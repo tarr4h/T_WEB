@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.t_web.program.comn.dao.ComnDao">
+
+    <insert id="insertMapData">
+        INSERT INTO MAP_DATA
+        (ID, NAME, PX, PY, ADDRESS, MCID, MCID_NAME, AVAILABLE)
+        VALUES(
+               #{bookmarkId}
+            ,   #{name}
+            ,   #{px}
+            ,   #{py}
+            ,   #{address}
+            ,   #{mcid}
+            ,   #{mcidName}
+            ,   #{available}
+        )
+    </insert>
+
+    <select id="selectMapDataCount" resultType="int">
+        SELECT  COUNT(*)
+        FROM    MAP_DATA
+        WHERE   ID = #{bookmarkId}
+    </select>
+
+    <select id="selectMapDataList" resultType="com.demo.t_web.program.comn.model.MapData">
+        SELECT  *
+        FROM    MAP_DATA
+        WHERE   PX BETWEEN #{minLng} AND #{maxLng}
+            AND PY BETWEEN #{minLat} AND #{maxLat}
+    </select>
+</mapper>

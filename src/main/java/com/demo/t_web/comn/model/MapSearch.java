@@ -1,0 +1,25 @@
+package com.demo.t_web.comn.model;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * <pre>
+ * com.demo.t_web.comn.model.MaxLatLng
+ *   - MaxLatLng.java
+ * </pre>
+ *
+ * @author : 한태우
+ * @className : MaxLatLng
+ * @description :
+ * @date : 4/29/24
+ */
+@Getter
+@Setter
+public class MapSearch {
+
+    private double maxLat;
+    private double maxLng;
+    private double minLat;
+    private double minLng;
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug">
+        <Appenders>
+            <Console name="console" target="SYSTEM_OUT" follow="true">
+<!--                <PatternLayout pattern="%d{yyyy-MM-dd hh:mm:ss} %5p [%c] %m%n"/>-->
+                <PatternLayout
+                    pattern="%d{yyyy-MM-dd hh:mm:ss} %highlight{[%-5p]}{FATAL=bg_red, ERROR=red, INFO=blue, DEBUG=green} [%c] %m%n"
+                    disableAnsi="false"
+                />
+            </Console>
+            <Console name="console-log" target="SYSTEM_OUT">
+                <PatternLayout pattern="%d{yyyy-MM-dd hh:mm:ss} %5p [%c] %n%n%replace{%msg}{^}{        }%n"/>
+            </Console>
+        </Appenders>
+
+        <loggers>
+    	    <logger name="com.web" level="debug" additivity="true"/>
+
+            <Logger name="java.sql" level="info" additivity="false">
+                <AppenderRef ref="console" />
+            </Logger>
+
+            <Logger name="jdbc" level="OFF"/>
+
+            <Logger name="jdbc.sqltiming" level="off" additivity="false">
+                <AppenderRef ref="console" />
+            </Logger>
+
+            <Logger name="jdbc.resultsettable" level="off" additivity="false">
+                <appender-ref ref="console" />
+            </Logger>
+
+            <!-- Query Loggers -->
+            <Logger name="jdbc.sqlonly" level="info" additivity="false">
+                <appender-ref ref="console-log"/>
+            </Logger>
+
+            <Root level="ERROR">
+                <AppenderRef ref="console" />
+            </Root>
+
+        </loggers>
+</Configuration>
