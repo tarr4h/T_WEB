@@ -1,11 +1,13 @@
 package com.demo.t_web.program.comn.dao;
 
 import com.demo.t_web.comn.model.MapSearch;
+import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.program.comn.model.MapData;
 import com.demo.t_web.program.comn.model.NaverMap;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <pre>
@@ -26,4 +28,6 @@ public interface ComnDao {
     int selectMapDataCount(NaverMap map);
 
     List<MapData> selectMapDataList(MapSearch c);
+
+    List<Tmap> getMcidList(MapSearch c);
 }

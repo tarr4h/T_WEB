@@ -14,8 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <pre>
@@ -72,15 +71,42 @@ public class ComnService {
     }
 
     public Object getData(Map<String, Object> param) {
-        log.debug("param = {}", param);
-        double lat = Double.parseDouble(String.valueOf(param.get("lat")));
-        double lng = Double.parseDouble(String.valueOf(param.get("lng")));
-        int distance = Utilities.parseInt(param.get("distance"));
+        MapSearch c = getMaxLatLng(param);
+        c.setMcid((String) param.get("mcid"));
+        c.setPlaceName((String) param.get("placeName"));
 
-        MapSearch c = Utilities.getMaxLatLng(lat, lng, distance);
-        log.debug("calc = {}", Utilities.beanToMap(c));
         List<MapData> dataList = dao.selectMapDataList(c);
 
-        return dataList;
+        List<MapData> availList = new ArrayList<>();
+        for(MapData data : dataList){
+            double parseLat = Utilities.parseDouble(data.getPy());
+            double parseLng = Utilities.parseDouble(data.getPx());
+            double distance = Utilities.calculateArea(c.getLat(), c.getLng(), parseLat, parseLng);
+            data.setCenterDistance(distance);
+
+            if(distance < c.getRadius()){
+                availList.add(data);
+            }
+        }
+
+        Collections.sort(availList);
+
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("dataList", availList);
+        ret.put("maxLatLng", c);
+        return ret;
+    }
+
+    public Object getMcidList(Map<String, Object> param) {
+        log.debug("getMcidList param = {}", param);
+        return dao.getMcidList(getMaxLatLng(param));
+    }
+
+    public MapSearch getMaxLatLng(Map<String, Object> param){
+        double lat = Utilities.parseDouble(param.get("lat"));
+        double lng = Utilities.parseDouble(param.get("lng"));
+        int radius = Utilities.parseInt(param.get("radius"));
+
+        return Utilities.getMaxLatLng(lat, lng, radius);
     }
 }

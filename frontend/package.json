@@ -15,7 +15,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "node_modules/.bin/cross-env HTTPS=true SSL_CRT_FILE=cert.pem SSL_KEY_FILE=key.pem react-scripts start",
+    "start": "export PORT=3001 && node_modules/.bin/cross-env HTTPS=true SSL_CRT_FILE=cert.pem SSL_KEY_FILE=key.pem react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -38,7 +38,7 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://localhost:3000/",
+  "homepage": "https://localhost:3001/",
   "devDependencies": {
     "cross-env": "^7.0.3"
   }

@@ -30,5 +30,21 @@
         FROM    MAP_DATA
         WHERE   PX BETWEEN #{minLng} AND #{maxLng}
             AND PY BETWEEN #{minLat} AND #{maxLat}
+            <if test="mcid != null and mcid != ''">
+            AND MCID = #{mcid}
+            </if>
+            <if test="placeName != null and placeName != ''">
+            AND NAME LIKE CONCAT('%', #{placeName}, '%')
+            </if>
+    </select>
+
+    <select id="getMcidList" resultType="Tmap">
+        SELECT  MCID
+            ,   MCID_NAME
+        FROM    MAP_DATA
+        WHERE   PX BETWEEN #{minLng} AND #{maxLng}
+            AND PY BETWEEN #{minLat} AND #{maxLat}
+        GROUP BY MCID, MCID_NAME
+        ORDER BY MCID_NAME DESC
     </select>
 </mapper>

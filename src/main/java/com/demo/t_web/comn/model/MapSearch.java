@@ -18,8 +18,14 @@ import lombok.Setter;
 @Setter
 public class MapSearch {
 
+    private double lat;
+    private double lng;
+    private int radius;
     private double maxLat;
     private double maxLng;
     private double minLat;
     private double minLng;
+
+    private String mcid;
+    private String placeName;
 }

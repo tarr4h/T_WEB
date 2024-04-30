@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -37,6 +38,8 @@ public class Utilities {
     private static ConfigurableApplicationContext context;
     private static ObjectMapper objectMapper;
 
+    private static final double EARTH_RADIUS = 6371;
+
     @Autowired
     private ConfigurableApplicationContext ctx;
 
@@ -46,6 +49,9 @@ public class Utilities {
         objectMapper = (ObjectMapper) context.getBean("jacksonObjectMapper");
     }
 
+    public static ResponseEntity<?> retValue(Object obj){
+        return ResponseEntity.ok().body(obj);
+    }
 
     public static HttpSession getSession() throws Exception {
         ServletRequestAttributes servletContainer = (ServletRequestAttributes) RequestContextHolder
@@ -57,6 +63,8 @@ public class Utilities {
             throw new Exception("SERVLETCONTAINER NULL");
         }
     }
+
+
 
     public static int sec2min(int sec){
         double doubleRange = (double) sec / 60;
@@ -125,17 +133,29 @@ public class Utilities {
         }
     }
 
+    public static double parseDouble(Object obj){
+        try {
+            if(obj instanceof String){
+                return Double.parseDouble(String.valueOf(obj));
+            } else {
+                return (double) obj;
+            }
+        } catch (NullPointerException e){
+            throw new NullPointerException("PARSE DOUBLE >> OBJ == NULL");
+        }
+    }
+
     public static Map<String, Object> beanToMap(Object obj) {
         if(obj == null) return null;
         return objectMapper.convertValue(obj, Tmap.class);
     }
 
-    public static MapSearch getMaxLatLng(double lat, double lng, int distance){
+    public static MapSearch getMaxLatLng(double lat, double lng, int radius){
         MapSearch ret = new MapSearch();
 
         double R = 6371;
 
-        double aRad = distance / R;
+        double aRad = radius / R;
 
         double latDeg = Math.toDegrees(aRad);
         double maxLat = lat + latDeg;
@@ -145,11 +165,35 @@ public class Utilities {
         double maxLng = lng + lngDeg;
         double minLng = lng - lngDeg;
 
+        ret.setLat(lat);
+        ret.setLng(lng);
+        ret.setRadius(radius);
+
         ret.setMaxLat(maxLat);
         ret.setMinLat(minLat);
         ret.setMaxLng(maxLng);
         ret.setMinLng(minLng);
 
         return ret;
+    }
+
+    // X, Y : 기준 lat, lng - A, B : 비교할 lat, lng
+    public static double calculateArea(double X, double Y, double A, double B) {
+        if(X == A && Y == B) {
+            return 0;
+        }
+
+        return getSqrtDistance(X, Y, A, B);
+    }
+
+    public static double getSqrtDistance(double X, double Y, double A, double B){
+        double latDistance = Math.toRadians(A - X);
+        double lonDistance = Math.toRadians(B - Y);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(X)) * Math.cos(Math.toRadians(A))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS * c;
     }
 }

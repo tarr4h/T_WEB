@@ -16,7 +16,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MapData {
+public class MapData implements Comparable<MapData>{
 
     private String id;
     private String name;
@@ -30,4 +30,17 @@ public class MapData {
     private String mcidName;
     private String available;
     private String updatedDt;
+
+    private double centerDistance;
+
+    @Override
+    public int compareTo(MapData o) {
+        if(this.centerDistance < o.centerDistance){
+            return -1;
+        } else if(this.centerDistance == o.centerDistance){
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }

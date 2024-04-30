@@ -1,0 +1,75 @@
+.searchWrapper > div:nth-child(1) {
+    height: 15%;
+}
+.searchWrapper > div:nth-child(2) {
+    height: 85%;
+}
+
+
+.searchList {
+    width: 100%;
+    /*height: 80%;*/
+    min-height: 2vh;
+    margin-top: 1vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.summary {
+    border: 1px solid #454545;
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-bottom: 0.5vh;
+    min-height: 5vh;
+    padding: 0.5em;
+    border-radius: 7px;
+    background-color: #07151C;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+}
+.summary > div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.summaryHeader > div:nth-child(1){
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #E2E2E2;
+}
+.summaryHeader > div:nth-child(2){
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    color: #739C85;
+}
+.summaryFooter {
+    color: #C6B9B1;
+}
+.summaryFooter > div:nth-child(1){
+    width: 90%;
+}
+.summaryFooter > div:nth-child(2){
+    width: 10%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-end;
+    color: #4f4f4f;
+}
+
+.diningColor{
+    color: #9C7673!important;
+}
+.barColor {
+    color: #5f6aa9!important;
+}
+.accommodationColor{
+    color: #d9900ac7!important;
+}

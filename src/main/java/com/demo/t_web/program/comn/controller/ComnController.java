@@ -1,5 +1,6 @@
 package com.demo.t_web.program.comn.controller;
 
+import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.comn.service.ComnService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
@@ -37,6 +38,12 @@ public class ComnController {
 
     @GetMapping("getData")
     public ResponseEntity<?> getData(@RequestParam Map<String, Object> param){
-        return ResponseEntity.ok().body(service.getData(param));
+        return Utilities.retValue(service.getData(param));
     }
+
+    @GetMapping("getMcid")
+    public ResponseEntity<?> getMcid(@RequestParam Map<String, Object> param){
+        return Utilities.retValue(service.getMcidList(param));
+    }
+
 }

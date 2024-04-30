@@ -4,6 +4,7 @@ import com.demo.t_web.comn.util.Utilities;
 import org.springframework.jdbc.support.JdbcUtils;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -38,7 +39,7 @@ public class Tmap extends LinkedHashMap<String, Object> {
         if(key.contains("_")){
             return super.put(JdbcUtils.convertUnderscoreNameToPropertyName(key), value);
         } else {
-            return super.put(key, value);
+            return super.put(key.toLowerCase(Locale.getDefault()), value);
         }
     }
 
