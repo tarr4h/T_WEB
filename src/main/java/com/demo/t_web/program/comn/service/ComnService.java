@@ -100,6 +100,7 @@ public class ComnService {
     public Object getMcidList(Map<String, Object> param) {
         log.debug("getMcidList param = {}", param);
         return dao.getMcidList(getMaxLatLng(param));
+//        return dao.getMcidList(new MapSearch());
     }
 
     public MapSearch getMaxLatLng(Map<String, Object> param){

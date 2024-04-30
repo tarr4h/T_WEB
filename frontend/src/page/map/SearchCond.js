@@ -1,10 +1,13 @@
 import {useEffect, useRef, useState} from "react";
+import axios from "axios";
 
-function SearchCond({mcidList, searchParam, setParam, setLatlng}){
+function SearchCond({searchParam, setParam, setLatlng}){
 
     const [radius, setRadius] = useState(3);
     const [mcid, setMcid] = useState('');
     const [placeName, setPlaceName] = useState('');
+
+    const [mcidList, setMcidList] = useState([]);
 
     const selectedMcid = useRef(null);
 
@@ -14,21 +17,16 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         }
     }, [radius, mcid]);
 
-
     useEffect(() => {
-        console.log('rerender mcidList : ', mcidList);
-        let bool = true;
-        console.log('ref = ', selectedMcid.current.value);
-        mcidList.forEach((item) => {
-            if(selectedMcid.current.value === item.mcid){
-                bool = false;
-            }
-        })
-        console.log('bool ? ', bool);
-        if(bool){
-            selectedMcid.current.value = '';
+        if(searchParam != null && searchParam.lat && searchParam.lng){
+            void getMcid();
         }
-    }, [mcidList]);
+    }, [searchParam]);
+
+    const getMcid = async () => {
+        const list = await(await axios.get('/comn/getMcid', {params : searchParam})).data;
+        setMcidList(list);
+    }
 
     const radiusOnchange = (event) => {
         const v = event.target.value;
@@ -52,10 +50,12 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
     const applyParam = () => {
         let p = {};
+        if(searchParam){
+            Object.assign(p, searchParam);
+        }
         p.radius = radius;
         p.mcid = mcid;
         p.placeName = placeName;
-        console.log('p ? ', p);
         setParam(p);
     }
 

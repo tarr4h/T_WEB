@@ -2,7 +2,7 @@ import {useEffect} from "react";
 import SearchList from "./SearchList";
 import SearchCond from "./SearchCond";
 
-function Search({data, mcidList, searchParam, setParam, setLatlng}){
+function Search({data, searchParam, setParam, setLatlng}){
 
     useEffect(() => {
 
@@ -12,7 +12,6 @@ function Search({data, mcidList, searchParam, setParam, setLatlng}){
         <div className={'searchWrapper'}>
             <SearchCond setParam={setParam}
                         searchParam={searchParam}
-                        mcidList={mcidList}
                         setLatlng={setLatlng}
             />
             <SearchList data={data}/>

@@ -8,7 +8,6 @@ function Map(){
     const [map, setMap] = useState(null);
     const [searchParam, setSearchParam] = useState(null);
     const [data, setData] = useState([]);
-    const [mcidList, setMcidList] = useState([]);
 
     const [latlng, setLatlng] = useState(null);
 
@@ -16,21 +15,15 @@ function Map(){
         void showMap();
     }, [searchParam]);
 
-
-    const getMcid = async () => {
-        if(searchParam != null && searchParam.lat != null && searchParam.lng != null){
-            const list = await (await axios.get('/comn/getMcid', {params : searchParam})).data;
-            setMcidList(list);
-        }
-    }
-
-    const showMap = async (lat, lng) => {
+    const showMap = async (lat, lng, force) => {
+        console.log('force : ', force);
         if(!lat && !lng){
             const geo = await getGeolocation();
             lat = geo.lat;
             lng = geo.lng;
         }
-        if(latlng != null){
+
+        if(!force && latlng != null){
             lat = latlng.lat;
             lng = latlng.lng;
         }
@@ -51,8 +44,7 @@ function Map(){
         // infowindow
         setInfoWindow(map, marker, '현재위치');
         naver.maps.Event.addListener(map, 'click', function(e){
-            console.log('request latlng : ', e.latlng._lat, e.latlng._lng);
-            showMap(e.latlng._lat, e.latlng._lng);
+            showMap(e.latlng._lat, e.latlng._lng, true);
             setLatlng({
                 lat : e.latlng._lat,
                 lng : e.latlng._lng
@@ -68,7 +60,6 @@ function Map(){
         }
         param.lat = lat;
         param.lng = lng;
-        console.log('before set param : ', param);
         setSearchParam(param);
         const retData = await getData(param);
         const dataList = retData.dataList;
@@ -76,9 +67,6 @@ function Map(){
             const mkr = setMarker(map, data.py, data.px, data.mcid);
             setInfoWindow(map, mkr, data);
         });
-
-        // mcid
-        void getMcid();
 
         // circle
         const circle = new naver.maps.Circle({
@@ -198,7 +186,6 @@ function Map(){
         <div className={'mapContainer'}>
             <div id="map"></div>
             <Search data={data}
-                    mcidList={mcidList}
                     searchParam={searchParam}
                     setParam={setSearchParam}
                     setLatlng={setLatlng}
