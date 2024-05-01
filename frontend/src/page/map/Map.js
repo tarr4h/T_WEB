@@ -8,6 +8,9 @@ function Map(){
     const [map, setMap] = useState(null);
     const [searchParam, setSearchParam] = useState(null);
     const [data, setData] = useState([]);
+    const [mcidList, setMcidList] = useState([]);
+
+    const [ifwList, setIfwList]= useState([]);
 
     const [latlng, setLatlng] = useState(null);
 
@@ -16,7 +19,6 @@ function Map(){
     }, [searchParam]);
 
     const showMap = async (lat, lng, force) => {
-        console.log('force : ', force);
         if(!lat && !lng){
             const geo = await getGeolocation();
             lat = geo.lat;
@@ -28,7 +30,6 @@ function Map(){
             lng = latlng.lng;
         }
 
-
         // map
         const mapOpts = {
             center: new naver.maps.LatLng(lat, lng),
@@ -39,7 +40,7 @@ function Map(){
         setMap(map);
 
         // marker
-        const marker = setMarker(map, lat, lng);
+        const marker = setMarker(map, lat, lng, 'LOCATION');
 
         // infowindow
         setInfoWindow(map, marker, '현재위치');
@@ -63,10 +64,21 @@ function Map(){
         setSearchParam(param);
         const retData = await getData(param);
         const dataList = retData.dataList;
-        dataList.forEach((data) => {
-            const mkr = setMarker(map, data.py, data.px, data.mcid);
-            setInfoWindow(map, mkr, data);
+        const aDataList = [];
+
+        const aifwList = [];
+        dataList.forEach((dt) => {
+            const mkr = setMarker(map, dt.py, dt.px, dt.mcid);
+            const infoWindow = setInfoWindow(map, mkr, dt);
+            aifwList.push(infoWindow);
+            dt.ifw = infoWindow;
+            dt.map = map;
+            dt.marker = mkr;
+            aDataList.push(dt);
         });
+
+        setData(aDataList);
+        setIfwList(aifwList);
 
         // circle
         const circle = new naver.maps.Circle({
@@ -90,6 +102,9 @@ function Map(){
         let img = '';
 
         switch (type) {
+            case 'LOCATION' :
+                img = 'location-pin.png';
+                break;
             case 'DINING' :
                 img = 'food.png';
                 break;
@@ -129,6 +144,13 @@ function Map(){
         return new naver.maps.Marker(opt);
     }
 
+    const ifwClick = (data) => {
+        let actSearchParam = {};
+        Object.assign(actSearchParam, searchParam);
+        actSearchParam.placeName = data.name;
+        setSearchParam(actSearchParam);
+    }
+
     const setInfoWindow = (map, marker, data) => {
         const ifwCont = document.createElement('div');
         ifwCont.innerText = data.name;
@@ -143,10 +165,6 @@ function Map(){
             pixelOffset : new naver.maps.Point(0, -3)
         });
 
-        const ifwClick = (data) => {
-            console.log('ifw click', data);
-        }
-
         ifwCont.addEventListener('click', () => {
             ifwClick(data);
         })
@@ -160,12 +178,15 @@ function Map(){
                 }, 5000);
             }
         });
+
+        return infoWindow;
     }
 
     const getData = async (param) => {
-        console.log('param = ', param);
+        console.log('param : ', param);
         const ret = await(await axios.get('/comn/getData', {params : param})).data;
         setData(ret.dataList);
+        setMcidList(ret.mcidList);
         return ret;
     }
 
@@ -186,6 +207,7 @@ function Map(){
         <div className={'mapContainer'}>
             <div id="map"></div>
             <Search data={data}
+                    mcidList={mcidList}
                     searchParam={searchParam}
                     setParam={setSearchParam}
                     setLatlng={setLatlng}

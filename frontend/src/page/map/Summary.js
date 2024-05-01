@@ -1,6 +1,14 @@
 import '../../css/Search.css';
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 function Summary({data}){
+
+    const [driving, setDriving] = useState(null);
+
+    useEffect(() => {
+
+    }, [data]);
 
     const typeColor = (type) => {
         let className = '';
@@ -28,8 +36,33 @@ function Summary({data}){
         return distance + mark;
     }
 
+    const openIfw = async () => {
+        const ifw = data.ifw,
+              map = data.map,
+              marker = data.marker;
+        ifw.open(map, marker);
+        setTimeout(() => {
+            ifw.close();
+        }, 5000);
+
+        const center = map.getCenter();
+        const param = {
+            lat : data.py,
+            lng : data.px,
+            centerLat : center.y,
+            centerLng : center.x
+        }
+        const driving = await (await axios.get('/comn/getDriving', {params : param})).data;
+        console.log('driving : ', driving);
+        if(driving){
+            setDriving(driving);
+        }
+    }
+
     return (
-        <div className={'summary'}>
+        <div className={'summary'}
+             onClick={openIfw}
+        >
             <div className={'summaryHeader'}>
                 <div>{data.name}</div>
                 <div className={typeColor(data.mcid)}
@@ -37,7 +70,10 @@ function Summary({data}){
             </div>
             <div className={'summaryFooter'}>
                 <div>{data.address}</div>
-                <div>{getDistanceMark(data.centerDistance)}</div>
+                <div>
+                    <div>{getDistanceMark(data.centerDistance)}</div>
+                    <div className={'durationMin'}>{driving != null ? driving.durationMin + '분' : ''}</div>
+                </div>
             </div>
         </div>
     )

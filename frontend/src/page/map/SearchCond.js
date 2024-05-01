@@ -1,15 +1,33 @@
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 
-function SearchCond({searchParam, setParam, setLatlng}){
+function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
     const [radius, setRadius] = useState(3);
     const [mcid, setMcid] = useState('');
     const [placeName, setPlaceName] = useState('');
-
-    const [mcidList, setMcidList] = useState([]);
+    const [runSearch, setRunSearch] = useState(false);
 
     const selectedMcid = useRef(null);
+
+    const [region1, setRegion1] = useState([]);
+    const [region2, setRegion2] = useState([]);
+    const selectedRegion1 = useRef(null);
+    const selectedRegion2 = useRef(null);
+
+    useEffect(() => {
+        setMcid('');
+        setRadius(3);
+        setPlaceName('');
+        setRunSearch(false);
+        setRegion1([]);
+        setRegion2([]);
+
+        selectedMcid.current.value = '';
+        selectedRegion1.current.value = '';
+        selectedRegion2.current.value = '';
+        void getRegion1();
+    }, []);
 
     useEffect(() => {
         if(radius){
@@ -18,15 +36,39 @@ function SearchCond({searchParam, setParam, setLatlng}){
     }, [radius, mcid]);
 
     useEffect(() => {
-        if(searchParam != null && searchParam.lat && searchParam.lng){
-            void getMcid();
+        if(runSearch){
+            applyParam();
+            setRunSearch(false);
         }
-    }, [searchParam]);
+    }, [runSearch]);
 
-    const getMcid = async () => {
-        const list = await(await axios.get('/comn/getMcid', {params : searchParam})).data;
-        setMcidList(list);
-    }
+    useEffect(() => {
+        if(mcidList.length === 0){
+            if(searchParam && searchParam.placeName !== placeName){
+                setMcid('');
+                selectedMcid.current.value = '';
+                applyParam();
+            }
+        } else {
+            let bool = true;
+            for(let i = 0; i < mcidList.length; i++){
+                const item = mcidList[i];
+                if(item.mcid === mcid){
+                    selectedMcid.current.value = mcid;
+                    bool = false;
+                    break;
+                }
+            }
+
+            if(bool){
+                selectedMcid.current.value = '';
+            }
+        }
+
+        if(searchParam && searchParam.placeName !== ''){
+            setPlaceName(searchParam.placeName);
+        }
+    }, [mcidList]);
 
     const radiusOnchange = (event) => {
         const v = event.target.value;
@@ -41,6 +83,7 @@ function SearchCond({searchParam, setParam, setLatlng}){
     const mcidOnchange = (event) => {
         const v = event.target.value;
         setMcid(v);
+        selectedMcid.current.value = v;
     }
 
     const placeNameOnchange = (event) => {
@@ -56,45 +99,140 @@ function SearchCond({searchParam, setParam, setLatlng}){
         p.radius = radius;
         p.mcid = mcid;
         p.placeName = placeName;
+        p.addr1 = selectedRegion1.current.value;
+        p.addr2 = selectedRegion2.current.value;
         setParam(p);
+    }
+
+    const applyPlaceName = () => {
+        setCurrentLoc();
     }
 
     const setCurrentLoc = () => {
         setLatlng(null);
+        setMcid('');
+        setPlaceName('');
+        setRunSearch(true);
+        setRadius(3);
+        selectedRegion1.current.value = '';
+        selectedRegion2.current.value = '';
+        setRegion2([]);
+    }
+
+    const getRegion1 = async () => {
+        const region1 = await(await axios.get('/comn/getRegion1')).data;
+        setRegion1(region1);
+    }
+
+    const region1Onchange = (e) => {
+        const v = e.target.value;
+        selectedRegion1.current.value = v;
+        void getRegion2(v);
+    }
+
+    const getRegion2 = async (upRegion) => {
+        const param = {
+            addr1 : upRegion
+        }
+        const region2 = await(await axios.get('/comn/getRegion2', {params : param})).data;
+        setRegion2(region2);
+    }
+
+    const region2Onchange = (e) => {
+        selectedRegion2.current.value = e.target.value;;
     }
 
     return (
-        <div>
-            <div onClick={setCurrentLoc}>현위치
+        <div className={'searchFilter'}>
+            <div>
+                <div>
+                    <span>지역</span>
+                </div>
+                <div className={'dualSelect'}>
+                    <select onChange={region1Onchange}
+                            defaultValue={''}
+                            ref={selectedRegion1}
+                            className={'select_sm wd_100'}
+                    >
+                        <option value="">전체</option>
+                        {
+                            region1 != null ? region1.map((item, index) => (
+                                <option value={item.addr1}
+                                        key={index}
+                                >{item.addr1}</option>
+                            )) : null
+                        }
+                    </select>
+                    <select onChange={region2Onchange}
+                            defaultValue={''}
+                            ref={selectedRegion2}
+                            className={'select_sm wd_100'}
+                    >
+                        <option value="">전체</option>
+                        {
+                            region2 != null ? region2.map((item, index) => (
+                                <option value={item.addr2}
+                                        key={index}
+                                >{item.addr2}</option>
+                            )) : null
+                        }
+                    </select>
+                </div>
             </div>
             <div>
-                <span>반경(km)</span>
-                <input type="number"
-                       value={radius}
-                       onChange={radiusOnchange}
-                />
+                <div>
+                    <span>반경(km)</span>
+                </div>
+                <div>
+                    <input type="number"
+                           value={radius}
+                           onChange={radiusOnchange}
+                           className={'wd_100'}
+                    />
+                </div>
             </div>
             <div>
-                <span>분류</span>
-                <select onChange={mcidOnchange}
-                        defaultValue={''}
-                        ref={selectedMcid}
-                >
-                    <option value="">전체</option>
-                    {mcidList.map((mcid, index) => (
-                        <option value={mcid.mcid}
-                                key={index}
-                        >{mcid.mcidName}</option>
-                    ))}
-                </select>
+                <div>
+                    <span>분류</span>
+                </div>
+                <div>
+                    <select onChange={mcidOnchange}
+                            defaultValue={''}
+                            ref={selectedMcid}
+                            className={'select_sm wd_100'}
+                    >
+                        <option value="">전체</option>
+                        {
+                            mcidList != null ? mcidList.map((mcid, index) => (
+                                <option value={mcid.mcid}
+                                        key={index}
+                                >{mcid.mcidName}</option>
+                            )) : null
+                        }
+                    </select>
+                </div>
             </div>
             <div>
-                <span>가게명</span>
-                <input type="text"
-                       value={placeName}
-                       onChange={placeNameOnchange}
-                />
-                <div onClick={() => {applyParam()}}>반영</div>
+                <div>
+                    <span>가게명</span>
+                </div>
+                <div>
+                    <div>
+                        <input type="text"
+                               value={placeName || ''}
+                               onChange={placeNameOnchange}
+                               className={'wd_100'}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div onClick={applyPlaceName} className={'searchBtn'}>
+                    <span>현위치</span>
+                </div>
+                <div onClick={() => {applyParam()}}
+                     className={'searchBtn'}
+                >검색</div>
             </div>
         </div>
     )

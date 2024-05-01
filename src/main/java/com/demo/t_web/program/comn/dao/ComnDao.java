@@ -29,5 +29,9 @@ public interface ComnDao {
 
     List<MapData> selectMapDataList(MapSearch c);
 
-    List<Tmap> getMcidList(MapSearch c);
+    List<Tmap> selectMcidList(MapSearch c);
+
+    List<Tmap> getRegion1(Map<String, Object> param);
+
+    List<Tmap> getRegion2(Map<String, Object> param);
 }

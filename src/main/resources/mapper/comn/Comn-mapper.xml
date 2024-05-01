@@ -33,18 +33,37 @@
             <if test="mcid != null and mcid != ''">
             AND MCID = #{mcid}
             </if>
-            <if test="placeName != null and placeName != ''">
-            AND NAME LIKE CONCAT('%', #{placeName}, '%')
+            <if test="placeName != null and placeName instanceof java.util.ArrayList">
+                <foreach collection="placeName" item="item" separator="OR" open="AND (" close=")">
+                    NAME LIKE CONCAT('%', #{item}, '%')
+                </foreach>
             </if>
     </select>
 
-    <select id="getMcidList" resultType="Tmap">
+    <select id="selectMcidList" resultType="Tmap">
         SELECT  MCID
             ,   MCID_NAME
         FROM    MAP_DATA
         WHERE   PX BETWEEN #{minLng} AND #{maxLng}
-            AND PY BETWEEN #{minLat} AND #{maxLat}
+          AND PY BETWEEN #{minLat} AND #{maxLat}
         GROUP BY MCID, MCID_NAME
         ORDER BY MCID_NAME DESC
+    </select>
+
+    <select id="getRegion1" resultType="Tmap">
+        SELECT  ADDR_1
+        FROM    MAP_DATA
+        WHERE   ADDR_1 != ''
+        GROUP BY ADDR_1
+        ORDER BY ADDR_1
+    </select>
+
+    <select id="getRegion2" resultType="Tmap">
+        SELECT  ADDR_2
+        FROM    MAP_DATA
+        WHERE   ADDR_2 != ''
+            AND ADDR_1 = #{addr1}
+        GROUP BY ADDR_2
+        ORDER BY ADDR_2
     </select>
 </mapper>

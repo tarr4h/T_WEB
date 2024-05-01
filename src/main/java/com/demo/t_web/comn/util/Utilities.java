@@ -2,17 +2,25 @@ package com.demo.t_web.comn.util;
 
 import com.demo.t_web.comn.model.MapSearch;
 import com.demo.t_web.comn.model.Tmap;
+import com.demo.t_web.program.comn.model.DrivingVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,6 +47,23 @@ public class Utilities {
     private static ObjectMapper objectMapper;
 
     private static final double EARTH_RADIUS = 6371;
+
+    private static String naverApiKeyId;
+    private static String naverApiKey;
+    private static String naverDrivingUrl;
+
+    @Value("${naver.apiKeyId}")
+    private void setNaverApiKeyId(String value){
+        naverApiKeyId = value;
+    }
+    @Value("${naver.apiKey}")
+    private void setNaverApiKey(String value){
+        naverApiKey = value;
+    }
+    @Value("${naver.drivingUrl}")
+    private void setNaverDrivingUrl(String value){
+        naverDrivingUrl = value;
+    }
 
     @Autowired
     private ConfigurableApplicationContext ctx;
@@ -195,5 +220,38 @@ public class Utilities {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return EARTH_RADIUS * c;
+    }
+
+    public static DrivingVo getDriving(double startLat, double startLng, double goalLat, double goalLng){
+        RestTemplate restTemplate = new RestTemplate();
+
+        String apiKeyId = naverApiKeyId;
+        String apiKey = naverApiKey;
+        String drivingUrl = naverDrivingUrl;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Accept", "*/*");
+        headers.add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Mobile Safari/537.36");
+        headers.set("X-NCP-APIGW-API-KEY-ID", apiKeyId);
+        headers.set("X-NCP-APIGW-API-KEY", apiKey);
+
+        HttpEntity<HttpHeaders> request = new HttpEntity<>(headers);
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(drivingUrl)
+                .queryParam("start", startLng + "," + startLat)
+                .queryParam("goal", goalLng + "," + goalLat)
+                .encode(StandardCharsets.UTF_8)
+                .build()
+                .toUri();
+
+        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try{
+            return objectMapper.readValue(response.getBody(), DrivingVo.class);
+        } catch(JsonProcessingException e){
+            log.error("NAVERMAP API RESPONSE ERROR = {}", e.getMessage());
+            return null;
+        }
     }
 }

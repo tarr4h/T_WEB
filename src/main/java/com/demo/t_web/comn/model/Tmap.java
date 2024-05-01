@@ -39,7 +39,7 @@ public class Tmap extends LinkedHashMap<String, Object> {
         if(key.contains("_")){
             return super.put(JdbcUtils.convertUnderscoreNameToPropertyName(key), value);
         } else {
-            return super.put(key.toLowerCase(Locale.getDefault()), value);
+            return super.put(key.toLowerCase(), value);
         }
     }
 

@@ -3,6 +3,8 @@ package com.demo.t_web.comn.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * <pre>
  * com.demo.t_web.comn.model.MaxLatLng
@@ -27,5 +29,5 @@ public class MapSearch {
     private double minLng;
 
     private String mcid;
-    private String placeName;
+    private List<String> placeName;
 }

@@ -41,9 +41,18 @@ public class ComnController {
         return Utilities.retValue(service.getData(param));
     }
 
-    @GetMapping("getMcid")
-    public ResponseEntity<?> getMcid(@RequestParam Map<String, Object> param){
-        return Utilities.retValue(service.getMcidList(param));
+    @GetMapping("getDriving")
+    public ResponseEntity<?> getDriving(@RequestParam Map<String, Object> param){
+        return Utilities.retValue(service.getDriving(param));
     }
 
+    @GetMapping("getRegion1")
+    public ResponseEntity<?> getRegion1(@RequestParam Map<String, Object> param){
+        return Utilities.retValue(service.getRegion1(param));
+    }
+
+    @GetMapping("getRegion2")
+    public ResponseEntity<?> getRegion2(@RequestParam Map<String, Object> param){
+        return Utilities.retValue(service.getRegion2(param));
+    }
 }

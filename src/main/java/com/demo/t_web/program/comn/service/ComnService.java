@@ -1,8 +1,10 @@
 package com.demo.t_web.program.comn.service;
 
 import com.demo.t_web.comn.model.MapSearch;
+import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.comn.dao.ComnDao;
+import com.demo.t_web.program.comn.model.DrivingVo;
 import com.demo.t_web.program.comn.model.MapData;
 import com.demo.t_web.program.comn.model.NaverMap;
 import com.demo.t_web.program.comn.model.NaverMapList;
@@ -73,11 +75,25 @@ public class ComnService {
     public Object getData(Map<String, Object> param) {
         MapSearch c = getMaxLatLng(param);
         c.setMcid((String) param.get("mcid"));
-        c.setPlaceName((String) param.get("placeName"));
+        List<String> placeName = new ArrayList<>();
+        String p = (String) param.get("placeName");
+        if(p != null){
+            if(p.contains(",")){
+                String[] arr = p.split(",");
+                if(arr.length > 0){
+                    placeName.addAll(Arrays.asList(arr));
+                }
+            } else {
+                placeName.add(p);
+            }
+            c.setPlaceName(placeName);
+        }
 
         List<MapData> dataList = dao.selectMapDataList(c);
 
         List<MapData> availList = new ArrayList<>();
+        List<Tmap> mcidList = dao.selectMcidList(c);
+
         for(MapData data : dataList){
             double parseLat = Utilities.parseDouble(data.getPy());
             double parseLng = Utilities.parseDouble(data.getPx());
@@ -94,13 +110,8 @@ public class ComnService {
         Map<String, Object> ret = new HashMap<>();
         ret.put("dataList", availList);
         ret.put("maxLatLng", c);
+        ret.put("mcidList", mcidList);
         return ret;
-    }
-
-    public Object getMcidList(Map<String, Object> param) {
-        log.debug("getMcidList param = {}", param);
-        return dao.getMcidList(getMaxLatLng(param));
-//        return dao.getMcidList(new MapSearch());
     }
 
     public MapSearch getMaxLatLng(Map<String, Object> param){
@@ -109,5 +120,28 @@ public class ComnService {
         int radius = Utilities.parseInt(param.get("radius"));
 
         return Utilities.getMaxLatLng(lat, lng, radius);
+    }
+
+    public Object getDriving(Map<String, Object> param) {
+        double centerLat = Utilities.parseDouble(param.get("centerLat"));
+        double centerLng = Utilities.parseDouble(param.get("centerLng"));
+        double lat = Utilities.parseDouble(param.get("lat"));
+        double lng = Utilities.parseDouble(param.get("lng"));
+        DrivingVo driving = Utilities.getDriving(centerLat, centerLng, lat, lng);
+        if(driving == null){
+            return null;
+        }
+        int duration = driving.getRoute().getTraoptimal().get(0).getSummary().getDuration();
+        driving.setDuration(duration);
+        driving.setDurationMin(Utilities.miliSec2min(duration));
+        return driving;
+    }
+
+    public Object getRegion1(Map<String, Object> param) {
+        return dao.getRegion1(param);
+    }
+
+    public Object getRegion2(Map<String, Object> param) {
+        return dao.getRegion2(param);
     }
 }

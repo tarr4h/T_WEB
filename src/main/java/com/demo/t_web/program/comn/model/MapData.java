@@ -32,6 +32,7 @@ public class MapData implements Comparable<MapData>{
     private String updatedDt;
 
     private double centerDistance;
+    private DrivingVo driving;
 
     @Override
     public int compareTo(MapData o) {
