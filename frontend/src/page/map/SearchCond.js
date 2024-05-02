@@ -67,15 +67,22 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
             }
         }
 
-        if(searchParam && searchParam.placeName !== ''){
-            setPlaceName(searchParam.placeName);
-        }
+        if(searchParam){
+            if(searchParam.placeName !== ''){
+                setPlaceName(searchParam.placeName);
+            }
 
-        selectedRegion1.current.value = '';
-        selectedRegion2.current.value = '';
+            if(searchParam.radius !== radius){
+                setRadius(searchParam.radius);
+            }
 
-        if(searchParam && searchParam.radius !== radius){
-            setRadius(searchParam.radius);
+            if(searchParam.addr1 !== selectedRegion1.current.value){
+                selectedRegion1.current.value = '';
+                selectedRegion2.current.value = '';
+            }
+            if(searchParam.addr2 !== selectedRegion2.current.value){
+                selectedRegion2.current.value = '';
+            }
         }
     }, [mcidList]);
 
