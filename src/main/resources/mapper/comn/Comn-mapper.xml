@@ -33,6 +33,12 @@
             <if test="mcid != null and mcid != ''">
             AND MCID = #{mcid}
             </if>
+            <if test="addr1 != null and addr1 != ''">
+            AND ADDR_1 = #{addr1}
+            </if>
+            <if test="addr2 != null and addr2 != ''">
+            AND ADDR_2 = #{addr2}
+            </if>
             <if test="placeName != null and placeName instanceof java.util.ArrayList">
                 <foreach collection="placeName" item="item" separator="OR" open="AND (" close=")">
                     NAME LIKE CONCAT('%', #{item}, '%')
@@ -65,5 +71,18 @@
             AND ADDR_1 = #{addr1}
         GROUP BY ADDR_2
         ORDER BY ADDR_2
+    </select>
+
+    <select id="getRegionMapData" resultType="com.demo.t_web.program.comn.model.MapData">
+        SELECT  *
+        FROM    MAP_DATA
+        <where>
+            <if test="addr1 != null and addr1 != ''">
+                ADDR_1 = #{addr1}
+            </if>
+            <if test="addr2 != null and addr2 != ''">
+                AND ADDR_2 = #{addr2}
+            </if>
+        </where>
     </select>
 </mapper>

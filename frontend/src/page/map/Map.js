@@ -61,6 +61,12 @@ function Map(){
         }
         param.lat = lat;
         param.lng = lng;
+
+        if(force){
+            param.addr1 = '';
+            param.addr2 = '';
+            param.radius = 3;
+        }
         setSearchParam(param);
         const retData = await getData(param);
         const dataList = retData.dataList;

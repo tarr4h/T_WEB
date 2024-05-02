@@ -31,13 +31,15 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
     useEffect(() => {
         if(radius){
-            applyParam();
+            if(radius < 10){
+                void applyParam();
+            }
         }
     }, [radius, mcid]);
 
     useEffect(() => {
         if(runSearch){
-            applyParam();
+            void applyParam();
             setRunSearch(false);
         }
     }, [runSearch]);
@@ -47,7 +49,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
             if(searchParam && searchParam.placeName !== placeName){
                 setMcid('');
                 selectedMcid.current.value = '';
-                applyParam();
+                void applyParam();
             }
         } else {
             let bool = true;
@@ -68,15 +70,22 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         if(searchParam && searchParam.placeName !== ''){
             setPlaceName(searchParam.placeName);
         }
+
+        selectedRegion1.current.value = '';
+        selectedRegion2.current.value = '';
+
+        if(searchParam && searchParam.radius !== radius){
+            setRadius(searchParam.radius);
+        }
     }, [mcidList]);
 
     const radiusOnchange = (event) => {
         const v = event.target.value;
         if(v === 0) return;
-        if(v >= 10) {
-            alert('10km 미만으로만 설정 가능합니다.');
-            return;
-        }
+        // if(v >= 10) {
+        //     alert('10km 미만으로만 설정 가능합니다.');
+        //     return;
+        // }
         setRadius(v);
     }
 
@@ -91,7 +100,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         setPlaceName(v);
     }
 
-    const applyParam = () => {
+    const applyParam = async () => {
         let p = {};
         if(searchParam){
             Object.assign(p, searchParam);
@@ -101,6 +110,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         p.placeName = placeName;
         p.addr1 = selectedRegion1.current.value;
         p.addr2 = selectedRegion2.current.value;
+
         setParam(p);
     }
 
@@ -124,10 +134,14 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         setRegion1(region1);
     }
 
-    const region1Onchange = (e) => {
+    const region1Onchange = async (e) => {
         const v = e.target.value;
         selectedRegion1.current.value = v;
         void getRegion2(v);
+
+        const addr1GeoLoc = await getRegionGeoLoc({addr1 : v});
+        setLatlng({lat : addr1GeoLoc.latitude, lng : addr1GeoLoc.longitude});
+        setRadius(addr1GeoLoc.radius);
     }
 
     const getRegion2 = async (upRegion) => {
@@ -138,8 +152,17 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         setRegion2(region2);
     }
 
-    const region2Onchange = (e) => {
-        selectedRegion2.current.value = e.target.value;;
+    const region2Onchange = async (e) => {
+        const v = e.target.value;
+        selectedRegion2.current.value = v;
+
+        const addr2GeoLoc = await getRegionGeoLoc({addr2 : v});
+        setLatlng({lat : addr2GeoLoc.latitude, lng : addr2GeoLoc.longitude});
+        setRadius(addr2GeoLoc.radius);
+    }
+
+    const getRegionGeoLoc = async(param) => {
+        return await(await axios.get('/comn/getRegionGeoLoc', {params : param})).data;
     }
 
     return (
@@ -230,7 +253,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                 <div onClick={applyPlaceName} className={'searchBtn'}>
                     <span>현위치</span>
                 </div>
-                <div onClick={() => {applyParam()}}
+                <div onClick={() => {void applyParam()}}
                      className={'searchBtn'}
                 >검색</div>
             </div>

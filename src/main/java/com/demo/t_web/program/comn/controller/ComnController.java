@@ -55,4 +55,10 @@ public class ComnController {
     public ResponseEntity<?> getRegion2(@RequestParam Map<String, Object> param){
         return Utilities.retValue(service.getRegion2(param));
     }
+
+    @GetMapping("getRegionGeoLoc")
+    public ResponseEntity<?> getRegionGeoLoc(@RequestParam Map<String, Object> param){
+        return Utilities.retValue(service.getRegionGeoLoc(param));
+    }
+
 }

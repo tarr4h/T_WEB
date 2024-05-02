@@ -29,5 +29,7 @@ public class MapSearch {
     private double minLng;
 
     private String mcid;
+    private String addr1;
+    private String addr2;
     private List<String> placeName;
 }

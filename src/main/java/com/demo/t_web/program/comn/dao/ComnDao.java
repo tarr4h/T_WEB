@@ -34,4 +34,6 @@ public interface ComnDao {
     List<Tmap> getRegion1(Map<String, Object> param);
 
     List<Tmap> getRegion2(Map<String, Object> param);
+
+    List<MapData> getRegionMapData(Map<String, Object> param);
 }

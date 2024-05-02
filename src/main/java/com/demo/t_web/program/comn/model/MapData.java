@@ -1,5 +1,6 @@
 package com.demo.t_web.program.comn.model;
 
+import com.demo.t_web.comn.util.Utilities;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,6 +34,14 @@ public class MapData implements Comparable<MapData>{
 
     private double centerDistance;
     private DrivingVo driving;
+
+    public double getLat(){
+        return Utilities.parseDouble(getPy());
+    }
+
+    public double getLng(){
+        return Utilities.parseDouble(getPx());
+    }
 
     @Override
     public int compareTo(MapData o) {

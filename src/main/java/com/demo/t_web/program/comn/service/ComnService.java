@@ -75,6 +75,8 @@ public class ComnService {
     public Object getData(Map<String, Object> param) {
         MapSearch c = getMaxLatLng(param);
         c.setMcid((String) param.get("mcid"));
+        c.setAddr1((String) param.get("addr1"));
+        c.setAddr2((String) param.get("addr2"));
         List<String> placeName = new ArrayList<>();
         String p = (String) param.get("placeName");
         if(p != null){
@@ -95,9 +97,7 @@ public class ComnService {
         List<Tmap> mcidList = dao.selectMcidList(c);
 
         for(MapData data : dataList){
-            double parseLat = Utilities.parseDouble(data.getPy());
-            double parseLng = Utilities.parseDouble(data.getPx());
-            double distance = Utilities.calculateArea(c.getLat(), c.getLng(), parseLat, parseLng);
+            double distance = Utilities.calculateArea(c.getLat(), c.getLng(), data.getLat(), data.getLng());
             data.setCenterDistance(distance);
 
             if(distance < c.getRadius()){
@@ -143,5 +143,49 @@ public class ComnService {
 
     public Object getRegion2(Map<String, Object> param) {
         return dao.getRegion2(param);
+    }
+
+    public Object getRegionGeoLoc(Map<String, Object> param) {
+        List<MapData> mapDataList = dao.getRegionMapData(param);
+
+        double minLat = 0;
+        double maxLat = 0;
+        double minLng = 0;
+        double maxLng = 0;
+        for(MapData data : mapDataList){
+            if(minLat == 0 || data.getLat() < minLat) {
+                minLat = data.getLat();
+            }
+            if(data.getLat() > maxLat) {
+                maxLat = data.getLat();
+            }
+            if(minLng == 0 || data.getLng() < minLng){
+                minLng = data.getLng();
+            }
+            if(data.getLng() > maxLng){
+                maxLng = data.getLng();
+            }
+        }
+
+        double centralLat = (minLat + maxLat) / 2;
+        double centralLng = (minLng + maxLng) / 2;
+
+        // 반경계산
+        double radius = 0;
+        for(MapData data : mapDataList){
+            double distance = Utilities.calculateArea(centralLat, centralLng, data.getLat(), data.getLng());
+            if(distance > radius){
+                radius = distance;
+            }
+
+        }
+        radius = Math.ceil(radius);
+
+        Map<String, Object> returnMap = new HashMap<>();
+        returnMap.put("latitude", centralLat);
+        returnMap.put("longitude", centralLng);
+        returnMap.put("radius", radius);
+
+        return returnMap;
     }
 }
