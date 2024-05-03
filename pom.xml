@@ -146,6 +146,33 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId> <!-- 컴파일러가 사용하는 플러그인 -->
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!--				<version>3.8.0</version>-->
+                <configuration>
+                    <source>1.8</source> <!-- version -->
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <!-- war plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <!--				<version>3.2.1</version>-->
+                <configuration>
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory> <!-- war파일 디렉토리 -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml> <!-- web.xml이 없을 때 에러를 낼건지 안낼건지 -->
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
