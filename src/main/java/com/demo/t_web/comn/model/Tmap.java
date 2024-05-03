@@ -3,6 +3,7 @@ package com.demo.t_web.comn.model;
 import com.demo.t_web.comn.util.Utilities;
 import org.springframework.jdbc.support.JdbcUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -37,9 +38,13 @@ public class Tmap extends LinkedHashMap<String, Object> {
     @Override
     public Object put(String key, Object value) {
         if(key.contains("_")){
-            return super.put(JdbcUtils.convertUnderscoreNameToPropertyName(key), value);
+            if(value instanceof byte[]){
+                return super.put(JdbcUtils.convertUnderscoreNameToPropertyName(key), new String((byte[]) value));
+            } else {
+                return super.put(JdbcUtils.convertUnderscoreNameToPropertyName(key), value);
+            }
         } else {
-            return super.put(key.toLowerCase(), value);
+            return super.put(key.toLowerCase(), String.valueOf(value));
         }
     }
 
