@@ -8,6 +8,7 @@ module.exports = app => {
     app.use(
         createProxyMiddleware(urlPaths, {
             target: 'http://localhost:8083',
+            // target: 'http://hansolcnc.co.kr',
             changeOrigin: true,
         })
     )
