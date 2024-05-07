@@ -83,6 +83,22 @@
     color: #919064;
     font-weight: 500;
 }
+.summaryDetail{
+    flex-direction: column!important;
+    margin-top: 0.5vw;
+}
+.summaryDetail > div {
+    width: 100%;
+    text-align: center;
+}
+.summaryDetail > div:nth-child(2){
+    font-size: 0.8rem;
+    border: 1px solid #6b6b6b;
+    border-radius: 1em;
+    margin-top: 0.4vh;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+}
 
 .diningColor{
     color: #9C7673!important;

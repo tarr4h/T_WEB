@@ -3,6 +3,7 @@ package com.demo.t_web.comn.util;
 import com.demo.t_web.comn.model.MapSearch;
 import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.program.comn.model.DrivingVo;
+import com.demo.t_web.program.comn.model.NvSearch;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.*;
@@ -263,27 +265,32 @@ public class Utilities {
         }
     }
 
-    public static Object getNvSearch(Map<String, Object> param){
+    public static NvSearch getNvSearch(Map<String, Object> param){
         String text = (String) param.get("searchTxt");
         if(text == null) return null;
 
-        String encodeTxt = null;
-
-        try {
-            encodeTxt = URLEncoder.encode(text, StandardCharsets.UTF_8);
-        } catch (Exception e){
-            log.error("NAVER SEARCH ENCODE ERROR *** {}", e.getMessage());
-        }
-
-        String apiURL = "https://openapi.naver.com/v1/search/local.json?query=" + encodeTxt;
+        URI uri = UriComponentsBuilder.fromUriString("https://openapi.naver.com")
+                .path("/v1/search/local.json")
+                .queryParam("query", text)
+                .queryParam("display", 10)
+                .encode(StandardCharsets.UTF_8)
+                .build()
+                .toUri();
+        log.debug("url = {}", uri);
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", naverClientId);
         requestHeaders.put("X-Naver-Client-Secret", naverClientSecret);
-        String responseBody = nvGet(apiURL,requestHeaders);
+        String responseBody = nvGet(uri.toString(),requestHeaders);
 
         log.debug("responseBody = {}", responseBody);
-        return null;
+        ObjectMapper objMapper = new ObjectMapper();
+        try{
+            return objMapper.readValue(responseBody, NvSearch.class);
+        } catch (JsonProcessingException e){
+            log.error("NAVER SEARCH RESPONSE ERROR = {}", e.getMessage());
+            return null;
+        }
     }
 
 

@@ -63,6 +63,6 @@ public class ComnController {
 
     @GetMapping("getNvSearch")
     public ResponseEntity<?> getNvSearch(@RequestParam Map<String, Object> param){
-        return Utilities.retValue(Utilities.getNvSearch(param));
+        return Utilities.retValue(service.getNvSearch(param));
     }
 }

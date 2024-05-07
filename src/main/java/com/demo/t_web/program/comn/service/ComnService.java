@@ -4,10 +4,7 @@ import com.demo.t_web.comn.model.MapSearch;
 import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.comn.dao.ComnDao;
-import com.demo.t_web.program.comn.model.DrivingVo;
-import com.demo.t_web.program.comn.model.MapData;
-import com.demo.t_web.program.comn.model.NaverMap;
-import com.demo.t_web.program.comn.model.NaverMapList;
+import com.demo.t_web.program.comn.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,5 +184,26 @@ public class ComnService {
         returnMap.put("radius", radius);
 
         return returnMap;
+    }
+
+    public Object getNvSearch(Map<String, Object> param) {
+        NvSearch search = Utilities.getNvSearch(param);
+        NvSearch.NvSearchDetail ret = null;
+        double distance = 99999;
+        double cLat = Utilities.parseDouble(param.get("lat"));
+        double cLng = Utilities.parseDouble(param.get("lng"));
+
+        if(search != null){
+            if(search.getItems().size() > 1){
+                for(NvSearch.NvSearchDetail nvDetail : search.getItems()){
+                    if(Utilities.calculateArea(cLat, cLng, nvDetail.getLat(), nvDetail.getLng()) < distance){
+                        ret = nvDetail;
+                    }
+                }
+            } else {
+                ret = search.getItems().get(0);
+            }
+        }
+        return ret;
     }
 }

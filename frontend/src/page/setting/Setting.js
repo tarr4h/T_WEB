@@ -28,19 +28,12 @@ function Setting(){
         })
     }
 
-    const searchTest = async () => {
-        const result = await(await axios.get('/comn/getNvSearch', {params : {searchTxt : '평릉한우설렁탕'}})).data;
-        console.log('searchTest result : ', result);
-    }
-
     return (
         <div>
             <label htmlFor="importFile">DATA_IMPORT</label>
             <input type="file" id="importFile"
                    onChange={dataImport}
                    multiple={true} hidden={true}/>
-
-            <div onClick={() => {void searchTest()}}>searchTest</div>
         </div>
     )
 }

@@ -6,6 +6,10 @@ function Summary({data}){
 
     const [driving, setDriving] = useState(null);
 
+    const [showDetail, setShowDetail] = useState(false);
+    const [detail, setDetail] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+
     useEffect(() => {
 
     }, [data]);
@@ -53,9 +57,32 @@ function Summary({data}){
             centerLng : center.x
         }
         const driving = await (await axios.get('/comn/getDriving', {params : param})).data;
-        console.log('driving : ', driving);
         if(driving){
             setDriving(driving);
+        }
+
+        const cont = data.addr1 + ' ' + data.addr2 + ' ' + data.addr3 + ' ' + data.name;
+        const placeInfo = await searchPlace(cont, center.y, center.x);
+        setShowDetail(true);
+        setDetail(placeInfo.category);
+        setSearchQuery(cont);
+    }
+
+    const isMobile = () => {
+        let userAgent = navigator.userAgent;
+        return userAgent.match(/iPhone/i) || userAgent.match(/Android/i);
+    }
+
+    const searchPlace = async (searchTxt, lat, lng) => {
+        return await(await axios.get('/comn/getNvSearch', {params : {searchTxt, lat, lng}})).data;
+    }
+
+    const openDetail = () => {
+        const query = encodeURIComponent(searchQuery);
+        if(isMobile()){
+            window.location.href = `nmap://search?query=${query}`;
+        } else {
+            window.location.href = `https://map.naver.com/v5/search/${query}?c=14126698.6929185,4512085.1378358,15,0,0,0,dh`;
         }
     }
 
@@ -75,6 +102,14 @@ function Summary({data}){
                     <div className={'durationMin'}>{driving != null ? driving.durationMin + '분' : ''}</div>
                 </div>
             </div>
+            {
+                showDetail ? (
+                    <div className={'summaryDetail'}>
+                        <div>{detail}</div>
+                        <div onClick={() => {openDetail()}}>상세보기</div>
+                    </div>
+                ) : null
+            }
         </div>
     )
 }
