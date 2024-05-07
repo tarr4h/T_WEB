@@ -327,11 +327,10 @@ public class Utilities {
     }
 
     public static String nvReadBody(InputStream body){
-        InputStreamReader streamReader = new InputStreamReader(body);
+        InputStreamReader streamReader = new InputStreamReader(body, StandardCharsets.UTF_8);
 
         try (BufferedReader lineReader = new BufferedReader(streamReader)) {
             StringBuilder responseBody = new StringBuilder();
-
 
             String line;
             while ((line = lineReader.readLine()) != null) {
