@@ -1,9 +1,10 @@
 import {useEffect, useRef, useState} from "react";
+import * as comn from '../../comn/comnFunction';
 import axios from "axios";
 
 function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
-    const [radius, setRadius] = useState(3);
+    const [radius, setRadius] = useState(comn.getSuitableRadius());
     const [mcid, setMcid] = useState('');
     const [placeName, setPlaceName] = useState('');
     const [runSearch, setRunSearch] = useState(false);
@@ -17,7 +18,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
     useEffect(() => {
         setMcid('');
-        setRadius(3);
+        setRadius(comn.getSuitableRadius());
         setPlaceName('');
         setRunSearch(false);
         setRegion1([]);
@@ -130,7 +131,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         setMcid('');
         setPlaceName('');
         setRunSearch(true);
-        setRadius(3);
+        setRadius(comn.getSuitableRadius());
         selectedRegion1.current.value = '';
         selectedRegion2.current.value = '';
         setRegion2([]);

@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Search from "./Search";
+import * as comn from '../../comn/comnFunction';
 const {naver} = window;
 
 function Map(){
@@ -55,7 +56,7 @@ function Map(){
         // getdata
         let param;
         if(searchParam == null){
-            param = {radius : 3};
+            param = {radius : comn.getSuitableRadius()};
         } else {
             param = searchParam;
         }
@@ -65,7 +66,7 @@ function Map(){
         if(force){
             param.addr1 = '';
             param.addr2 = '';
-            param.radius = 3;
+            param.radius = comn.getSuitableRadius();
         }
         setSearchParam(param);
         const retData = await getData(param);

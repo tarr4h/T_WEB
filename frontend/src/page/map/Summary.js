@@ -1,4 +1,5 @@
 import '../../css/Search.css';
+import * as comn from '../../comn/comnFunction';
 import {useEffect, useState} from "react";
 import axios from "axios";
 
@@ -68,18 +69,13 @@ function Summary({data}){
         setSearchQuery(cont);
     }
 
-    const isMobile = () => {
-        let userAgent = navigator.userAgent;
-        return userAgent.match(/iPhone/i) || userAgent.match(/Android/i);
-    }
-
     const searchPlace = async (searchTxt, lat, lng) => {
         return await(await axios.get('/comn/getNvSearch', {params : {searchTxt, lat, lng}})).data;
     }
 
     const openDetail = () => {
         const query = encodeURIComponent(searchQuery);
-        if(isMobile()){
+        if(comn.isMobile()){
             window.location.href = `nmap://search?query=${query}`;
         } else {
             window.location.href = `https://map.naver.com/v5/search/${query}?c=14126698.6929185,4512085.1378358,15,0,0,0,dh`;
