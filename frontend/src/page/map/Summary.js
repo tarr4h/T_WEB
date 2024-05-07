@@ -12,7 +12,9 @@ function Summary({data}){
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-
+        setShowDetail(false);
+        setDetail(null);
+        setSearchQuery('');
     }, [data]);
 
     const typeColor = (type) => {
@@ -63,6 +65,7 @@ function Summary({data}){
         }
 
         const cont = data.addr1 + ' ' + data.addr2 + ' ' + data.addr3 + ' ' + data.name;
+        console.log('cont : ', cont);
         const placeInfo = await searchPlace(cont, center.y, center.x);
         setShowDetail(true);
         setDetail(placeInfo.category);

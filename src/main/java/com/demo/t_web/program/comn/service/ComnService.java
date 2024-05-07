@@ -201,7 +201,9 @@ public class ComnService {
                     }
                 }
             } else {
-                ret = search.getItems().get(0);
+                if(!search.getItems().isEmpty()){
+                    ret = search.getItems().get(0);
+                }
             }
         }
         return ret;
