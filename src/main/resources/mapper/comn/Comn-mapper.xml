@@ -41,7 +41,7 @@
             </if>
             <if test="placeName != null and placeName instanceof java.util.ArrayList">
                 <foreach collection="placeName" item="item" separator="OR" open="AND (" close=")">
-                    NAME LIKE CONCAT('%', #{item}, '%')
+                    NAME LIKE CONCAT('%', TRIM(#{item}), '%')
                 </foreach>
             </if>
     </select>
