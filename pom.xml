@@ -11,7 +11,7 @@
     <groupId>com.demo</groupId>
     <artifactId>T_WEB</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>T_WEB</name>
     <description>T_WEB</description>
     <properties>
@@ -164,15 +164,15 @@
                 </configuration>
             </plugin>
             <!-- war plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <!--				<version>3.2.1</version>-->
-                <configuration>
-                    <warSourceDirectory>src/main/webapp</warSourceDirectory> <!-- war파일 디렉토리 -->
-                    <failOnMissingWebXml>false</failOnMissingWebXml> <!-- web.xml이 없을 때 에러를 낼건지 안낼건지 -->
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-war-plugin</artifactId>-->
+<!--                &lt;!&ndash;				<version>3.2.1</version>&ndash;&gt;-->
+<!--                <configuration>-->
+<!--                    <warSourceDirectory>src/main/webapp</warSourceDirectory> &lt;!&ndash; war파일 디렉토리 &ndash;&gt;-->
+<!--                    <failOnMissingWebXml>false</failOnMissingWebXml> &lt;!&ndash; web.xml이 없을 때 에러를 낼건지 안낼건지 &ndash;&gt;-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
