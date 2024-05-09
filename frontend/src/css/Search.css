@@ -1,22 +1,38 @@
-.searchWrapper > div:nth-child(1) {
-    height: 25%;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    justify-content: space-around;
+/*mobile*/
+@media(max-width: 991px) {
+    .searchWrapper > div:nth-child(1) {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+    }
+    .searchWrapper > div:nth-child(2){
+    }
+    .searchWrapper > div:nth-child(3) {
+    }
 }
-.searchWrapper > div:nth-child(2){
-    height: 3%;
-}
-.searchWrapper > div:nth-child(3) {
-    height: 70%;
+/*web*/
+@media(min-width: 992px) {
+    .searchWrapper > div:nth-child(1) {
+        height: 25%;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+    }
+    .searchWrapper > div:nth-child(2){
+        height: 3%;
+    }
+    .searchWrapper > div:nth-child(3) {
+        height: 70%;
+    }
 }
 
 
 .searchList {
     width: 100%;
     min-height: 2vh;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     overflow-x: hidden;
 }
 .searchListHd {
@@ -160,4 +176,26 @@
 }
 .dualSelect > select {
     width: 49%;
+}
+
+.pmIp{
+    display: flex;
+}
+.pmIp > .pmBtn {
+    width: 10%;
+    border: 1px solid #f2f2f2;
+    margin-left: 3px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.scrollTop{
+    position: fixed;
+    bottom: 1vh;
+    right: 2vw;
+    color: #e2e2e236;
+    border: 1px solid #e2e2e236;
+    border-radius: 5px;
+    padding: 0.3em;
+    z-index: 9999;
 }

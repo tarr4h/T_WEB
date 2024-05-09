@@ -161,16 +161,29 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const region2Onchange = async (e) => {
-        const v = e.target.value;
-        selectedRegion2.current.value = v;
+        const v2 = e.target.value;
+        selectedRegion2.current.value = v2;
 
-        const addr2GeoLoc = await getRegionGeoLoc({addr2 : v});
+        const v1 = selectedRegion1.current.value;
+
+        const addr2GeoLoc = await getRegionGeoLoc({addr1 : v1, addr2 : v2});
         setLatlng({lat : addr2GeoLoc.latitude, lng : addr2GeoLoc.longitude});
         setRadius(addr2GeoLoc.radius);
     }
 
     const getRegionGeoLoc = async(param) => {
         return await(await axios.get('/comn/getRegionGeoLoc', {params : param})).data;
+    }
+
+    const updownRadius = (b) => {
+        if(b){
+            setRadius(v => v + 1);
+        } else {
+            if(radius === 1){
+                return;
+            }
+            setRadius(v => v - 1);
+        }
     }
 
     return (
@@ -214,12 +227,18 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                 <div>
                     <span>반경(km)</span>
                 </div>
-                <div>
+                <div className={'pmIp'}>
                     <input type="number"
                            value={radius}
                            onChange={radiusOnchange}
                            className={'wd_100'}
                     />
+                    <div className={'pmBtn'}
+                         onClick={() => {updownRadius(true)}}
+                    >+</div>
+                    <div className={'pmBtn'}
+                         onClick={() => {updownRadius(false)}}
+                    >-</div>
                 </div>
             </div>
             <div>

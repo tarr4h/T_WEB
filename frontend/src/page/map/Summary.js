@@ -64,12 +64,25 @@ function Summary({data}){
             setDriving(driving);
         }
 
-        const cont = data.addr1 + ' ' + data.addr2 + ' ' + data.addr3 + ' ' + data.name;
-        console.log('cont : ', cont);
-        const placeInfo = await searchPlace(cont, center.y, center.x);
-        setShowDetail(true);
-        setDetail(placeInfo.category);
-        setSearchQuery(cont);
+        let cont = data.addr1 + ' ' + data.addr2 + ' ' + data.addr3 + ' ' + data.name;
+        let placeInfo = await searchPlace(cont, center.y, center.x);
+
+        let avpi = false;
+        if(placeInfo){
+            avpi = true;
+        } else {
+            cont = data.addr1 + ' ' + data.addr2 + ' ' + data.name;
+            placeInfo = await searchPlace(cont, center.y, center.x);
+            if(placeInfo){
+                avpi = true;
+            }
+        }
+
+        if(avpi){
+            setShowDetail(true);
+            setDetail(placeInfo.category);
+            setSearchQuery(cont);
+        }
     }
 
     const searchPlace = async (searchTxt, lat, lng) => {
@@ -80,8 +93,9 @@ function Summary({data}){
         const query = encodeURIComponent(searchQuery);
         if(comn.isMobile()){
             window.location.href = `nmap://search?query=${query}`;
+            // window.open(`nmap://search?query=${query}`, '_blank');
         } else {
-            window.location.href = `https://map.naver.com/v5/search/${query}?c=14126698.6929185,4512085.1378358,15,0,0,0,dh`;
+            window.open(`https://map.naver.com/v5/search/${query}?c=14126698.6929185,4512085.1378358,15,0,0,0,dh`, '_blank');
         }
     }
 
