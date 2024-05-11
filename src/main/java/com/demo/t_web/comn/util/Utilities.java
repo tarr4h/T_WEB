@@ -180,6 +180,18 @@ public class Utilities {
         }
     }
 
+    public static long pasreLong(Object obj){
+        try {
+            if(obj instanceof String){
+                return Long.parseLong(String.valueOf(obj));
+            } else {
+                return (long) obj;
+            }
+        } catch (NullPointerException e){
+            throw new NullPointerException("PARSE LONG >> OBJ == NULL");
+        }
+    }
+
     public static Map<String, Object> beanToMap(Object obj) {
         if(obj == null) return null;
         return objectMapper.convertValue(obj, Tmap.class);

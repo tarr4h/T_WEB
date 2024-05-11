@@ -28,8 +28,14 @@ function Setting(){
         })
     }
 
+    const test = async () => {
+        const test = await(await axios.get('/awsMas/healthCheck'), {params : {}});
+        console.log('tes : ', test);
+    }
+
     return (
         <div>
+            <div onClick={() => {test()}}>test</div>
             <label htmlFor="importFile">DATA_IMPORT</label>
             <input type="file" id="importFile"
                    onChange={dataImport}

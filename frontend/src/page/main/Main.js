@@ -8,10 +8,6 @@ function Main(){
 
     const [pg, setPg] = useState('map');
 
-    useEffect(() => {
-        console.log('page : ', pg);
-    }, [pg]);
-
     return (
         <div>
             <Nav setPage={setPg}/>

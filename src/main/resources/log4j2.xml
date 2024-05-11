@@ -14,7 +14,13 @@
         </Appenders>
 
         <loggers>
-    	    <logger name="com.web" level="debug" additivity="true"/>
+    	    <logger name="com.demo" level="debug" additivity="true"/>
+
+            <logger name="com.demo.t_web.program.comn.dao" level="error" additivity="false">
+                <AppenderRef ref="console"/>
+            </logger>
+
+            <logger name="com.demo.t_web.program.comn.controller.AwsMasController" level="error" additivity="false"/>
 
             <Logger name="java.sql" level="info" additivity="false">
                 <AppenderRef ref="console" />

@@ -190,7 +190,6 @@ function Map(){
     }
 
     const getData = async (param) => {
-        console.log('param : ', param);
         const ret = await(await axios.get('/comn/getData', {params : param})).data;
         setData(ret.dataList);
         setMcidList(ret.mcidList);
