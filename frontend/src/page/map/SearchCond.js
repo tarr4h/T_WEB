@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import * as comn from '../../comn/comnFunction';
 import axios from "axios";
+import instance from '../../comn/AxiosInterceptor';
 
 function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
@@ -138,7 +139,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const getRegion1 = async () => {
-        const region1 = await(await axios.get('/comn/getRegion1')).data;
+        const region1 = await(await instance.get('/comn/getRegion1')).data;
         setRegion1(region1);
     }
 
@@ -156,7 +157,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         const param = {
             addr1 : upRegion
         }
-        const region2 = await(await axios.get('/comn/getRegion2', {params : param})).data;
+        const region2 = await(await instance.get('/comn/getRegion2', {params : param})).data;
         setRegion2(region2);
     }
 
@@ -172,7 +173,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const getRegionGeoLoc = async(param) => {
-        return await(await axios.get('/comn/getRegionGeoLoc', {params : param})).data;
+        return await(await instance.get('/comn/getRegionGeoLoc', {params : param})).data;
     }
 
     const updownRadius = (b) => {

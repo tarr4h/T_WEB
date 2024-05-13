@@ -28,8 +28,8 @@
     <select id="selectMapDataList" resultType="com.demo.t_web.program.comn.model.MapData">
         SELECT  *
         FROM    MAP_DATA
-        WHERE   PX BETWEEN #{minLng} AND #{maxLng}
-            AND PY BETWEEN #{minLat} AND #{maxLat}
+        WHERE   CAST(PX AS DOUBLE PRECISION) BETWEEN CAST(#{minLng} AS DOUBLE PRECISION) AND CAST(#{maxLng} AS DOUBLE PRECISION)
+            AND CAST(PY AS DOUBLE PRECISION) BETWEEN CAST(#{minLat} AS DOUBLE PRECISION) AND CAST(#{maxLat} AS DOUBLE PRECISION)
             <if test="mcid != null and mcid != ''">
             AND MCID = #{mcid}
             </if>
@@ -50,8 +50,8 @@
         SELECT  MCID
             ,   MCID_NAME
         FROM    MAP_DATA
-        WHERE   PX BETWEEN #{minLng} AND #{maxLng}
-          AND PY BETWEEN #{minLat} AND #{maxLat}
+        WHERE   CAST(PX AS DOUBLE PRECISION) BETWEEN CAST(#{minLng} AS DOUBLE PRECISION) AND CAST(#{maxLng} AS DOUBLE PRECISION)
+            AND CAST(PY AS DOUBLE PRECISION) BETWEEN CAST(#{minLat} AS DOUBLE PRECISION) AND CAST(#{maxLat} AS DOUBLE PRECISION)
         GROUP BY MCID, MCID_NAME
         ORDER BY MCID_NAME DESC
     </select>

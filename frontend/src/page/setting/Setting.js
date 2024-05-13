@@ -29,7 +29,7 @@ function Setting(){
     }
 
     const test = async () => {
-        const test = await(await axios.get('/awsMas/healthCheck'), {params : {}});
+        const test = await(await instance.get('/awsMas/healthCheck'), {params : {}});
         console.log('tes : ', test);
     }
 

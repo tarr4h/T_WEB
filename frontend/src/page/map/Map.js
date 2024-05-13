@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import Search from "./Search";
 import * as comn from '../../comn/comnFunction';
+import instance from '../../comn/AxiosInterceptor';
 const {naver} = window;
 
 function Map(){
@@ -190,7 +191,7 @@ function Map(){
     }
 
     const getData = async (param) => {
-        const ret = await(await axios.get('/comn/getData', {params : param})).data;
+        const ret = await(await instance.get('/comn/getData', {params : param})).data;
         setData(ret.dataList);
         setMcidList(ret.mcidList);
         return ret;

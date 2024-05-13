@@ -144,6 +144,10 @@ public class ComnService {
 
     public Object getRegionGeoLoc(Map<String, Object> param) {
         List<MapData> mapDataList = dao.getRegionMapData(param);
+        Map<String, Object> returnMap = new HashMap<>();
+        if(mapDataList.isEmpty()){
+            return returnMap;
+        }
 
         double minLat = 0;
         double maxLat = 0;
@@ -178,7 +182,6 @@ public class ComnService {
         }
         radius = Math.ceil(radius);
 
-        Map<String, Object> returnMap = new HashMap<>();
         returnMap.put("latitude", centralLat);
         returnMap.put("longitude", centralLng);
         returnMap.put("radius", radius);

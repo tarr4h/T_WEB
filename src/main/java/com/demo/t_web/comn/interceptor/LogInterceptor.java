@@ -38,6 +38,8 @@ public class LogInterceptor implements HandlerInterceptor {
             appendBool = false;
         } else if(request.getRequestURI().contains("healthCheck")){
             appendBool = false;
+        } else if(request.getHeader("accept").isEmpty()){
+            appendBool = false;
         }
 
         return appendBool;

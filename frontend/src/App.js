@@ -1,14 +1,12 @@
 import {
-  BrowserRouter as Router,
-  Routes,
-  Route
+    BrowserRouter as Router,
+    Routes,
+    Route, useNavigate
 } from "react-router-dom";
 import Main from "./page/main/Main";
 import './css/Comn.css';
 
 function App() {
-
-
 
   return(
       <Router>

@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy" : "gh-pages -d build"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -41,7 +41,7 @@
     ]
   },
   "__homepage": "https://tarr4h.github.io/adp/",
-  "homepage": "https://localhost:3001/",
+  "homepage": "http://localhost:3001/",
   "devDependencies": {
     "cross-env": "^7.0.3",
     "gh-pages": "^6.1.1"

@@ -1,8 +1,7 @@
 import '../../css/Comn.css';
 import Nav from "./Nav";
 import View from "./View";
-import {useEffect, useState} from "react";
-
+import {useState} from "react";
 
 function Main(){
 
