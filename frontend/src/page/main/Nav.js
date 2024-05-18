@@ -11,9 +11,9 @@ function Nav({setPage}){
                 <div onClick={(page) => {movePage('map')}}>
                     MAP
                 </div>
-                {/*<div onClick={(page) => {movePage('setting')}}>*/}
-                {/*    SETTING*/}
-                {/*</div>*/}
+                <div onClick={(page) => {movePage('setting')}}>
+                    SETTING
+                </div>
             </div>
         </div>
     )

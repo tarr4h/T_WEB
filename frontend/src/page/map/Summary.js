@@ -60,15 +60,13 @@ function Summary({data}){
             centerLat : center.y,
             centerLng : center.x
         }
-        const driving = await (await instance.get('/comn/getDriving', {params : param})).data;
+        const driving = (await instance.get('/comn/getDriving', {params : param})).data;
         if(driving){
             setDriving(driving);
         }
-        console.log('driving : ', driving);
 
         let cont = data.addr1 + ' ' + data.addr2 + ' ' + data.addr3 + ' ' + data.name;
         let placeInfo = await searchPlace(cont, center.y, center.x);
-
 
         let avpi = false;
         if(placeInfo){
@@ -81,9 +79,6 @@ function Summary({data}){
             }
         }
 
-        console.log('data : ', data);
-        console.log('cont : ', cont);
-        console.log('placeInfo : ', placeInfo);
         if(avpi){
             setShowDetail(true);
             setDetail(placeInfo.category);
@@ -92,7 +87,7 @@ function Summary({data}){
     }
 
     const searchPlace = async (searchTxt, lat, lng) => {
-        return await(await instance.get('/comn/getNvSearch', {params : {searchTxt, lat, lng}})).data;
+        return (await instance.get('/comn/getNvSearch', {params : {searchTxt, lat, lng}})).data;
     }
 
     const openDetail = () => {

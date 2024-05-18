@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -64,5 +65,10 @@ public class ComnController {
     @GetMapping("getNvSearch")
     public ResponseEntity<?> getNvSearch(@RequestParam Map<String, Object> param){
         return Utilities.retValue(service.getNvSearch(param));
+    }
+
+    @GetMapping("verifyData")
+    public ResponseEntity<?> verifyData(@RequestParam Map<String, Object> param){
+        return Utilities.retValue(Arrays.asList("123123", "asdlfiajsdfl"));
     }
 }

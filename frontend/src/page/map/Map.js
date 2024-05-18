@@ -191,7 +191,7 @@ function Map(){
     }
 
     const getData = async (param) => {
-        const ret = await(await instance.get('/comn/getData', {params : param})).data;
+        const ret = (await instance.get('/comn/getData', {params : param})).data;
         setData(ret.dataList);
         setMcidList(ret.mcidList);
         return ret;

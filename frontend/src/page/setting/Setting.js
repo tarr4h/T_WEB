@@ -1,4 +1,5 @@
 import axios from "axios";
+import instance from "../../comn/AxiosInterceptor";
 
 
 function Setting(){
@@ -29,13 +30,19 @@ function Setting(){
     }
 
     const test = async () => {
-        const test = await(await instance.get('/awsMas/healthCheck'), {params : {}});
+        const test = (await instance.get('/awsMas/healthCheck', {params : {}})).data;
         console.log('tes : ', test);
+    }
+
+    const verifyData = async () => {
+        const result = (await instance.get('comn/verifyData', {})).data;
+        console.log('result = ', result);
     }
 
     return (
         <div>
             <div onClick={() => {test()}}>test</div>
+            <div onClick={() => {verifyData()}}>verifyData</div>
             <label htmlFor="importFile">DATA_IMPORT</label>
             <input type="file" id="importFile"
                    onChange={dataImport}
