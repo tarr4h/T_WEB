@@ -110,4 +110,27 @@
         WHERE   IP = #{ip}
             AND VISIT_DT = TO_CHAR(NOW(), 'YYYY-MM-DD')
     </update>
+
+    <select id="checkVanish" resultType="int">
+        SELECT  COUNT(*)
+        FROM    VANISH_MAP_DATA
+        WHERE   ID = #{id}
+    </select>
+
+    <insert id="insertVanish">
+        INSERT INTO VANISH_MAP_DATA
+        (id, request_cnt, init_dt, vanish_yn)
+        VALUES (
+                #{id}
+            ,   1
+            ,   NOW()
+            ,   'y'
+        )
+    </insert>
+
+    <update id="updateVanish">
+        update  vanish_map_data
+        set     request_cnt = request_cnt + 1
+        where   id = #{id}
+    </update>
 </mapper>

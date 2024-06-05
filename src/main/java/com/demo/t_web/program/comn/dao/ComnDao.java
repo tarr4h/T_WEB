@@ -42,4 +42,10 @@ public interface ComnDao {
     int insertVisitLog(Map<String, Object> param);
 
     int updateVisitLog(Map<String, Object> param);
+
+    int checkVanish(Map<String, Object> param);
+
+    int insertVanish(Map<String, Object> param);
+
+    int updateVanish(Map<String, Object> param);
 }

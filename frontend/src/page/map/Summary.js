@@ -12,10 +12,14 @@ function Summary({data}){
     const [detail, setDetail] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
+    const [isNullDetail, setIsNullDetail] = useState(false);
+
     useEffect(() => {
         setShowDetail(false);
         setDetail(null);
         setSearchQuery('');
+
+        setIsNullDetail(false);
     }, [data]);
 
     const typeColor = (type) => {
@@ -66,14 +70,14 @@ function Summary({data}){
         }
 
         let cont = data.addr1 + ' ' + data.addr2 + ' ' + data.addr3 + ' ' + data.name;
-        let placeInfo = await searchPlace(cont, center.y, center.x);
+        let placeInfo = await searchPlace(cont, center.y, center.x, data.id, false);
 
         let avpi = false;
         if(placeInfo){
             avpi = true;
         } else {
             cont = data.addr1 + ' ' + data.addr2 + ' ' + data.name;
-            placeInfo = await searchPlace(cont, center.y, center.x);
+            placeInfo = await searchPlace(cont, center.y, center.x, data.id, true);
             if(placeInfo){
                 avpi = true;
             }
@@ -83,11 +87,13 @@ function Summary({data}){
             setShowDetail(true);
             setDetail(placeInfo.category);
             setSearchQuery(cont);
+        } else {
+            setIsNullDetail(true);
         }
     }
 
-    const searchPlace = async (searchTxt, lat, lng) => {
-        return (await instance.get('/comn/getNvSearch', {params : {searchTxt, lat, lng}})).data;
+    const searchPlace = async (searchTxt, lat, lng, id, vanishYn) => {
+        return (await instance.get('/comn/getNvSearch', {params : {searchTxt, lat, lng, id, vanishYn}})).data;
     }
 
     const openDetail = () => {
@@ -121,6 +127,10 @@ function Summary({data}){
                     <div className={'summaryDetail'}>
                         <div>{detail}</div>
                         <div onClick={() => {openDetail()}}>상세보기</div>
+                    </div>
+                ) : isNullDetail ? (
+                    <div className={'summaryDetail'}>
+                        <div>폐업했거나 존재하지 않는 장소입니다.</div>
                     </div>
                 ) : null
             }

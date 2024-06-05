@@ -192,22 +192,34 @@ public class ComnService {
 
     public Object getNvSearch(Map<String, Object> param) {
         NvSearch search = Utilities.getNvSearch(param);
+        if(search == null || search.getItems().size() == 0){
+            boolean vanishYn = Boolean.parseBoolean((String) param.get("vanishYn"));
+            if(vanishYn) {
+                int chkVanish = dao.checkVanish(param);
+                if(chkVanish == 0){
+                    dao.insertVanish(param);
+                } else {
+                    dao.updateVanish(param);
+                }
+            }
+
+            return null;
+        }
+
         NvSearch.NvSearchDetail ret = null;
         double distance = 99999;
         double cLat = Utilities.parseDouble(param.get("lat"));
         double cLng = Utilities.parseDouble(param.get("lng"));
 
-        if(search != null){
-            if(search.getItems().size() > 1){
-                for(NvSearch.NvSearchDetail nvDetail : search.getItems()){
-                    if(Utilities.calculateArea(cLat, cLng, nvDetail.getLat(), nvDetail.getLng()) < distance){
-                        ret = nvDetail;
-                    }
+        if(search.getItems().size() > 1){
+            for(NvSearch.NvSearchDetail nvDetail : search.getItems()){
+                if(Utilities.calculateArea(cLat, cLng, nvDetail.getLat(), nvDetail.getLng()) < distance){
+                    ret = nvDetail;
                 }
-            } else {
-                if(!search.getItems().isEmpty()){
-                    ret = search.getItems().get(0);
-                }
+            }
+        } else {
+            if(!search.getItems().isEmpty()){
+                ret = search.getItems().get(0);
             }
         }
         return ret;
@@ -215,7 +227,7 @@ public class ComnService {
 
     public void visitLog(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
-        if("0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)){
+        if(ip == null || "".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)){
             return;
         }
         Map<String, Object> param = new HashMap<>();

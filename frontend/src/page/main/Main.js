@@ -9,7 +9,6 @@ function Main(){
     const [pg, setPg] = useState('map');
 
     useEffect(() => {
-        console.log('first on');
         void visitLog();
     }, []);
 
