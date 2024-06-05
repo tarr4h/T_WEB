@@ -85,4 +85,29 @@
             </if>
         </where>
     </select>
+
+    <select id="checkVisit" resultType="int">
+        SELECT  COUNT(*)
+        FROM    VISIT_LOG
+        WHERE   IP = #{ip}
+            AND VISIT_DT = TO_CHAR(NOW(), 'YYYY-MM-DD')
+    </select>
+
+    <insert id="insertVisitLog">
+        INSERT INTO VISIT_LOG
+        (ip, visit_dt, visit_count, user_agent)
+        VALUES(
+                #{ip}
+            ,   TO_CHAR(now(), 'YYYY-MM-DD')
+            ,   1
+            ,   #{userAgent}
+        )
+    </insert>
+
+    <update id="updateVisitLog">
+        UPDATE VISIT_LOG
+        SET     VISIT_COUNT = VISIT_COUNT + 1
+        WHERE   IP = #{ip}
+            AND VISIT_DT = TO_CHAR(NOW(), 'YYYY-MM-DD')
+    </update>
 </mapper>

@@ -2,6 +2,7 @@ package com.demo.t_web.program.comn.controller;
 
 import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.comn.service.ComnService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +71,10 @@ public class ComnController {
     @GetMapping("verifyData")
     public ResponseEntity<?> verifyData(@RequestParam Map<String, Object> param){
         return Utilities.retValue(Arrays.asList("123123", "asdlfiajsdfl"));
+    }
+
+    @PostMapping("visitLog")
+    public void visitLog(HttpServletRequest request){
+        service.visitLog(request);
     }
 }

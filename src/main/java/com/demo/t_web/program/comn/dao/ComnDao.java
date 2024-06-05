@@ -36,4 +36,10 @@ public interface ComnDao {
     List<Tmap> getRegion2(Map<String, Object> param);
 
     List<MapData> getRegionMapData(Map<String, Object> param);
+
+    int checkVisit(Map<String, Object> param);
+
+    int insertVisitLog(Map<String, Object> param);
+
+    int updateVisitLog(Map<String, Object> param);
 }

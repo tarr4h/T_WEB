@@ -2,9 +2,9 @@ import axios from "axios";
 
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8080',
-    // baseURL: 'https://tarr4h.com',
-    timeout: 1000
+    // baseURL: 'http://localhost:8080',
+    baseURL: 'https://tarr4h.com',
+    timeout: 300000
 });
 
 
@@ -17,14 +17,14 @@ instance.interceptors.request.use(
     }
 )
 
-instance.interceptors.response.use(
-    async (res) => {
-        return res;
-    },
-    (error) =>{
-        console.log('axios error : ', error);
-    }
-)
+// instance.interceptors.response.use(
+//     async (res) => {
+//         return res;
+//     },
+//     (error) =>{
+//         console.log('axios error : ', error);
+//     }
+// )
 
 
 

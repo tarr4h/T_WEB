@@ -1,11 +1,21 @@
 import '../../css/Comn.css';
 import Nav from "./Nav";
 import View from "./View";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import instance from "../../comn/AxiosInterceptor";
 
 function Main(){
 
     const [pg, setPg] = useState('map');
+
+    useEffect(() => {
+        console.log('first on');
+        void visitLog();
+    }, []);
+
+    const visitLog = async() => {
+        await instance.post('/comn/visitLog');
+    }
 
     return (
         <div>

@@ -6,6 +6,7 @@ import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.comn.dao.ComnDao;
 import com.demo.t_web.program.comn.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -210,5 +211,25 @@ public class ComnService {
             }
         }
         return ret;
+    }
+
+    public void visitLog(HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        if("0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)){
+            return;
+        }
+        Map<String, Object> param = new HashMap<>();
+        String userAgent = request.getHeader("user-agent");
+
+        param.put("ip", ip);
+        param.put("userAgent", userAgent);
+
+        int isExist = dao.checkVisit(param);
+
+        if(isExist == 0){
+            dao.insertVisitLog(param);
+        } else {
+            dao.updateVisitLog(param);
+        }
     }
 }

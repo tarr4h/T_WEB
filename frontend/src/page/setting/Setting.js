@@ -11,22 +11,28 @@ function Setting(){
             formData.append('file', file);
         });
 
-        const res = await(await insertFile(formData)).json();
+        const res = (await insertFile(formData)).data;
         console.log('data import result : ', res);
     }
 
-    const insertFile = (formData) => {
-        return new Promise((resolve) => {
-            const res = fetch('/comn/importFiles', {
-                method : 'POST',
-                headers : {
-                    enctype : 'multipart/form-data'
-                },
-                body : formData
-            });
+    const insertFile = async (formData) => {
+        const headers = {
+            'Content-Type': 'multipart/form-data'
+        }
+        const res = (await instance.post('/comn/importFiles', formData, headers));
+        // return new Promise((resolve) => {
+        //     const res = fetch('/comn/importFiles', {
+        //         method : 'POST',
+        //         headers : {
+        //             enctype : 'multipart/form-data'
+        //         },
+        //         body : formData
+        //     });
+        //
+        //     resolve(res);
+        // })
 
-            resolve(res);
-        })
+        return res;
     }
 
     const test = async () => {
