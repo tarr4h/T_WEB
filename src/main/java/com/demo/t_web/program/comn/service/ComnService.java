@@ -214,7 +214,7 @@ public class ComnService {
     }
 
     public void visitLog(HttpServletRequest request) {
-        String ip = request.getRemoteAddr();
+        String ip = request.getHeader("X-Forwarded-For");
         if("0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)){
             return;
         }
