@@ -34,12 +34,29 @@ div::-webkit-scrollbar-thumb{
     flex-wrap: wrap;
     align-content: center;
 }
-.nav > div:nth-child(1){
-    width: 3vw;
+
+/*mobile*/
+@media(max-width: 991px){
+    .nav > div:nth-child(1){
+        height: 3vh;
+        margin-right: 1vw;
+    }
+    .nav img {
+        height: 3vh;
+    }
 }
-.nav img {
-    width: 2vw;
+
+/*web*/
+@media(min-width: 992px){
+    .nav > div:nth-child(1){
+        width: 3vw;
+    }
+    .nav img {
+        width: 2vw;
+    }
 }
+
+
 
 .nav > div:nth-child(2){
     font-size: 2rem;
