@@ -64,14 +64,54 @@
     font-size: 1.3rem;
     font-weight: 500;
     color: #E2E2E2;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 85%;
 }
+
+/*mobile*/
+@media(max-width: 991px) {
+    .summaryHeader > div:nth-child(1) > div:nth-child(1){
+        width: 4vh;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: center;
+    }
+    .summaryHeader > div:nth-child(1) > div:nth-child(1) > img {
+        width: 2.5vh;
+        height: 2.5vh;
+    }
+
+    .summaryHeader > div:nth-child(1) > div:nth-child(2){
+        max-width: 89%;
+    }
+}
+/*web*/
+@media(min-width: 992px) {
+    .summaryHeader > div:nth-child(1) > div:nth-child(1){
+        width: 2.5vh;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: center;
+    }
+    .summaryHeader > div:nth-child(1) > div:nth-child(1) > img {
+        width: 1.5vh;
+        height: 1.5vh;
+    }
+}
+
 .summaryHeader > div:nth-child(2){
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: center;
-    justify-content: center;
+    justify-content: flex-end;
     color: #739C85;
+    width: 14%;
 }
 .summaryFooter {
     color: #C6B9B1;

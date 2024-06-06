@@ -106,32 +106,6 @@ function Map(){
         map.fitBounds(fitBound);
     }
 
-    const imgGend = (type) => {
-        let img = '';
-
-        switch (type) {
-            case 'LOCATION' :
-                img = 'location-pin.png';
-                break;
-            case 'DINING' :
-                img = 'food.png';
-                break;
-            case 'BAR' :
-                img = 'beer_pub.png';
-                break;
-            case 'CAFE' :
-                img = 'cafe.png';
-                break;
-            case 'ACCOMMODATION':
-                img = 'dog_accomodation.png';
-                break;
-            default :
-                img = 'question.png';
-        }
-
-        return require(`../../images/${img}`);
-    }
-
     const setMarker = (map, lat, lng, type) => {
         const opt = {
             position : new naver.maps.LatLng(lat, lng),
@@ -139,7 +113,7 @@ function Map(){
         };
 
         if(type){
-            const imgSrc = imgGend(type);
+            const imgSrc = comn.imgGend(type);
             opt.icon = {
                 url : imgSrc,
                 size : new naver.maps.Size(25, 25),

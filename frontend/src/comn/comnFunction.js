@@ -10,3 +10,29 @@ export function getSuitableRadius(){
         return 3;
     }
 }
+
+export function imgGend(type){
+    let img = '';
+
+    switch (type) {
+        case 'LOCATION' :
+            img = 'location-pin.png';
+            break;
+        case 'DINING' :
+            img = 'food.png';
+            break;
+        case 'BAR' :
+            img = 'beer_pub.png';
+            break;
+        case 'CAFE' :
+            img = 'cafe.png';
+            break;
+        case 'ACCOMMODATION':
+            img = 'dog_accomodation.png';
+            break;
+        default :
+            img = 'question.png';
+    }
+
+    return require(`../images/${img}`);
+}

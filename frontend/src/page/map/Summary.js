@@ -111,7 +111,10 @@ function Summary({data}){
              onClick={openIfw}
         >
             <div className={'summaryHeader'}>
-                <div>{data.name}</div>
+                <div>
+                    <div><img src={comn.imgGend(data.mcid)} alt=""/></div>
+                    <div>{data.name}</div>
+                </div>
                 <div className={typeColor(data.mcid)}
                 >{data.mcidName}</div>
             </div>
