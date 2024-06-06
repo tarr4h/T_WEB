@@ -9,7 +9,7 @@ function Nav({setPage}){
     return (
         <div className={'nav'}>
             <div>
-                <img src={logoImg}/>
+                <img src={logoImg} alt="adp"/>
             </div>
             <div>ADP</div>
             <div>
