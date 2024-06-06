@@ -1,3 +1,5 @@
+import logoImg from '../../images/adp_logo.png';
+
 function Nav({setPage}){
 
     const movePage = (page) => {
@@ -6,6 +8,9 @@ function Nav({setPage}){
 
     return (
         <div className={'nav'}>
+            <div>
+                <img src={logoImg}/>
+            </div>
             <div>ADP</div>
             <div>
                 <div onClick={(page) => {movePage('map')}}>

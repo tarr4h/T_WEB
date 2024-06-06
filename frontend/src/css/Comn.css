@@ -35,16 +35,23 @@ div::-webkit-scrollbar-thumb{
     align-content: center;
 }
 .nav > div:nth-child(1){
+    width: 3vw;
+}
+.nav img {
+    width: 2vw;
+}
+
+.nav > div:nth-child(2){
     font-size: 2rem;
 }
-.nav > div:nth-child(2) {
+.nav > div:nth-child(3) {
     margin-left: 2vw;
 }
-.nav > div:nth-child(2) > div {
+.nav > div:nth-child(3) > div {
     margin-right: 2vw;
 }
 
-.nav > div:nth-child(2) > div:hover {
+.nav > div:nth-child(3) > div:hover {
     cursor: pointer;
 }
 
