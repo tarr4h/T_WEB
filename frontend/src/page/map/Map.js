@@ -117,13 +117,13 @@ function Map(){
                 img = 'food.png';
                 break;
             case 'BAR' :
-                img = 'food.png';
+                img = 'beer_pub.png';
                 break;
             case 'CAFE' :
                 img = 'cafe.png';
                 break;
             case 'ACCOMMODATION':
-                img = 'accomodation.png';
+                img = 'dog_accomodation.png';
                 break;
             default :
                 img = 'question.png';
