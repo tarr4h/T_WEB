@@ -30,7 +30,7 @@ public class LogInterceptor implements HandlerInterceptor {
         boolean appendBool = true;
         if(request.getRemoteAddr().equals("172.31.50.179")){
             appendBool = false;
-        } else if(request.getHeader("user-agent").isEmpty()){
+        } else if(request.getHeader("user-agent") == null || request.getHeader("user-agent").isEmpty()){
             appendBool = false;
         } else if(request.getHeader("user-agent").contains("ELB")){
             appendBool = false;
@@ -38,7 +38,9 @@ public class LogInterceptor implements HandlerInterceptor {
             appendBool = false;
         } else if(request.getRequestURI().contains("healthCheck")){
             appendBool = false;
-        } else if(request.getHeader("accept").isEmpty()){
+        } else if(request.getHeader("accept") == null || request.getHeader("accept").isEmpty()){
+            appendBool = false;
+        } else if(!request.getRequestURL().toString().contains("tarr4h")){
             appendBool = false;
         }
 
