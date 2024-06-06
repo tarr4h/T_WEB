@@ -132,6 +132,7 @@ public class ComnService {
         int duration = driving.getRoute().getTraoptimal().get(0).getSummary().getDuration();
         driving.setDuration(duration);
         driving.setDurationMin(Utilities.miliSec2min(duration));
+
         return driving;
     }
 
@@ -222,6 +223,19 @@ public class ComnService {
                 ret = search.getItems().get(0);
             }
         }
+
+        if(ret != null){
+            String ctgr = ret.getCategory();
+            String[] cStr = ctgr.split(">");
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < cStr.length; i++){
+                sb.append(cStr[i]);
+                if(i != cStr.length - 1){
+                    sb.append(" > ");
+                }
+            }
+            ret.setCategory(sb.toString());
+        }
         return ret;
     }
 
@@ -235,6 +249,7 @@ public class ComnService {
 
         param.put("ip", ip);
         param.put("userAgent", userAgent);
+        param.put("sessionId", request.getSession().getId());
 
         int isExist = dao.checkVisit(param);
 

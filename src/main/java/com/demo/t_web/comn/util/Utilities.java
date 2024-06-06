@@ -288,14 +288,12 @@ public class Utilities {
                 .encode(StandardCharsets.UTF_8)
                 .build()
                 .toUri();
-        log.debug("url = {}", uri);
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", naverClientId);
         requestHeaders.put("X-Naver-Client-Secret", naverClientSecret);
         String responseBody = nvGet(uri.toString(),requestHeaders);
 
-        log.debug("responseBody = {}", responseBody);
         ObjectMapper objMapper = new ObjectMapper();
         try{
             return objMapper.readValue(responseBody, NvSearch.class);

@@ -39,7 +39,7 @@ function Map(){
         };
 
         let map = new naver.maps.Map('map', mapOpts);
-        setMap(map);
+        // setMap(map);
 
         // marker
         const marker = setMarker(map, lat, lng, 'LOCATION');

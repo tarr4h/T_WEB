@@ -87,20 +87,22 @@
     </select>
 
     <select id="checkVisit" resultType="int">
-        SELECT  COUNT(*)
-        FROM    VISIT_LOG
-        WHERE   IP = #{ip}
-            AND VISIT_DT = TO_CHAR(NOW(), 'YYYY-MM-DD')
+        select  count(*)
+        from    visit_log
+        where   IP = #{ip}
+            and session_id = #{sessionId}
+            and visit_dt = to_char(now(), 'YYYY-MM-DD')
     </select>
 
     <insert id="insertVisitLog">
-        INSERT INTO VISIT_LOG
-        (ip, visit_dt, visit_count, user_agent)
-        VALUES(
+        insert into visit_log
+        (ip, visit_dt, visit_count, user_agent, session_id)
+        values(
                 #{ip}
-            ,   TO_CHAR(now(), 'YYYY-MM-DD')
+            ,   to_char(now(), 'YYYY-MM-DD')
             ,   1
             ,   #{userAgent}
+            ,   #{sessionId}
         )
     </insert>
 
@@ -109,6 +111,7 @@
         SET     VISIT_COUNT = VISIT_COUNT + 1
         WHERE   IP = #{ip}
             AND VISIT_DT = TO_CHAR(NOW(), 'YYYY-MM-DD')
+            AND user_agent = #{userAgent}
     </update>
 
     <select id="checkVanish" resultType="int">
