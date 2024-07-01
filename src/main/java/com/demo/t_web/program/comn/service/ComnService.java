@@ -55,6 +55,7 @@ public class ComnService {
                         int exist = dao.selectMapDataCount(map);
                         if(exist == 0){
                             cnt += dao.insertMapData(map);
+                            existCnt += 1;
                         } else {
                             existCnt++;
                         }
@@ -120,18 +121,27 @@ public class ComnService {
         return Utilities.getMaxLatLng(lat, lng, radius);
     }
 
+    /**
+     * Returns the driving information based on the given parameters.
+     *
+     * @param param a map containing the following key-value pairs:
+     *              - "centerLat": the latitude of the center location (double)
+     *              - "centerLng": the longitude of the center location (double)
+     *              - "lat": the latitude of the destination location (double)
+     *              - "lng": the longitude of the destination location (double)
+     * @return the driving information as a {@link DrivingVo} object, or null if no information is found
+     */
     public Object getDriving(Map<String, Object> param) {
         double centerLat = Utilities.parseDouble(param.get("centerLat"));
         double centerLng = Utilities.parseDouble(param.get("centerLng"));
         double lat = Utilities.parseDouble(param.get("lat"));
         double lng = Utilities.parseDouble(param.get("lng"));
         DrivingVo driving = Utilities.getDriving(centerLat, centerLng, lat, lng);
-        if(driving == null){
-            return null;
+        if(driving != null){
+            int duration = driving.getRoute().getTraoptimal().get(0).getSummary().getDuration();
+            driving.setDuration(duration);
+            driving.setDurationMin(Utilities.miliSec2min(duration));
         }
-        int duration = driving.getRoute().getTraoptimal().get(0).getSummary().getDuration();
-        driving.setDuration(duration);
-        driving.setDurationMin(Utilities.miliSec2min(duration));
 
         return driving;
     }
