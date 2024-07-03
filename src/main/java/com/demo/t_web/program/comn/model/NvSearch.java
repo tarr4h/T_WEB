@@ -42,19 +42,23 @@ public class NvSearch {
         private String title;
 
         @JsonIgnore
+        public String getLatStr(){
+            return new StringBuilder(getMapy()).insert(2, ".").toString();
+        }
+
+        @JsonIgnore
+        public String getLngStr(){
+            return new StringBuilder(getMapx()).insert(3, ".").toString();
+        }
+
+        @JsonIgnore
         public double getLat(){
-            String pre = getMapy().substring(0, 3);
-            String suf = getMapy().substring(3);
-            String comb = pre + "." + suf;
-            return Utilities.parseDouble(comb);
+            return Utilities.parseDouble(getLatStr());
         }
 
         @JsonIgnore
         public double getLng(){
-            String pre = getMapx().substring(0, 3);
-            String suf = getMapx().substring(3);
-            String comb = pre + "." + suf;
-            return Utilities.parseDouble(comb);
+            return Utilities.parseDouble(getLngStr());
         }
     }
 }

@@ -138,7 +138,10 @@ public class ComnService {
         double lng = Utilities.parseDouble(param.get("lng"));
         DrivingVo driving = Utilities.getDriving(centerLat, centerLng, lat, lng);
         if(driving != null){
-            int duration = driving.getRoute().getTraoptimal().get(0).getSummary().getDuration();
+            int duration = 0;
+            if(driving.getRoute() != null){
+                duration = driving.getRoute().getTraoptimal().get(0).getSummary().getDuration();
+            }
             driving.setDuration(duration);
             driving.setDurationMin(Utilities.miliSec2min(duration));
         }
@@ -224,7 +227,12 @@ public class ComnService {
 
         if(search.getItems().size() > 1){
             for(NvSearch.NvSearchDetail nvDetail : search.getItems()){
-                if(Utilities.calculateArea(cLat, cLng, nvDetail.getLat(), nvDetail.getLng()) < distance){
+                if(nvDetail.getCategory().contains("도로") || nvDetail.getCategory().contains("시설")){
+                    continue;
+                }
+                double centerDistance = Utilities.calculateArea(cLat, cLng, nvDetail.getLat(), nvDetail.getLng());
+                if(centerDistance < distance){
+                    distance = centerDistance;
                     ret = nvDetail;
                 }
             }
@@ -251,8 +259,8 @@ public class ComnService {
             MapData mdt = dao.selectMapData(tm);
 
             if(mdt != null){
-                String xsb = new StringBuilder(ret.getMapx()).insert(3, ".").toString();
-                String ysb = new StringBuilder(ret.getMapy()).insert(2, ".").toString();
+                String xsb = ret.getLngStr();
+                String ysb = ret.getLatStr();
 
                 if(!mdt.getPx().equals(xsb) || !mdt.getPy().equals(ysb)){
                     Map<String, Object> cmap = new HashMap<>();
