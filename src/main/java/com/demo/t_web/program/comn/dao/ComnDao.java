@@ -48,4 +48,10 @@ public interface ComnDao {
     int insertVanish(Map<String, Object> param);
 
     int updateVanish(Map<String, Object> param);
+
+    MapData selectMapData(Map<String, Object> stringObjectMap);
+
+    int insertLocationChange(Map<String, Object> cmap);
+
+    int updateMapDataLocation(MapData mdt);
 }

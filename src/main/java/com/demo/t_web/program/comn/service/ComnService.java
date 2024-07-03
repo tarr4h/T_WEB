@@ -203,7 +203,7 @@ public class ComnService {
 
     public Object getNvSearch(Map<String, Object> param) {
         NvSearch search = Utilities.getNvSearch(param);
-        if(search == null || search.getItems().size() == 0){
+        if(search == null || search.getItems().isEmpty()){
             boolean vanishYn = Boolean.parseBoolean((String) param.get("vanishYn"));
             if(vanishYn) {
                 int chkVanish = dao.checkVanish(param);
@@ -245,7 +245,44 @@ public class ComnService {
                 }
             }
             ret.setCategory(sb.toString());
+
+            Map<String, Object> tm = new HashMap<>();
+            tm.put("name", ret.getTitle().replace("<b>", "").replace("</b>", ""));
+            MapData mdt = dao.selectMapData(tm);
+
+            if(mdt != null){
+                String xsb = new StringBuilder(ret.getMapx()).insert(3, ".").toString();
+                String ysb = new StringBuilder(ret.getMapy()).insert(2, ".").toString();
+
+                if(!mdt.getPx().equals(xsb) || !mdt.getPy().equals(ysb)){
+                    Map<String, Object> cmap = new HashMap<>();
+                    cmap.put("id", mdt.getId());
+                    cmap.put("prevLat", mdt.getPy());
+                    cmap.put("prevLng", mdt.getPx());
+                    cmap.put("chngLat", ysb);
+                    cmap.put("chngLng", xsb);
+
+                    int ll = dao.insertLocationChange(cmap);
+                    if(ll != 0){
+                        mdt.setPy(ysb);
+                        mdt.setPx(xsb);
+
+                        String[] address;
+                        if(ret.getRoadAddress() != null){
+                            address = ret.getRoadAddress().split(" ");
+                        } else {
+                            address = ret.getAddress().split(" ");
+                        }
+                        mdt.setAddr1(address[0]);
+                        mdt.setAddr2(address[1]);
+                        mdt.setAddr3(address[2]);
+                        dao.updateMapDataLocation(mdt);
+                    }
+                }
+
+            }
         }
+
         return ret;
     }
 

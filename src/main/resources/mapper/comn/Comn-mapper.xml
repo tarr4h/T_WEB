@@ -19,6 +19,20 @@
         )
     </insert>
 
+    <select id="selectMapData" resultType="com.demo.t_web.program.comn.model.MapData">
+        select  *
+        from    map_data
+        <where>
+            <if test="id != null and id != ''">
+                id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+        </where>
+
+    </select>
+
     <select id="selectMapDataCount" resultType="int">
         SELECT  COUNT(*)
         FROM    MAP_DATA
@@ -26,34 +40,36 @@
     </select>
 
     <select id="selectMapDataList" resultType="com.demo.t_web.program.comn.model.MapData">
-        SELECT  *
-        FROM    MAP_DATA
-        WHERE   CAST(PX AS DOUBLE PRECISION) BETWEEN CAST(#{minLng} AS DOUBLE PRECISION) AND CAST(#{maxLng} AS DOUBLE PRECISION)
-            AND CAST(PY AS DOUBLE PRECISION) BETWEEN CAST(#{minLat} AS DOUBLE PRECISION) AND CAST(#{maxLat} AS DOUBLE PRECISION)
+        select  a.*
+        from    map_data a left join vanish_map_data b on a.id = b.id
+        where   (b.vanish_yn is null or b.vanish_yn = 'n')
+            and cast(px as double precision) between cast(#{minLng} as double precision) and cast(#{maxLng} as double precision)
+            and cast(py as double precision) between cast(#{minLat} as double precision) and cast(#{maxLat} as double precision)
             <if test="mcid != null and mcid != ''">
-            AND MCID = #{mcid}
+                and mcid = #{mcid}
             </if>
             <if test="addr1 != null and addr1 != ''">
-            AND ADDR_1 = #{addr1}
+                and addr_1 = #{addr1}
             </if>
             <if test="addr2 != null and addr2 != ''">
-            AND ADDR_2 = #{addr2}
+                and addr_2 = #{addr2}
             </if>
             <if test="placeName != null and placeName instanceof java.util.ArrayList">
-                <foreach collection="placeName" item="item" separator="OR" open="AND (" close=")">
-                    NAME LIKE CONCAT('%', TRIM(#{item}), '%')
+                <foreach collection="placeName" item="item" separator="or" open="and (" close=")">
+                    name like concat('%', trim(#{item}), '%')
                 </foreach>
             </if>
     </select>
 
     <select id="selectMcidList" resultType="Tmap">
-        SELECT  MCID
-            ,   MCID_NAME
-        FROM    MAP_DATA
-        WHERE   CAST(PX AS DOUBLE PRECISION) BETWEEN CAST(#{minLng} AS DOUBLE PRECISION) AND CAST(#{maxLng} AS DOUBLE PRECISION)
-            AND CAST(PY AS DOUBLE PRECISION) BETWEEN CAST(#{minLat} AS DOUBLE PRECISION) AND CAST(#{maxLat} AS DOUBLE PRECISION)
-        GROUP BY MCID, MCID_NAME
-        ORDER BY MCID_NAME DESC
+        select  a.mcid
+            ,   a.mcid_name
+        from    map_data a left join vanish_map_data b on a.id = b.id
+        where   (b.vanish_yn is null or b.vanish_yn = 'n')
+            and cast(px as double precision) between cast(#{minLng} as double precision) and cast(#{maxLng} as double precision)
+            and cast(py as double precision) between cast(#{minLat} as double precision) and cast(#{maxLat} as double precision)
+        group by mcid, mcid_name
+        order by mcid_name desc
     </select>
 
     <select id="getRegion1" resultType="Tmap">
@@ -134,6 +150,29 @@
     <update id="updateVanish">
         update  vanish_map_data
         set     request_cnt = request_cnt + 1
+        where   id = #{id}
+    </update>
+
+    <insert id="insertLocationChange">
+        insert into location_change_data
+        values(
+                #{id}
+            ,   #{prevLat}
+            ,   #{prevLng}
+            ,   #{chngLat}
+            ,   #{chngLng}
+            ,   now()
+        )
+    </insert>
+
+    <update id="updateMapDataLocation">
+        update  map_data
+        set     py = #{py}
+            ,   px = #{px}
+            ,   addr_1 = #{addr1}
+            ,   addr_2 = #{addr2}
+            ,   addr_3 = #{addr3}
+            ,   updated_at = now()
         where   id = #{id}
     </update>
 </mapper>

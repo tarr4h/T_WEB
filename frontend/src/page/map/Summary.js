@@ -83,8 +83,6 @@ function Summary({data}){
             }
         }
 
-        console.log('placeInfo : ', placeInfo);
-
         if(avpi){
             setShowDetail(true);
             setDetail(placeInfo.category);
