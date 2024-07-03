@@ -279,7 +279,6 @@ public class Utilities {
 
     public static NvSearch getNvSearch(Map<String, Object> param){
         String text = (String) param.get("searchTxt");
-        log.debug("search text is {}", text);
         if(text == null) return null;
 
         URI uri = UriComponentsBuilder.fromUriString("https://openapi.naver.com")
