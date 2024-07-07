@@ -4,6 +4,11 @@ export function isMobile(){
 }
 
 export function getSuitableRadius(){
+    const saveRadius = window.localStorage.getItem('radius');
+    if(saveRadius){
+        return Number(saveRadius);
+    }
+
     if(isMobile()){
         return 1;
     } else {

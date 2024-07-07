@@ -18,6 +18,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     const selectedRegion2 = useRef(null);
 
     useEffect(() => {
+        window.localStorage.removeItem('radius');
         setMcid('');
         setRadius(comn.getSuitableRadius());
         setPlaceName('');
@@ -38,6 +39,12 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
             }
         }
     }, [radius, mcid]);
+
+    useEffect(() => {
+        if(radius){
+            window.localStorage.setItem('radius', radius.toString());
+        }
+    }, [radius]);
 
     useEffect(() => {
         if(runSearch){
@@ -91,10 +98,6 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     const radiusOnchange = (event) => {
         const v = event.target.value;
         if(v === 0) return;
-        // if(v >= 10) {
-        //     alert('10km 미만으로만 설정 가능합니다.');
-        //     return;
-        // }
         setRadius(v);
     }
 
