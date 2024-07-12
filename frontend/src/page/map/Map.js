@@ -18,7 +18,12 @@ function Map(){
 
     useEffect(() => {
         void showMap();
+        // void searchPlace();
     }, [searchParam]);
+
+    // const searchPlace = async () => {
+    //     console.log('wead result : ', (await instance.get('/comn/nvSearchTest', {params : {searchTxt : "하남 카페웨더"}})).data);
+    // }
 
     const showMap = async (lat, lng, force) => {
         if(!lat && !lng){

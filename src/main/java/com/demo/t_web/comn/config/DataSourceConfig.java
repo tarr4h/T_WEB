@@ -22,7 +22,7 @@ import javax.sql.DataSource;
  * </pre>
  *
  * @author : tarr4h
- * @ClassName : MybatisConfig
+ * @className : MybatisConfig
  * @description :
  * @date : 2023-04-20
  */

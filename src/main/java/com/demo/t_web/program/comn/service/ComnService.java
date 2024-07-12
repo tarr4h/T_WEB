@@ -227,7 +227,7 @@ public class ComnService {
 
         if(search.getItems().size() > 1){
             for(NvSearch.NvSearchDetail nvDetail : search.getItems()){
-                if(nvDetail.getCategory().contains("도로") || nvDetail.getCategory().contains("시설")){
+                if(nvDetail.getCategory().contains("도로") || nvDetail.getCategory().contains("시설") || nvDetail.getCategory().contains("쇼핑,유통")){
                     continue;
                 }
                 double centerDistance = Utilities.calculateArea(cLat, cLng, nvDetail.getLat(), nvDetail.getLng());

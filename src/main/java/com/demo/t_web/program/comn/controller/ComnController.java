@@ -4,7 +4,6 @@ import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.comn.service.ComnService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +65,11 @@ public class ComnController {
     @GetMapping("getNvSearch")
     public ResponseEntity<?> getNvSearch(@RequestParam Map<String, Object> param){
         return Utilities.retValue(service.getNvSearch(param));
+    }
+
+    @GetMapping("nvSearchTest")
+    public ResponseEntity<?> nvSearchTest(@RequestParam Map<String, Object> param){
+        return Utilities.retValue(Utilities.getNvSearch(param));
     }
 
     @GetMapping("verifyData")
