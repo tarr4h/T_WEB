@@ -2,6 +2,7 @@ package com.demo.t_web.program.comn.dao;
 
 import com.demo.t_web.comn.model.MapSearch;
 import com.demo.t_web.comn.model.Tmap;
+import com.demo.t_web.program.comn.model.ExcludeCategory;
 import com.demo.t_web.program.comn.model.MapData;
 import com.demo.t_web.program.comn.model.NaverMap;
 import org.apache.ibatis.annotations.Mapper;
@@ -54,4 +55,6 @@ public interface ComnDao {
     int insertLocationChange(Map<String, Object> cmap);
 
     int updateMapDataLocation(MapData mdt);
+
+    List<ExcludeCategory> selectRelatedCategories(Map<String, Object> param);
 }

@@ -175,4 +175,10 @@
             ,   updated_at = now()
         where   id = #{id}
     </update>
+
+    <select id="selectRelatedCategories" resultType="com.demo.t_web.program.comn.model.ExcludeCategory">
+        select  *
+        from    exclude_categories
+        where   related_mcid = #{mcid}
+    </select>
 </mapper>
