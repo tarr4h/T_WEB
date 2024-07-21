@@ -191,6 +191,12 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         }
     }
 
+    const placeNameOnEnter = (e) => {
+        if(e.keyCode === 13){
+            void applyParam();
+        }
+    }
+
     return (
         <div className={'searchFilter'}>
             <div>
@@ -276,6 +282,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                         <input type="text"
                                value={placeName || ''}
                                onChange={placeNameOnchange}
+                               onKeyUp={placeNameOnEnter}
                                className={'wd_100'}
                         />
                     </div>
