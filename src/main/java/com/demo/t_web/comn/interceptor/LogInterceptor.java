@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Enumeration;
-
 /**
  * <pre>
  * com.trv.log.interceptor.LogInterceptor
@@ -28,6 +26,7 @@ public class LogInterceptor implements HandlerInterceptor {
 
     public boolean isAppendable(HttpServletRequest request){
         boolean appendBool = true;
+
         if(request.getRemoteAddr().equals("172.31.50.179")){
             appendBool = false;
         } else if(request.getHeader("user-agent") == null || request.getHeader("user-agent").isEmpty()){
@@ -42,6 +41,10 @@ public class LogInterceptor implements HandlerInterceptor {
             appendBool = false;
         } else if(!request.getRequestURL().toString().contains("tarr4h")){
             appendBool = false;
+        }
+
+        if(request.getRemoteAddr().contains("localhost:8080") || request.getRemoteAddr().contains("0:0:0:0:0:0:0:1")) {
+            appendBool = true;
         }
 
         return appendBool;
