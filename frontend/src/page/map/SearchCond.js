@@ -112,7 +112,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         setPlaceName(v);
     }
 
-    const applyParam = async () => {
+    const applyParam = async (force) => {
         let p = {};
         if(searchParam){
             Object.assign(p, searchParam);
@@ -122,8 +122,15 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         p.placeName = placeName;
         p.addr1 = selectedRegion1.current.value;
         p.addr2 = selectedRegion2.current.value;
-
         setParam(p);
+        if(force){
+            window.localStorage.removeItem('zoom');
+        }
+    }
+
+    const clearPlaceName = async () => {
+        setPlaceName('');
+        setRunSearch(true);
     }
 
     const applyPlaceName = () => {
@@ -131,14 +138,16 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const setCurrentLoc = () => {
+        // window.localStorage.removeItem('radius');
         setLatlng(null);
         setMcid('');
         setPlaceName('');
-        setRunSearch(true);
         setRadius(comn.getSuitableRadius());
         selectedRegion1.current.value = '';
         selectedRegion2.current.value = '';
         setRegion2([]);
+        setRunSearch(true);
+        window.localStorage.removeItem('zoom');
     }
 
     const getRegion1 = async () => {
@@ -155,6 +164,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         const addr1GeoLoc = await getRegionGeoLoc({addr1 : v});
         setLatlng({lat : addr1GeoLoc.latitude, lng : addr1GeoLoc.longitude});
         setRadius(addr1GeoLoc.radius);
+        setPlaceName('');
     }
 
     const getRegion2 = async (upRegion) => {
@@ -174,6 +184,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         const addr2GeoLoc = await getRegionGeoLoc({addr1 : v1, addr2 : v2});
         setLatlng({lat : addr2GeoLoc.latitude, lng : addr2GeoLoc.longitude});
         setRadius(addr2GeoLoc.radius);
+        setPlaceName('');
     }
 
     const getRegionGeoLoc = async(param) => {
@@ -292,9 +303,12 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                 <div onClick={applyPlaceName} className={'searchBtn'}>
                     <span>현위치</span>
                 </div>
-                <div onClick={() => {void applyParam()}}
+                <div onClick={() => {void applyParam(true)}}
                      className={'searchBtn'}
                 >검색</div>
+                {
+                    placeName && placeName !== '' ? (<div className={'searchBtn'} onClick={clearPlaceName}>초기화</div>) : null
+                }
             </div>
         </div>
     )

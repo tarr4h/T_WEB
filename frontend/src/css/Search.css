@@ -198,8 +198,8 @@
 .searchFilter > div:nth-child(5) > div{
     width: 49%;
 }
-.searchFilter > div:nth-child(5) > div:nth-child(1){
-    margin-right: 2%;
+.searchFilter > div:nth-child(5) > div:not(:nth-child(1)){
+    margin-left: 2%;
 }
 
 .searchBtn {

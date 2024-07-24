@@ -17,6 +17,10 @@ function Map(){
     const [latlng, setLatlng] = useState(null);
 
     useEffect(() => {
+        window.localStorage.removeItem('zoom');
+    }, []);
+
+    useEffect(() => {
         void showMap();
     }, [searchParam]);
 
@@ -34,12 +38,20 @@ function Map(){
 
         // map
         const mapOpts = {
-            center: new naver.maps.LatLng(lat, lng),
-            // zoom: 15
+            center: new naver.maps.LatLng(lat, lng)
         };
 
+        const zoom = window.localStorage.getItem('zoom');
+        if(zoom){
+            mapOpts.zoom = Number(zoom);
+        }
+
         let map = new naver.maps.Map('map', mapOpts);
-        // setMap(map);
+
+        // zoom_changed event
+        naver.maps.Event.addListener(map, 'zoom_changed', (zoom) => {
+           window.localStorage.setItem('zoom', zoom);
+        });
 
         // marker
         const marker = setMarker(map, lat, lng, 'LOCATION');
@@ -98,12 +110,14 @@ function Map(){
         });
 
         // fit
-        const maxLatLng = retData.maxLatLng;
-        const fitBound = new naver.maps.LatLngBounds(
-            new naver.maps.LatLng(maxLatLng.minLat, maxLatLng.minLng),
-            new naver.maps.LatLng(maxLatLng.maxLat, maxLatLng.maxLng)
-        )
-        map.fitBounds(fitBound);
+        if(!zoom){
+            const maxLatLng = retData.maxLatLng;
+            const fitBound = new naver.maps.LatLngBounds(
+                new naver.maps.LatLng(maxLatLng.minLat, maxLatLng.minLng),
+                new naver.maps.LatLng(maxLatLng.maxLat, maxLatLng.maxLng)
+            )
+            map.fitBounds(fitBound);
+        }
     }
 
     const setMarker = (map, lat, lng, type) => {
@@ -126,11 +140,15 @@ function Map(){
         return new naver.maps.Marker(opt);
     }
 
-    const ifwClick = (data) => {
+    const ifwClick = (data, map) => {
+        const center = map.getCenter();
+        setLatlng({lat : center._lat, lng : center._lng});
+
         let actSearchParam = {};
         Object.assign(actSearchParam, searchParam);
         actSearchParam.placeName = data.name;
         setSearchParam(actSearchParam);
+
     }
 
     const setInfoWindow = (map, marker, data) => {
@@ -148,7 +166,7 @@ function Map(){
         });
 
         ifwCont.addEventListener('click', () => {
-            ifwClick(data);
+            ifwClick(data, map);
         })
         naver.maps.Event.addListener(marker, 'click', (e) => {
             if(infoWindow.getMap()){
