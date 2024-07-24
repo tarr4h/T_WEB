@@ -7,6 +7,8 @@
         justify-content: space-around;
     }
     .searchWrapper > div:nth-child(2){
+        margin-top: 1svh;
+        margin-bottom: 1svh;
     }
     .searchWrapper > div:nth-child(3) {
     }
