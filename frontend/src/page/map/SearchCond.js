@@ -138,10 +138,10 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const setCurrentLoc = () => {
-        // window.localStorage.removeItem('radius');
         setLatlng(null);
         setMcid('');
         setPlaceName('');
+        window.localStorage.removeItem('radius');
         setRadius(comn.getSuitableRadius());
         selectedRegion1.current.value = '';
         selectedRegion2.current.value = '';
