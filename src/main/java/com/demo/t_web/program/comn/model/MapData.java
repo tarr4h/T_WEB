@@ -1,8 +1,11 @@
 package com.demo.t_web.program.comn.model;
 
 import com.demo.t_web.comn.util.Utilities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * <pre>
@@ -17,7 +20,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MapData implements Comparable<MapData>{
+public class MapData implements Comparable<MapData>, Serializable {
 
     private String id;
     private String name;
@@ -33,6 +36,7 @@ public class MapData implements Comparable<MapData>{
     private String updatedDt;
 
     private double centerDistance;
+    @JsonIgnore
     private DrivingVo driving;
 
     public double getLat(){

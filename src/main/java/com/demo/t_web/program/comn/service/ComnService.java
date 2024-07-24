@@ -34,6 +34,9 @@ public class ComnService {
     @Autowired
     ComnDao dao;
 
+    @Autowired
+    CacheableService cacheService;
+
     public Object importFile(MultipartFile[] fileList) {
         log.info("fileList size = {}", fileList.length);
         int cnt = 0;
@@ -90,7 +93,8 @@ public class ComnService {
             c.setPlaceName(placeName);
         }
 
-        List<MapData> dataList = dao.selectMapDataList(c);
+//        List<MapData> dataList = dao.selectMapDataList(c);
+        List<MapData> dataList = cacheService.selectMapDataList(c);
 
         List<MapData> availList = new ArrayList<>();
         List<Tmap> mcidList = dao.selectMcidList(c);

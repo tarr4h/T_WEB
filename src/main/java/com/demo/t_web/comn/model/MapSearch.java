@@ -3,6 +3,7 @@ package com.demo.t_web.comn.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MapSearch {
+public class MapSearch implements Serializable {
 
     private double lat;
     private double lng;
@@ -32,4 +33,26 @@ public class MapSearch {
     private String addr1;
     private String addr2;
     private List<String> placeName;
+
+    public String cacheKey;
+
+    public String getCacheKey(){
+        StringBuilder sb = new StringBuilder();
+        sb.append((String.valueOf(lat)).replace(".", ""))
+                .append(String.valueOf(lng).replace(".", ""))
+                .append(radius);
+        if(mcid != null){
+            sb.append(mcid);
+        }
+        if(addr1 != null){
+            sb.append(addr1);
+        }
+        if(placeName != null){
+            for(String place : placeName){
+                sb.append(place);
+            }
+        }
+
+        return sb.toString();
+    }
 }
