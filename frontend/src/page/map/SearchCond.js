@@ -300,14 +300,14 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                 </div>
             </div>
             <div>
-                <div onClick={applyPlaceName} className={'searchBtn'}>
+                <div onClick={applyPlaceName} className={'btn'}>
                     <span>현위치</span>
                 </div>
                 <div onClick={() => {void applyParam(true)}}
-                     className={'searchBtn'}
+                     className={'btn'}
                 >검색</div>
                 {
-                    placeName && placeName !== '' ? (<div className={'searchBtn'} onClick={clearPlaceName}>초기화</div>) : null
+                    placeName && placeName !== '' ? (<div className={'btn'} onClick={clearPlaceName}>초기화</div>) : null
                 }
             </div>
         </div>

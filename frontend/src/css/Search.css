@@ -1,31 +1,25 @@
 /*mobile*/
 @media(max-width: 991px) {
-    .searchWrapper > div:nth-child(1) {
+    .searchWrapper > .searchFilter {
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
         justify-content: space-around;
     }
-    .searchWrapper > div:nth-child(2){
-        margin-top: 1svh;
-        margin-bottom: 1svh;
-    }
-    .searchWrapper > div:nth-child(3) {
-    }
 }
 /*web*/
 @media(min-width: 992px) {
-    .searchWrapper > div:nth-child(1) {
+    .searchWrapper > .searchFilter {
         height: 25%;
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
         justify-content: space-around;
     }
-    .searchWrapper > div:nth-child(2){
+    .searchWrapper > .searchListHd{
         height: 3%;
     }
-    .searchWrapper > div:nth-child(3) {
+    .searchWrapper > .searchList {
         height: 70%;
     }
 }
@@ -38,7 +32,15 @@
     overflow-x: hidden;
 }
 .searchListHd {
-    padding-left: 0.5em;
+    margin-bottom: 0.5vh;
+    padding: 0.5em 0.3em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+}
+.searchListHd .btn{
+    padding: 3px 12px;
 }
 
 .summary {
@@ -203,11 +205,7 @@
 }
 
 .searchBtn {
-    padding-top: 2px;
-    padding-bottom: 1px;
-    border: 1px solid #454545;
-    text-align: center;
-    border-radius: 3px;
+
 }
 
 .dualSelect{

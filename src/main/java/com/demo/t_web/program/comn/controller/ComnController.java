@@ -67,8 +67,8 @@ public class ComnController {
         return Utilities.retValue(service.getNvSearch(param));
     }
 
-    @GetMapping("nvSearchTest")
-    public ResponseEntity<?> nvSearchTest(@RequestParam Map<String, Object> param){
+    @GetMapping("nvSearch")
+    public ResponseEntity<?> nvSearch(@RequestParam Map<String, Object> param){
         return Utilities.retValue(Utilities.getNvSearch(param));
     }
 
@@ -80,5 +80,10 @@ public class ComnController {
     @PostMapping("visitLog")
     public void visitLog(HttpServletRequest request){
         service.visitLog(request);
+    }
+
+    @PostMapping("requestNewData")
+    public ResponseEntity<?> requestNewData(@RequestBody Map<String, Object> param){
+        return Utilities.retValue(service.insertRequestData(param));
     }
 }

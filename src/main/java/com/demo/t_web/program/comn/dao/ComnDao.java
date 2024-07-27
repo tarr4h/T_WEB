@@ -57,4 +57,8 @@ public interface ComnDao {
     int updateMapDataLocation(MapData mdt);
 
     List<ExcludeCategory> selectRelatedCategories(Map<String, Object> param);
+
+    List<MapData> selectMapDataExist(Map<String, Object> param);
+
+    int insertRequestData(Map<String, Object> param);
 }

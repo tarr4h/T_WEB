@@ -27,7 +27,13 @@
                 id = #{id}
             </if>
             <if test="name != null and name != ''">
-                and name = #{name}
+                and name like '%' || #{name} || '%'
+            </if>
+            <if test="px != null and px != ''">
+                and px = #{px}
+            </if>
+            <if test="py != null and py != ''">
+                and py = #{py}
             </if>
         </where>
 
@@ -181,4 +187,38 @@
         from    exclude_categories
         where   related_mcid = #{mcid}
     </select>
+
+    <select id="selectMapDataExist" resultType="com.demo.t_web.program.comn.model.MapData">
+        select  *
+        from    map_data
+        <where>
+            <if test="id != null and id != ''">
+                id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name like '%' || #{name} || '%'
+            </if>
+            <if test="px != null and px != ''">
+                and px = #{px}
+            </if>
+            <if test="py != null and py != ''">
+                and py = #{py}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertRequestData">
+        insert into request_data
+        (name, address, road_address, px, py, category, request_dt, accepted)
+        values(
+               #{name}
+            ,   #{address}
+            ,   #{roadAddress}
+            ,   #{px}
+            ,   #{py}
+            ,   #{category}
+            ,   now()
+            ,   false
+        )
+    </insert>
 </mapper>

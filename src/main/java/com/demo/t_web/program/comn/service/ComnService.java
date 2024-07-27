@@ -319,4 +319,19 @@ public class ComnService {
             dao.updateVisitLog(param);
         }
     }
+
+    public int insertRequestData(Map<String, Object> param) {
+        param.put("name", param.get("title"));
+        String pxStr = new StringBuilder(((String) param.get("mapx"))).insert(3, ".").toString();
+        String pyStr = new StringBuilder(((String) param.get("mapy"))).insert(2, ".").toString();
+        param.put("px", pxStr);
+        param.put("py", pyStr);
+
+        List<MapData> exist = dao.selectMapDataExist(param);
+        if(exist.isEmpty()){
+            return dao.insertRequestData(param);
+        } else {
+            return 0;
+        }
+    }
 }

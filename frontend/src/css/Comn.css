@@ -189,6 +189,132 @@ div::-webkit-scrollbar-thumb{
 input[type=number]{
 }
 
+.wd_10{
+    width: 10%;
+}
+.wd_20{
+    width: 20%;
+}
+.wd_30{
+    width: 30%;
+}
+.wd_40{
+    width: 40%;
+}
+.wd_50{
+    width: 50%;
+}
+.wd_60{
+    width: 60%;
+}
+.wd_70{
+    width: 70%;
+}
+.wd_80{
+    width: 80%;
+}
+.wd_90{
+    width: 90%;
+}
 .wd_100{
     width: 100%;
+}
+
+.btn{
+    padding: 2px 2px;
+    border: 1px solid #454545;
+    text-align: center;
+    border-radius: 3px;
+}
+
+/*modal*/
+.modal{
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 9999;
+    background-color: rgba(0,0,0,0.8);
+    padding: 5vw;
+}
+.modal.openModal{
+    display: flex;
+    align-items: center;
+}
+
+.modalWrapper{
+    background-color : #24232B;
+    width: 100%;
+    min-height: 10vh;
+    border-radius: 5px;
+    /*border: 1px solid black;*/
+}
+.modalHeader{
+    width: 100%;
+    height: 5vh;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+}
+.modalTitle{
+    width: 90%;
+}
+.modalHeader > div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    color: #F2F2F2;
+}
+.modalHeader > div:nth-child(1){
+    justify-content: flex-start;
+    width: 90%;
+    padding-left: 5%;
+}
+.modalHeader > div:nth-child(2){
+    width: 10%;
+    justify-content: center;
+}
+
+.modalContent{
+    padding: 2vh 2vw;
+}
+
+
+.searchInput{
+    position: relative;
+    background-color: inherit;
+    border: 1px solid #999999db;
+    border-radius: 12px;
+    margin: 1vh 0;
+    height: 5vh;
+}
+.searchInput > input {
+    width: 75%;
+    background-color: inherit;
+    height: 100%;
+    padding-left: 5vw!important;
+    padding-right: 20vw!important;
+    text-align: center;
+    color: #F2F2F2;
+    outline: none;
+}
+.searchInput > span{
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 8vw;
+    margin-right: 2vw;
+    z-index: 999;
+    font-size: 0.9em;
+    padding: 1vw 1vw;
+    text-align: center;
+    cursor: pointer;
+    color: #999999db;
+    font-weight: 600;
 }
