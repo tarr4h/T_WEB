@@ -340,6 +340,8 @@ input[type=number]{
     position: absolute;
     text-align: center;
     z-index: 99999;
+    top: 0;
+    left: 0;
 }
 #blockUI > div{
     color: #FFF;
