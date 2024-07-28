@@ -16,27 +16,31 @@ export function getSuitableRadius(){
     }
 }
 
-export function imgGend(type){
+export function imgGend(type, path){
     let img = '';
 
-    switch (type) {
-        case 'LOCATION' :
-            img = 'location-pin.png';
-            break;
-        case 'DINING' :
-            img = 'food.png';
-            break;
-        case 'BAR' :
-            img = 'beer_pub.png';
-            break;
-        case 'CAFE' :
-            img = 'cafe.png';
-            break;
-        case 'ACCOMMODATION':
-            img = 'dog_accomodation.png';
-            break;
-        default :
-            img = 'question.png';
+    if(!path){
+        switch (type) {
+            case 'LOCATION' :
+                img = 'location-pin.png';
+                break;
+            case 'DINING' :
+                img = 'food.png';
+                break;
+            case 'BAR' :
+                img = 'beer_pub.png';
+                break;
+            case 'CAFE' :
+                img = 'cafe.png';
+                break;
+            case 'ACCOMMODATION':
+                img = 'dog_accomodation.png';
+                break;
+            default :
+                img = 'question.png';
+        }
+    } else {
+        img = path;
     }
 
     return require(`../images/${img}`);

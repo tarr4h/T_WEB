@@ -348,3 +348,26 @@ input[type=number]{
     top: 50vh;
     position: relative;
 }
+
+.guide {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+.guide img {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 1vh;
+}
+.guide > div {
+    padding: 0.5vh 1vw;
+    margin-bottom: 1vh;
+}
+
+.guide .browser_selector{
+    text-decoration: underline;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+.guide .user_browser{
+    display: none;
+}

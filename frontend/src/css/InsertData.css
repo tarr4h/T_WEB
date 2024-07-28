@@ -10,7 +10,7 @@
     margin-bottom: 0.5vh;
     color: #F2F2F2;
 }
-.insertDataDetail > div:nth-child(2), div:nth-child(3){
+.insertDataDetail > div:nth-child(2), .insertDataDetail > div:nth-child(3){
     color: rgb(156 156 156);
 }
 .insertDataDetail > div:last-child {
