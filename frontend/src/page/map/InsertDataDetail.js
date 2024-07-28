@@ -1,7 +1,7 @@
 import instance from "../../comn/AxiosInterceptor";
 
 
-function InsertDataDetail({data}) {
+function InsertDataDetail({data, setIsOpen}) {
 
     const requestInsert = async () => {
         const result = (await instance.post('/comn/requestNewData', data)).data;
@@ -9,6 +9,7 @@ function InsertDataDetail({data}) {
             alert('이미 존재하는 업체입니다.');
         } else {
             alert('요청되었습니다.\n검토 후 추가예정입니다.');
+            setIsOpen(false);
         }
     }
 

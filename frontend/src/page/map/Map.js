@@ -3,6 +3,7 @@ import axios from "axios";
 import Search from "./Search";
 import * as comn from '../../comn/comnFunction';
 import instance from '../../comn/AxiosInterceptor';
+import {blockUI, unBlockUI} from "../../comn/comnFunction";
 const {naver} = window;
 
 function Map(){
@@ -25,6 +26,7 @@ function Map(){
     }, [searchParam]);
 
     const showMap = async (lat, lng, force) => {
+        blockUI();
         if(!lat && !lng){
             const geo = await getGeolocation();
             lat = geo.lat;
@@ -118,6 +120,7 @@ function Map(){
             )
             map.fitBounds(fitBound);
         }
+        unBlockUI();
     }
 
     const setMarker = (map, lat, lng, type) => {

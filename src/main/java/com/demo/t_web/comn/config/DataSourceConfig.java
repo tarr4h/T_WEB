@@ -2,18 +2,22 @@ package com.demo.t_web.comn.config;
 
 import com.demo.t_web.comn.model.DataBaseFrameworkProperties;
 import com.demo.t_web.comn.model.DataSourceProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 
 /**
  * <pre>
@@ -29,7 +33,11 @@ import javax.sql.DataSource;
 @Primary
 @Configuration("datasourceConfig")
 @MapperScan(value = "com.demo.t_web", sqlSessionFactoryRef = "SqlSessionFactory")
+@Slf4j
 public class DataSourceConfig {
+
+    @Autowired
+    private Environment env;
 
     @Bean
     public DataSourceProperties props(){
@@ -49,11 +57,16 @@ public class DataSourceConfig {
         return frameworkProps().getMybatisProperties();
     }
 
+    private boolean isLocalProfile(){
+        String[] profile = env.getActiveProfiles();
+        return Arrays.asList(profile).contains("local");
+    }
+
     @Bean(name = "dataSource")
     public DataSource DataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(fetchProps().getDriverClassName());
-        dataSource.setUrl(fetchProps().getUrl());
+        dataSource.setUrl(isLocalProfile() ? fetchProps().getJdbcUrl() : fetchProps().getUrl());
         dataSource.setUsername(fetchProps().getUsername());
         dataSource.setPassword(fetchProps().getPassword());
 

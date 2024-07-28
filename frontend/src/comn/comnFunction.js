@@ -41,3 +41,15 @@ export function imgGend(type){
 
     return require(`../images/${img}`);
 }
+
+export function blockUI(){
+    let bodyHeight = document.body.scrollHeight;
+    const block = window.document.getElementById('blockUI');
+    block.style.height = bodyHeight + 'px';
+    block.style.display = 'block';
+}
+
+export function unBlockUI(){
+    const block = window.document.getElementById('blockUI');
+    block.style.display = 'none';
+}

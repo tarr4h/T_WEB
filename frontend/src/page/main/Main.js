@@ -18,6 +18,9 @@ function Main(){
 
     return (
         <div>
+            <div id="blockUI">
+                <div>잠시만 기다려주세요.</div>
+            </div>
             <Nav setPage={setPg}/>
             <View page={pg}/>
         </div>

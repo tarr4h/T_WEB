@@ -198,6 +198,12 @@
             <if test="name != null and name != ''">
                 and name like '%' || #{name} || '%'
             </if>
+            <if test="nameList != null">
+                and
+                    <foreach collection="nameList" item="item" open="(" close=")" separator="or">
+                        name like '%' || #{item} || '%'
+                    </foreach>
+            </if>
             <if test="px != null and px != ''">
                 and px = #{px}
             </if>

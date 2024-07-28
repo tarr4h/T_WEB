@@ -321,7 +321,14 @@ public class ComnService {
     }
 
     public int insertRequestData(Map<String, Object> param) {
-        param.put("name", param.get("title"));
+        String name = (String) param.get("title");
+        param.put("name", name);
+
+        String[] nameArrs = name.split(" ");
+        if(nameArrs.length > 1){
+            param.put("nameList", nameArrs);
+        }
+
         String pxStr = new StringBuilder(((String) param.get("mapx"))).insert(3, ".").toString();
         String pyStr = new StringBuilder(((String) param.get("mapy"))).insert(2, ".").toString();
         param.put("px", pxStr);
