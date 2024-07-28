@@ -222,7 +222,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
             <div className={`hideSearchFilter ${isMobile() && foldFilter ? '' : 'dpn'}`}
                  onClick={openSearchFilter}
             >
-                다시 검색하기
+                검색하기
             </div>
             <div className={`searchFilter ${isMobile() && foldFilter ? 'dpn' : ''}`}>
                 <div>
