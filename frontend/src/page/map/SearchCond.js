@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import * as comn from '../../comn/comnFunction';
 import axios from "axios";
 import instance from '../../comn/AxiosInterceptor';
+import {isMobile} from "../../comn/comnFunction";
 
 function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
@@ -16,6 +17,8 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     const [region2, setRegion2] = useState([]);
     const selectedRegion1 = useRef(null);
     const selectedRegion2 = useRef(null);
+
+    const [foldFilter, setFoldFilter] = useState(false);
 
     useEffect(() => {
         window.localStorage.removeItem('radius');
@@ -126,6 +129,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         if(force){
             window.localStorage.removeItem('zoom');
         }
+        setFoldFilter(true);
     }
 
     const clearPlaceName = async () => {
@@ -208,107 +212,128 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         }
     }
 
+    const openSearchFilter = () => {
+        setFoldFilter(v => !v);
+    }
+
+
     return (
-        <div className={'searchFilter'}>
-            <div>
-                <div>
-                    <span>지역</span>
-                </div>
-                <div className={'dualSelect'}>
-                    <select onChange={region1Onchange}
-                            defaultValue={''}
-                            ref={selectedRegion1}
-                            className={'select_sm wd_100'}
-                    >
-                        <option value="">전체</option>
-                        {
-                            region1 != null ? region1.map((item, index) => (
-                                <option value={item.addr1}
-                                        key={index}
-                                >{item.addr1}</option>
-                            )) : null
-                        }
-                    </select>
-                    <select onChange={region2Onchange}
-                            defaultValue={''}
-                            ref={selectedRegion2}
-                            className={'select_sm wd_100'}
-                    >
-                        <option value="">전체</option>
-                        {
-                            region2 != null ? region2.map((item, index) => (
-                                <option value={item.addr2}
-                                        key={index}
-                                >{item.addr2}</option>
-                            )) : null
-                        }
-                    </select>
-                </div>
+        <div>
+            <div className={`hideSearchFilter ${isMobile() && foldFilter ? '' : 'dpn'}`}
+                 onClick={openSearchFilter}
+            >
+                다시 검색하기
             </div>
-            <div>
+            <div className={`searchFilter ${isMobile() && foldFilter ? 'dpn' : ''}`}>
                 <div>
-                    <span>반경(km)</span>
-                </div>
-                <div className={'pmIp'}>
-                    <input type="number"
-                           value={radius}
-                           onChange={radiusOnchange}
-                           className={'wd_100'}
-                    />
-                    <div className={'pmBtn'}
-                         onClick={() => {updownRadius(true)}}
-                    >+</div>
-                    <div className={'pmBtn'}
-                         onClick={() => {updownRadius(false)}}
-                    >-</div>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <span>분류</span>
-                </div>
-                <div>
-                    <select onChange={mcidOnchange}
-                            defaultValue={''}
-                            ref={selectedMcid}
-                            className={'select_sm wd_100'}
-                    >
-                        <option value="">전체</option>
-                        {
-                            mcidList != null ? mcidList.map((mcid, index) => (
-                                <option value={mcid.mcid}
-                                        key={index}
-                                >{mcid.mcidName}</option>
-                            )) : null
-                        }
-                    </select>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <span>가게명</span>
+                    <div>
+                        <span>지역</span>
+                    </div>
+                    <div className={'dualSelect'}>
+                        <select onChange={region1Onchange}
+                                defaultValue={''}
+                                ref={selectedRegion1}
+                                className={'select_sm wd_100'}
+                        >
+                            <option value="">전체</option>
+                            {
+                                region1 != null ? region1.map((item, index) => (
+                                    <option value={item.addr1}
+                                            key={index}
+                                    >{item.addr1}</option>
+                                )) : null
+                            }
+                        </select>
+                        <select onChange={region2Onchange}
+                                defaultValue={''}
+                                ref={selectedRegion2}
+                                className={'select_sm wd_100'}
+                        >
+                            <option value="">전체</option>
+                            {
+                                region2 != null ? region2.map((item, index) => (
+                                    <option value={item.addr2}
+                                            key={index}
+                                    >{item.addr2}</option>
+                                )) : null
+                            }
+                        </select>
+                    </div>
                 </div>
                 <div>
                     <div>
-                        <input type="text"
-                               value={placeName || ''}
-                               onChange={placeNameOnchange}
-                               onKeyUp={placeNameOnEnter}
+                        <span>반경(km)</span>
+                    </div>
+                    <div className={'pmIp'}>
+                        <input type="number"
+                               value={radius}
+                               onChange={radiusOnchange}
                                className={'wd_100'}
                         />
+                        <div className={'pmBtn'}
+                             onClick={() => {
+                                 updownRadius(true)
+                             }}
+                        >+
+                        </div>
+                        <div className={'pmBtn'}
+                             onClick={() => {
+                                 updownRadius(false)
+                             }}
+                        >-
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <div onClick={applyPlaceName} className={'btn'}>
-                    <span>현위치</span>
+                <div>
+                    <div>
+                        <span>분류</span>
+                    </div>
+                    <div>
+                        <select onChange={mcidOnchange}
+                                defaultValue={''}
+                                ref={selectedMcid}
+                                className={'select_sm wd_100'}
+                        >
+                            <option value="">전체</option>
+                            {
+                                mcidList != null ? mcidList.map((mcid, index) => (
+                                    <option value={mcid.mcid}
+                                            key={index}
+                                    >{mcid.mcidName}</option>
+                                )) : null
+                            }
+                        </select>
+                    </div>
                 </div>
-                <div onClick={() => {void applyParam(true)}}
-                     className={'btn'}
-                >검색</div>
-                {
-                    placeName && placeName !== '' ? (<div className={'btn'} onClick={clearPlaceName}>초기화</div>) : null
-                }
+                <div>
+                    <div>
+                        <span>가게명</span>
+                    </div>
+                    <div>
+                        <div>
+                            <input type="text"
+                                   value={placeName || ''}
+                                   onChange={placeNameOnchange}
+                                   onKeyUp={placeNameOnEnter}
+                                   className={'wd_100'}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div onClick={applyPlaceName} className={'btn'}>
+                        <span>현위치</span>
+                    </div>
+                    <div onClick={() => {
+                        void applyParam(true)
+                    }}
+                         className={'btn'}
+                    >검색
+                    </div>
+                    {
+                        placeName && placeName !== '' ? (<div className={'btn'} onClick={clearPlaceName}>초기화</div>) : null
+                    }
+                </div>
             </div>
         </div>
     )

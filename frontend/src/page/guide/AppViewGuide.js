@@ -17,7 +17,11 @@ function AppViewGuide() {
 
     return (
         <div className={'guide'}>
-            <div style={{fontStyle:'italic', marginTop:'2vh', textAlign:'center'}}>바탕화면에 추가해서 앱처럼 사용하세요</div>
+            <div style={{fontStyle:'italic', marginTop:'2vh', textAlign:'center', fontWeight:'500'}}>바탕화면에 추가해서 앱처럼 사용하세요</div>
+            <div style={{fontStyle:'italic', textAlign:'center'}}>p.s 가끔 앱을 완전종료해주세요(삭제말고)
+                <br/>완전종료 후 다시 들어오면 업데이트가 반영돼요
+                <br/>완전종료 : 멀티태스킹 바에서 삭제
+            </div>
             <br/>
             <div className={'browser_selector'}
                  onClick={() => openEachBrowser('safari')}

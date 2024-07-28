@@ -233,6 +233,16 @@
 
 }
 
+.hideSearchFilter{
+    border: 1px solid #F2F2F2;
+    padding: 1vw 1vw;
+    text-align: center;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
 .dualSelect{
     display: flex;
     flex-direction: row;

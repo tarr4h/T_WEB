@@ -287,6 +287,8 @@ input[type=number]{
     justify-content: flex-start;
     width: 90%;
     padding-left: 2vh;
+    font-weight: 600;
+    color: #898989;
 }
 .modalHeader > div:nth-child(2){
     width: 5vh;
@@ -366,8 +368,13 @@ input[type=number]{
 .guide .browser_selector{
     text-decoration: underline;
     font-weight: 500;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    color: #bcbcbc;
 }
 .guide .user_browser{
     display: none;
+}
+
+.dpn{
+    display: none!important;
 }
