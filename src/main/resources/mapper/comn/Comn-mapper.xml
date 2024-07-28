@@ -27,7 +27,13 @@
                 id = #{id}
             </if>
             <if test="name != null and name != ''">
-                and name like '%' || #{name} || '%'
+                and name = #{name}
+            </if>
+            <if test="addr1 != null and addr1 != ''">
+                and addr_1 = #{addr1}
+            </if>
+            <if test="addr2 != null and addr2 != ''">
+                and addr_2 = #{addr2}
             </if>
             <if test="px != null and px != ''">
                 and px = #{px}

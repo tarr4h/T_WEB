@@ -259,8 +259,17 @@ public class ComnService {
             }
             ret.setCategory(sb.toString());
 
+            String[] address;
+            if(ret.getRoadAddress() != null){
+                address = ret.getRoadAddress().split(" ");
+            } else {
+                address = ret.getAddress().split(" ");
+            }
+
             Map<String, Object> tm = new HashMap<>();
             tm.put("name", ret.getTitle().replace("<b>", "").replace("</b>", ""));
+            tm.put("addr1", address[0]);
+            tm.put("addr2", address[1]);
             MapData mdt = dao.selectMapData(tm);
 
             if(mdt != null){
@@ -279,20 +288,14 @@ public class ComnService {
                     if(ll != 0){
                         mdt.setPy(ysb);
                         mdt.setPx(xsb);
-
-                        String[] address;
-                        if(ret.getRoadAddress() != null){
-                            address = ret.getRoadAddress().split(" ");
-                        } else {
-                            address = ret.getAddress().split(" ");
-                        }
+                        mdt.setAddress(ret.getRoadAddress() == null ? ret.getAddress() : ret.getRoadAddress());
                         mdt.setAddr1(address[0]);
                         mdt.setAddr2(address[1]);
                         mdt.setAddr3(address[2]);
+
                         dao.updateMapDataLocation(mdt);
                     }
                 }
-
             }
         }
 
