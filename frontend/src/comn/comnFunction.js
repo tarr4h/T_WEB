@@ -45,7 +45,7 @@ export function imgGend(type){
 export function blockUI(){
     let bodyHeight = document.body.scrollHeight;
     const block = window.document.getElementById('blockUI');
-    block.style.height = bodyHeight + 'px';
+    block.style.height = bodyHeight * 1.05 + 'px';
     block.style.display = 'block';
 }
 
