@@ -37,10 +37,12 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
     useEffect(() => {
         if(radius){
-            if(radius < 10){
+            if(radius <= 15){
+                window.localStorage.removeItem('zoom');
                 void applyParam();
             }
         }
+        setFoldFilter(false);
     }, [radius, mcid]);
 
     useEffect(() => {
@@ -155,7 +157,6 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const getRegion1 = async () => {
-        // const region1 = await(await instance.get('/comn/getRegion1')).data;
         const region1 = (await instance.get('/comn/getRegion1')).data;
         setRegion1(region1);
     }
@@ -164,6 +165,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         const v = e.target.value;
         selectedRegion1.current.value = v;
         void getRegion2(v);
+        selectedRegion2.current.value = '';
 
         const addr1GeoLoc = await getRegionGeoLoc({addr1 : v});
         setLatlng({lat : addr1GeoLoc.latitude, lng : addr1GeoLoc.longitude});
@@ -196,6 +198,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const updownRadius = (b) => {
+        window.localStorage.removeItem('zoom');
         if(b){
             setRadius(v => v + 1);
         } else {
@@ -282,6 +285,9 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                              }}
                         >-
                         </div>
+                    </div>
+                    <div style={{fontSize: '0.6rem',paddingLeft:'0.2svh', paddingTop:'0.3svh', color: '#9f9f9fe8', fontStyle: 'italic'}}>
+                        반경 15km 초과인 경우 검색버튼을 눌러주세요.
                     </div>
                 </div>
                 <div>
