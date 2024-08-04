@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -74,13 +76,14 @@ public class ComnService {
         return cnt;
     }
 
-    public Object getData(Map<String, Object> param) {
+    public Object getData(Tmap param) {
         MapSearch c = getMaxLatLng(param);
-        c.setMcid((String) param.get("mcid"));
-        c.setAddr1((String) param.get("addr1"));
-        c.setAddr2((String) param.get("addr2"));
+        c.setMcid(param.getString("mcid"));
+        c.setAddr1(param.getString("addr1"));
+        c.setAddr2(param.getString("addr2"));
+
         List<String> placeName = new ArrayList<>();
-        String p = (String) param.get("placeName");
+        String p = param.getString("placeName");
         if(p != null){
             if(p.contains(",")){
                 String[] arr = p.split(",");
@@ -92,8 +95,6 @@ public class ComnService {
             }
             c.setPlaceName(placeName);
         }
-
-//        List<MapData> dataList = dao.selectMapDataList(c);
         List<MapData> dataList = cacheService.selectMapDataList(c);
 
         List<MapData> availList = new ArrayList<>();
@@ -110,17 +111,17 @@ public class ComnService {
 
         Collections.sort(availList);
 
-        Map<String, Object> ret = new HashMap<>();
+        Tmap ret = new Tmap();
         ret.put("dataList", availList);
         ret.put("maxLatLng", c);
         ret.put("mcidList", mcidList);
         return ret;
     }
 
-    public MapSearch getMaxLatLng(Map<String, Object> param){
-        double lat = Utilities.parseDouble(param.get("lat"));
-        double lng = Utilities.parseDouble(param.get("lng"));
-        int radius = Utilities.parseInt(param.get("radius"));
+    public MapSearch getMaxLatLng(Tmap param){
+        double lat = param.getDouble("lat");
+        double lng = param.getDouble("lng");
+        int radius = param.getInt("radius");
 
         return Utilities.getMaxLatLng(lat, lng, radius);
     }
@@ -135,11 +136,12 @@ public class ComnService {
      *              - "lng": the longitude of the destination location (double)
      * @return the driving information as a {@link DrivingVo} object, or null if no information is found
      */
-    public Object getDriving(Map<String, Object> param) {
-        double centerLat = Utilities.parseDouble(param.get("centerLat"));
-        double centerLng = Utilities.parseDouble(param.get("centerLng"));
-        double lat = Utilities.parseDouble(param.get("lat"));
-        double lng = Utilities.parseDouble(param.get("lng"));
+    public Object getDriving(Tmap param) {
+        double centerLat = param.getDouble("centerLat");
+        double centerLng = param.getDouble("centerLng");
+        double lat = param.getDouble("lat");
+        double lng = param.getDouble("lng");
+
         DrivingVo driving = Utilities.getDriving(centerLat, centerLng, lat, lng);
         if(driving != null){
             int duration = 0;
@@ -208,10 +210,10 @@ public class ComnService {
         return returnMap;
     }
 
-    public Object getNvSearch(Map<String, Object> param) {
+    public Object getNvSearch(Tmap param) {
         NvSearch search = Utilities.getNvSearch(param);
         if(search == null || search.getItems().isEmpty()){
-            boolean vanishYn = Boolean.parseBoolean((String) param.get("vanishYn"));
+            boolean vanishYn = param.getBoolean("vanishYn");
             if(vanishYn) {
                 int chkVanish = dao.checkVanish(param);
                 if(chkVanish == 0){
@@ -226,8 +228,8 @@ public class ComnService {
 
         NvSearch.NvSearchDetail ret = null;
         double distance = 99999;
-        double cLat = Utilities.parseDouble(param.get("lat"));
-        double cLng = Utilities.parseDouble(param.get("lng"));
+        double cLat = param.getDouble("lat");
+        double cLng = param.getDouble("lng");
 
         if(search.getItems().size() > 1){
             for(NvSearch.NvSearchDetail nvDetail : search.getItems()){
@@ -248,19 +250,12 @@ public class ComnService {
         }
 
         if(ret != null){
-            String ctgr = ret.getCategory();
-            String[] cStr = ctgr.split(">");
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < cStr.length; i++){
-                sb.append(cStr[i]);
-                if(i != cStr.length - 1){
-                    sb.append(" > ");
-                }
-            }
-            ret.setCategory(sb.toString());
+            String sep1 = Utilities.listToSeparatedString(ret.getCategory().split(">"), " > ");
+            String sep2 = Utilities.listToSeparatedString(sep1.split(","), ", ");
+            ret.setCategory(sep2);
 
             String[] address;
-            if(ret.getRoadAddress() != null){
+            if(ret.getRoadAddress() != null && !ret.getRoadAddress().isEmpty()){
                 address = ret.getRoadAddress().split(" ");
             } else {
                 address = ret.getAddress().split(" ");
@@ -270,30 +265,56 @@ public class ComnService {
             tm.put("name", ret.getTitle().replace("<b>", "").replace("</b>", ""));
             tm.put("addr1", address[0]);
             tm.put("addr2", address[1]);
-            MapData mdt = dao.selectMapData(tm);
+            List<MapData> mdtList = dao.selectMapDataList(tm);
 
-            if(mdt != null){
-                String xsb = ret.getLngStr();
-                String ysb = ret.getLatStr();
+            if(!mdtList.isEmpty()){
+                if(mdtList.size() > 1){
+                    List<Tmap> dupList = new ArrayList<>();
+                    for(MapData data : mdtList){
+                        Tmap d = new Tmap();
+                        d.put("id", data.getId());
+                        d.put("name", data.getName());
+                        d.put("addr1", data.getAddr1());
+                        d.put("addr2", data.getAddr2());
+                        dupList.add(d);
+                    }
 
-                if(!mdt.getPx().equals(xsb) || !mdt.getPy().equals(ysb)){
-                    Map<String, Object> cmap = new HashMap<>();
-                    cmap.put("id", mdt.getId());
-                    cmap.put("prevLat", mdt.getPy());
-                    cmap.put("prevLng", mdt.getPx());
-                    cmap.put("chngLat", ysb);
-                    cmap.put("chngLng", xsb);
+                    String relIds = Utilities.listToSeparatedString(dupList, ",", "id");
 
-                    int ll = dao.insertLocationChange(cmap);
-                    if(ll != 0){
-                        mdt.setPy(ysb);
-                        mdt.setPx(xsb);
-                        mdt.setAddress(ret.getRoadAddress() == null ? ret.getAddress() : ret.getRoadAddress());
-                        mdt.setAddr1(address[0]);
-                        mdt.setAddr2(address[1]);
-                        mdt.setAddr3(address[2]);
+                    int chk = dao.checkIsDuplicateInserted(relIds);
+                    if(chk == 0){
+                        for(Tmap d : dupList){
+                            d.put("relatedId", relIds);
+                            dao.insertDuplicateLocationData(d);
+                        }
+                    }
+                } else {
+                    MapData mdt = mdtList.get(0);
 
-                        dao.updateMapDataLocation(mdt);
+                    String xsb = ret.getLngStr();
+                    String ysb = ret.getLatStr();
+
+                    if(!mdt.getPx().equals(xsb) || !mdt.getPy().equals(ysb)){
+                        Map<String, Object> cmap = new HashMap<>();
+                        cmap.put("id", mdt.getId());
+                        cmap.put("prevLat", mdt.getPy());
+                        cmap.put("prevLng", mdt.getPx());
+                        cmap.put("chngLat", ysb);
+                        cmap.put("chngLng", xsb);
+                        cmap.put("prevAddr", mdt.getAddress());
+                        cmap.put("chngAddr", ret.getAddress());
+
+                        int ll = dao.insertLocationChange(cmap);
+                        if(ll != 0){
+                            mdt.setPy(ysb);
+                            mdt.setPx(xsb);
+                            mdt.setAddress(ret.getRoadAddress() == null ? ret.getAddress() : ret.getRoadAddress());
+                            mdt.setAddr1(address[0]);
+                            mdt.setAddr2(address[1]);
+                            mdt.setAddr3(address[2]);
+
+                            dao.updateMapDataLocation(mdt);
+                        }
                     }
                 }
             }
@@ -304,7 +325,7 @@ public class ComnService {
 
     public void visitLog(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
-        if(ip == null || "".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)){
+        if(ip == null || ip.isEmpty() || "0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)){
             return;
         }
         Map<String, Object> param = new HashMap<>();
@@ -312,7 +333,6 @@ public class ComnService {
 
         param.put("ip", ip);
         param.put("userAgent", userAgent);
-        param.put("sessionId", request.getSession().getId());
 
         int isExist = dao.checkVisit(param);
 
@@ -323,8 +343,8 @@ public class ComnService {
         }
     }
 
-    public int insertRequestData(Map<String, Object> param) {
-        String name = (String) param.get("title");
+    public int insertRequestData(Tmap param) {
+        String name = param.getString("title");
         param.put("name", name);
 
         String[] nameArrs = name.split(" ");
@@ -332,8 +352,8 @@ public class ComnService {
             param.put("nameList", nameArrs);
         }
 
-        String pxStr = new StringBuilder(((String) param.get("mapx"))).insert(3, ".").toString();
-        String pyStr = new StringBuilder(((String) param.get("mapy"))).insert(2, ".").toString();
+        String pxStr = new StringBuilder((param.getString("mapx"))).insert(3, ".").toString();
+        String pyStr = new StringBuilder((param.getString("mapy"))).insert(2, ".").toString();
         param.put("px", pxStr);
         param.put("py", pyStr);
 
@@ -342,6 +362,42 @@ public class ComnService {
             return dao.insertRequestData(param);
         } else {
             return 0;
+        }
+    }
+
+    public void addExceptionHst(Exception e, HttpServletRequest request) {
+        try {
+            String uri = request.getRequestURI();
+            String exception = e.getClass().getSimpleName();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            String msg = sw.toString();
+            if(msg.length() > 4000){
+                msg = msg.substring(0, 4000);
+            }
+
+            Tmap map = new Tmap();
+            map.put("uri", uri);
+            map.put("exception", exception);
+            map.put("msg", msg);
+
+            Enumeration<String> params = request.getParameterNames();
+            List<String> values = new ArrayList<>();
+            while(params.hasMoreElements()){
+                String name = params.nextElement();
+                values.add(name + ":" + request.getParameter(name));
+            }
+
+            String paramStr = Utilities.listToSeparatedString(values, ",");
+            if(paramStr.length() > 4000){
+                paramStr = paramStr.substring(0, 4000);
+            }
+            map.put("params", paramStr);
+
+            dao.insertExceptionHst(map);
+            log.error("exception occured => ", e);
+        } catch (Exception e1){
+            log.error("addExceptionHst error => ", e1);
         }
     }
 }

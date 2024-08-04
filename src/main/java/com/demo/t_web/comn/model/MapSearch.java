@@ -3,7 +3,6 @@ package com.demo.t_web.comn.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MapSearch implements Serializable {
+public class MapSearch extends BaseVo {
 
     private double lat;
     private double lng;
@@ -29,6 +28,7 @@ public class MapSearch implements Serializable {
     private double minLat;
     private double minLng;
 
+    private String name;
     private String mcid;
     private String addr1;
     private String addr2;

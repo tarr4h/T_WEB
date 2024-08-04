@@ -1,5 +1,6 @@
 package com.demo.t_web.comn.util;
 
+import com.demo.t_web.comn.model.BaseVo;
 import com.demo.t_web.comn.model.MapSearch;
 import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.program.comn.model.DrivingVo;
@@ -104,8 +105,6 @@ public class Utilities {
         }
     }
 
-
-
     public static int sec2min(int sec){
         double doubleRange = (double) sec / 60;
         return (int) (Math.ceil(doubleRange));
@@ -168,8 +167,8 @@ public class Utilities {
             } else {
                 return (int) obj;
             }
-        } catch (NullPointerException e){
-            throw new NullPointerException("PARSE INT >> OBJ == NULL");
+        } catch (ClassCastException e){
+            throw new ClassCastException("PARSE INT >> OBJ IS NOT SUITABLE TYPE");
         }
     }
 
@@ -180,20 +179,32 @@ public class Utilities {
             } else {
                 return (double) obj;
             }
-        } catch (NullPointerException e){
-            throw new NullPointerException("PARSE DOUBLE >> OBJ == NULL");
+        } catch (ClassCastException e){
+            throw new ClassCastException("PARSE DOUBLE >> OBJ IS NOT SUITABLE TYPE");
         }
     }
 
-    public static long pasreLong(Object obj){
+    public static long parseLong(Object obj){
         try {
             if(obj instanceof String){
                 return Long.parseLong(String.valueOf(obj));
             } else {
                 return (long) obj;
             }
-        } catch (NullPointerException e){
-            throw new NullPointerException("PARSE LONG >> OBJ == NULL");
+        } catch (ClassCastException e){
+            throw new ClassCastException("PARSE LONG >> OBJ IS NOT SUITABLE TYPE");
+        }
+    }
+
+    public static boolean parseBoolean(Object obj){
+        try {
+            if(obj instanceof String){
+                return Boolean.parseBoolean(String.valueOf(obj));
+            } else {
+                return (boolean) obj;
+            }
+        } catch (ClassCastException e){
+            throw new ClassCastException("PARSE BOOLEAN >> OBJ IS NOT SUITABLE TYPE");
         }
     }
 
@@ -282,8 +293,8 @@ public class Utilities {
         }
     }
 
-    public static NvSearch getNvSearch(Map<String, Object> param){
-        String text = (String) param.get("searchTxt");
+    public static NvSearch getNvSearch(Tmap param){
+        String text = param.getString("searchTxt");
         if(text == null) return null;
 
         URI uri = UriComponentsBuilder.fromUriString("https://openapi.naver.com")
@@ -358,4 +369,40 @@ public class Utilities {
             throw new RuntimeException("NAVER API 응답을 읽는 데 실패했습니다.", e);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static String listToSeparatedString(List<?> list, String separator, String field){
+        StringBuilder sb = new StringBuilder();
+        int ind = 0;
+        for(Object o : list){
+            if(o instanceof BaseVo){
+                o = Utilities.beanToMap(o);
+            } else if(!(o instanceof LinkedHashMap<?,?>)){
+                break;
+            }
+            sb.append(((Map<String, Object>) o).get(field));
+            if(ind++ < list.size() - 1){
+                sb.append(separator);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public static String listToSeparatedString(String[] list, String separator){
+        return listToSeparatedString(Arrays.asList(list), separator);
+    }
+
+    public static String listToSeparatedString(List<String> list, String separator){
+        StringBuilder sb = new StringBuilder();
+        int ind = 0;
+        for(String o : list){
+            sb.append(o);
+            if(ind++ < list.size() - 1){
+                sb.append(separator);
+            }
+        }
+        return sb.toString();
+    }
+
 }

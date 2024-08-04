@@ -30,6 +30,8 @@ public interface ComnDao {
 
     List<MapData> selectMapDataList(MapSearch c);
 
+    List<MapData> selectMapDataList(Map<String, Object> c);
+
     List<Tmap> selectMcidList(MapSearch c);
 
     List<Tmap> getRegion1(Map<String, Object> param);
@@ -61,4 +63,10 @@ public interface ComnDao {
     List<MapData> selectMapDataExist(Map<String, Object> param);
 
     int insertRequestData(Map<String, Object> param);
+
+    int insertDuplicateLocationData(Tmap d);
+
+    int checkIsDuplicateInserted(String string);
+
+    int insertExceptionHst(Tmap map);
 }

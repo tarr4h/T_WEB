@@ -1,11 +1,10 @@
 package com.demo.t_web.program.comn.model;
 
+import com.demo.t_web.comn.model.BaseVo;
 import com.demo.t_web.comn.util.Utilities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serializable;
 
 /**
  * <pre>
@@ -20,7 +19,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class MapData implements Comparable<MapData>, Serializable {
+public class MapData extends BaseVo implements Comparable<MapData> {
 
     private String id;
     private String name;

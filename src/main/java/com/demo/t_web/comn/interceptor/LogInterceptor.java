@@ -77,7 +77,7 @@ public class LogInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         boolean appendBool = isAppendable(request);
         String info = "";
-        info += getUriRow(request.getRequestURI(), "TERMINATE", Utilities.pasreLong(request.getAttribute("currTm")));
+        info += getUriRow(request.getRequestURI(), "TERMINATE", Utilities.parseLong(request.getAttribute("currTm")));
         info += "\n =====================================================================================================";
         if(appendBool){
             log.debug(info);

@@ -1,5 +1,6 @@
 package com.demo.t_web.program.comn.controller;
 
+import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.comn.service.ComnService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,13 +39,13 @@ public class ComnController {
     }
 
     @GetMapping("getData")
-    public ResponseEntity<?> getData(@RequestParam Map<String, Object> param){
-        return Utilities.retValue(service.getData(param));
+    public ResponseEntity<?> getData(@RequestParam Map<String, Object> param) {
+        return Utilities.retValue(service.getData(new Tmap(param)));
     }
 
     @GetMapping("getDriving")
     public ResponseEntity<?> getDriving(@RequestParam Map<String, Object> param){
-        return Utilities.retValue(service.getDriving(param));
+        return Utilities.retValue(service.getDriving(new Tmap(param)));
     }
 
     @GetMapping("getRegion1")
@@ -64,12 +65,12 @@ public class ComnController {
 
     @GetMapping("getNvSearch")
     public ResponseEntity<?> getNvSearch(@RequestParam Map<String, Object> param){
-        return Utilities.retValue(service.getNvSearch(param));
+        return Utilities.retValue(service.getNvSearch(new Tmap(param)));
     }
 
     @GetMapping("nvSearch")
     public ResponseEntity<?> nvSearch(@RequestParam Map<String, Object> param){
-        return Utilities.retValue(Utilities.getNvSearch(param));
+        return Utilities.retValue(Utilities.getNvSearch(new Tmap(param)));
     }
 
     @GetMapping("verifyData")
@@ -83,7 +84,7 @@ public class ComnController {
     }
 
     @PostMapping("requestNewData")
-    public ResponseEntity<?> requestNewData(@RequestBody Map<String, Object> param){
+    public ResponseEntity<?> requestNewData(@RequestBody Tmap param){
         return Utilities.retValue(service.insertRequestData(param));
     }
 }

@@ -1,5 +1,6 @@
 package com.demo.t_web.program.comn.model;
 
+import com.demo.t_web.comn.model.BaseVo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class ExcludeCategory {
+public class ExcludeCategory extends BaseVo {
 
     private String categoryName;
     private String relateMcid;

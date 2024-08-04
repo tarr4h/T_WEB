@@ -60,6 +60,9 @@
             <if test="mcid != null and mcid != ''">
                 and mcid = #{mcid}
             </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
             <if test="addr1 != null and addr1 != ''">
                 and addr_1 = #{addr1}
             </if>
@@ -118,19 +121,17 @@
         select  count(*)
         from    visit_log
         where   IP = #{ip}
-            and session_id = #{sessionId}
             and visit_dt = to_char(now(), 'YYYY-MM-DD')
     </select>
 
     <insert id="insertVisitLog">
         insert into visit_log
-        (ip, visit_dt, visit_count, user_agent, session_id)
+        (ip, visit_dt, visit_count, user_agent)
         values(
                 #{ip}
             ,   to_char(now(), 'YYYY-MM-DD')
             ,   1
             ,   #{userAgent}
-            ,   #{sessionId}
         )
     </insert>
 
@@ -139,7 +140,6 @@
         SET     VISIT_COUNT = VISIT_COUNT + 1
         WHERE   IP = #{ip}
             AND VISIT_DT = TO_CHAR(NOW(), 'YYYY-MM-DD')
-            AND user_agent = #{userAgent}
     </update>
 
     <select id="checkVanish" resultType="int">
@@ -167,6 +167,7 @@
 
     <insert id="insertLocationChange">
         insert into location_change_data
+        (id, prev_lat, prev_lng, chng_lat, chng_lng, change_at, prev_addr, chng_addr)
         values(
                 #{id}
             ,   #{prevLat}
@@ -174,6 +175,8 @@
             ,   #{chngLat}
             ,   #{chngLng}
             ,   now()
+            ,   #{prevAddr}
+            ,   #{chngAddr}
         )
     </insert>
 
@@ -231,6 +234,37 @@
             ,   #{category}
             ,   now()
             ,   false
+        )
+    </insert>
+
+    <select id="checkIsDuplicateInserted" resultType="int">
+        select  count(*)
+        from    duplicate_location_data
+        where   related_id = #{relatedId}
+    </select>
+
+    <insert id="insertDuplicateLocationData">
+        insert into duplicate_location_data
+        (id, name, addr1, addr2, related_id, reg_dt)
+        values(
+               #{id}
+            ,   #{name}
+            ,   #{addr1}
+            ,   #{addr2}
+            ,   #{relatedId}
+            ,   now()
+        )
+    </insert>
+
+    <insert id="insertExceptionHst">
+        insert into exception_hst
+        (uri, exception, msg, params, reg_dt)
+        values(
+               #{uri}
+            ,   #{exception}
+            ,   #{msg}
+            ,   #{params}
+            ,   now()
         )
     </insert>
 </mapper>

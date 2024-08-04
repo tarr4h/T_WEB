@@ -1,11 +1,10 @@
 package com.demo.t_web.comn.model;
 
 import com.demo.t_web.comn.util.Utilities;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.support.JdbcUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -19,7 +18,7 @@ import java.util.Map;
  * @description :
  * @date : 2023-04-20
  */
-
+@Slf4j
 public class Tmap extends LinkedHashMap<String, Object> {
 
     public Tmap(){
@@ -43,23 +42,46 @@ public class Tmap extends LinkedHashMap<String, Object> {
             } else {
                 return super.put(JdbcUtils.convertUnderscoreNameToPropertyName(key), value);
             }
-        } else {
+        } else if (value instanceof String){
             return super.put(key.toLowerCase(), String.valueOf(value));
+        } else {
+            return super.put(key, value);
         }
     }
 
     public String getString(String key) {
-        try{
-            Object value = super.get(key);
-            if(value instanceof String){
-                return (String) value;
-            } else {
-                throw new Exception("MAP VALUE IS NOT INSTANCEOF STRING");
-            }
-        } catch (Exception e){
-            e.printStackTrace();
+        Object value = super.get(key);
+        if(value instanceof String){
+            return (String) value;
+        } else {
+            return null;
         }
+    }
 
-        return null;
+    public int getInt(String key){
+        Object v = super.get(key);
+        if(v instanceof Integer){
+            return (int) v;
+        } else {
+            return Utilities.parseInt(v);
+        }
+    }
+
+    public double getDouble(String key){
+        Object v = super.get(key);
+        if(v instanceof Double){
+            return (double) v;
+        } else {
+            return Utilities.parseDouble(v);
+        }
+    }
+
+    public boolean getBoolean(String key){
+        Object v = super.get(key);
+        if(v instanceof Boolean){
+            return (boolean) v;
+        } else {
+            return Utilities.parseBoolean(v);
+        }
     }
 }
