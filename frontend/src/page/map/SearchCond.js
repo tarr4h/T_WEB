@@ -1,8 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import * as comn from '../../comn/comnFunction';
-import axios from "axios";
 import instance from '../../comn/AxiosInterceptor';
-import {isMobile} from "../../comn/comnFunction";
 
 function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
@@ -21,7 +19,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     const [foldFilter, setFoldFilter] = useState(false);
 
     useEffect(() => {
-        window.localStorage.removeItem('radius');
+        comn.removeRadius();
         setMcid('');
         setRadius(comn.getSuitableRadius());
         setPlaceName('');
@@ -38,7 +36,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     useEffect(() => {
         if(radius){
             if(radius <= 15){
-                window.localStorage.removeItem('zoom');
+                comn.removeZoom();
                 void applyParam();
             }
         }
@@ -47,7 +45,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
     useEffect(() => {
         if(radius){
-            window.localStorage.setItem('radius', radius.toString());
+            comn.setRadius(radius);
         }
     }, [radius]);
 
@@ -129,7 +127,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         p.addr2 = selectedRegion2.current.value;
         setParam(p);
         if(force){
-            window.localStorage.removeItem('zoom');
+            comn.removeZoom();
         }
         setFoldFilter(true);
     }
@@ -147,13 +145,13 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
         setLatlng(null);
         setMcid('');
         setPlaceName('');
-        window.localStorage.removeItem('radius');
+        comn.removeRadius();
         setRadius(comn.getSuitableRadius());
         selectedRegion1.current.value = '';
         selectedRegion2.current.value = '';
         setRegion2([]);
         setRunSearch(true);
-        window.localStorage.removeItem('zoom');
+        comn.removeZoom();
     }
 
     const getRegion1 = async () => {
@@ -198,7 +196,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
     }
 
     const updownRadius = (b) => {
-        window.localStorage.removeItem('zoom');
+        comn.removeZoom();
         if(b){
             setRadius(v => v + 1);
         } else {
@@ -222,12 +220,12 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
 
     return (
         <div>
-            <div className={`hideSearchFilter ${isMobile() && foldFilter ? '' : 'dpn'}`}
+            <div className={`hideSearchFilter ${comn.isMobile() && foldFilter ? '' : 'dpn'}`}
                  onClick={openSearchFilter}
             >
                 검색하기
             </div>
-            <div className={`searchFilter ${isMobile() && foldFilter ? 'dpn' : ''}`}>
+            <div className={`searchFilter ${comn.isMobile() && foldFilter ? 'dpn' : ''}`}>
                 <div>
                     <div>
                         <span>지역</span>
@@ -238,7 +236,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                                 ref={selectedRegion1}
                                 className={'select_sm wd_100'}
                         >
-                            <option value="">전체</option>
+                            <option value="">선택</option>
                             {
                                 region1 != null ? region1.map((item, index) => (
                                     <option value={item.addr1}
@@ -252,7 +250,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                                 ref={selectedRegion2}
                                 className={'select_sm wd_100'}
                         >
-                            <option value="">전체</option>
+                            <option value="">선택</option>
                             {
                                 region2 != null ? region2.map((item, index) => (
                                     <option value={item.addr2}

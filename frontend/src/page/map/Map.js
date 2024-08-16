@@ -18,7 +18,7 @@ function Map(){
     const [latlng, setLatlng] = useState(null);
 
     useEffect(() => {
-        window.localStorage.removeItem('zoom');
+        comn.removeZoom();
     }, []);
 
     useEffect(() => {
@@ -43,7 +43,7 @@ function Map(){
             center: new naver.maps.LatLng(lat, lng)
         };
 
-        const zoom = window.localStorage.getItem('zoom');
+        const zoom = comn.getZoom();
         if(zoom){
             mapOpts.zoom = Number(zoom);
         }
@@ -52,7 +52,7 @@ function Map(){
 
         // zoom_changed event
         naver.maps.Event.addListener(map, 'zoom_changed', (zoom) => {
-           window.localStorage.setItem('zoom', zoom);
+           comn.setZoom(zoom);
         });
 
         // marker

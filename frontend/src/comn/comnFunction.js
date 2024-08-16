@@ -4,7 +4,7 @@ export function isMobile(){
 }
 
 export function getSuitableRadius(){
-    const saveRadius = window.localStorage.getItem('radius');
+    const saveRadius = getRadius();
     if(saveRadius){
         return Number(saveRadius);
     }
@@ -57,3 +57,40 @@ export function unBlockUI(){
     const block = window.document.getElementById('blockUI');
     block.style.display = 'none';
 }
+
+export function setLocalStorage(key, value){
+    window.localStorage.setItem(key, value);
+}
+
+export function removeLocalStorage(key){
+    window.localStorage.removeItem(key);
+}
+
+export function getLocalStorage(key){
+    return window.localStorage.getItem(key);
+}
+
+export function setZoom(zoom){
+    setLocalStorage('zoom', zoom.toString());
+}
+
+export function removeZoom(){
+    removeLocalStorage('zoom');
+}
+
+export function getZoom(){
+    return getLocalStorage('zoom');
+}
+
+export function setRadius(radius){
+    setLocalStorage('radius', radius.toString());
+}
+
+export function removeRadius(){
+    removeLocalStorage('radius')
+}
+
+export function getRadius(){
+    return getLocalStorage('radius');
+}
+
