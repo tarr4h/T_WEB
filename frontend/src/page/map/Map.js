@@ -8,12 +8,9 @@ const {naver} = window;
 
 function Map(){
 
-    const [map, setMap] = useState(null);
     const [searchParam, setSearchParam] = useState(null);
     const [data, setData] = useState([]);
     const [mcidList, setMcidList] = useState([]);
-
-    const [ifwList, setIfwList]= useState([]);
 
     const [latlng, setLatlng] = useState(null);
 
@@ -88,19 +85,15 @@ function Map(){
         const dataList = retData.dataList;
         const aDataList = [];
 
-        const aifwList = [];
         dataList.forEach((dt) => {
             const mkr = setMarker(map, dt.py, dt.px, dt.mcid);
-            const infoWindow = setInfoWindow(map, mkr, dt);
-            aifwList.push(infoWindow);
-            dt.ifw = infoWindow;
+            dt.ifw = setInfoWindow(map, mkr, dt);
             dt.map = map;
             dt.marker = mkr;
             aDataList.push(dt);
         });
 
         setData(aDataList);
-        setIfwList(aifwList);
 
         // circle
         const circle = new naver.maps.Circle({

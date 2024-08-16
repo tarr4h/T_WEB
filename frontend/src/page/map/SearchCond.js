@@ -320,6 +320,7 @@ function SearchCond({mcidList, searchParam, setParam, setLatlng}){
                                    onChange={placeNameOnchange}
                                    onKeyUp={placeNameOnEnter}
                                    className={'wd_100'}
+                                   placeholder={', 을 사용하여 여러건 단어이 가능합니다.'}
                             />
                         </div>
                     </div>
