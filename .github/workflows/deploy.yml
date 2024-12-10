@@ -20,7 +20,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: adp
-          folder: build
+          folder: .
           repository-name: tarr4h/adp
           clean: true
           token: ${{ secrets.GITHUB_TOKEN }}
