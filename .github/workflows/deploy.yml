@@ -14,7 +14,7 @@ jobs:
         working-directory: ./frontend
         run: |
           npm ci
-          npm run build:prod
+          CI='false' npm run build:prod
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.5
