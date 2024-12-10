@@ -20,7 +20,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: adp
-          folder: .
+          folder: ./frontend/build/
           repository-name: tarr4h/adp
           clean: true
           token: ${{ secrets.TOKEN }}
