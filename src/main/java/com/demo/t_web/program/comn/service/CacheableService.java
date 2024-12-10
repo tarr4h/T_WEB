@@ -31,6 +31,7 @@ public class CacheableService {
 
     @Cacheable(cacheNames = "MAPDATA", key="#param.cacheKey")
     public List<MapData> selectMapDataList(MapSearch param) {
+        log.debug("flow test");
         return dao.selectMapDataList(param);
     }
 }
