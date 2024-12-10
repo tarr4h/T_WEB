@@ -1,9 +1,7 @@
 import SearchList from "./SearchList";
 import SearchCond from "./SearchCond";
 import * as comn from "../../comn/comnFunction";
-import {useRef, useState} from "react";
-import Modal from "../modal/Modal";
-import InsertDataModal from "./InsertDataModal";
+import {useRef} from "react";
 
 function Search({data, mcidList, searchParam, setParam, setLatlng}){
 

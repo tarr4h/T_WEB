@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
 import Search from "./Search";
 import * as comn from '../../comn/comnFunction';
 import instance from '../../comn/AxiosInterceptor';
@@ -96,7 +95,7 @@ function Map(){
         setData(aDataList);
 
         // circle
-        const circle = new naver.maps.Circle({
+        new naver.maps.Circle({
             map,
             center : new naver.maps.LatLng(lat, lng),
             radius : param.radius * 1000,

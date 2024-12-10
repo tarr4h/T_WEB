@@ -6,6 +6,7 @@ function View({page}){
     switch (page){
         case 'map' : return <Map/>;
         case 'setting' : return <Setting/>;
+        default : return null;
     }
 }
 

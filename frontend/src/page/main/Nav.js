@@ -1,9 +1,5 @@
 import logoImg from '../../images/adp_logo.png';
-import {imgGend, isMobile} from "../../comn/comnFunction";
-import Modal from "../modal/Modal";
-import {useState} from "react";
-import AppViewGuide from "../guide/AppViewGuide";
-import Hamburger from "./Hamburger";
+import Hamburger from "../hamburger/Hamburger";
 
 function Nav({setPage}){
 

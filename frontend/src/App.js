@@ -1,7 +1,7 @@
 import {
     BrowserRouter as Router,
     Routes,
-    Route, useNavigate
+    Route
 } from "react-router-dom";
 import Main from "./page/main/Main";
 import './css/Comn.css';

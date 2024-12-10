@@ -1,7 +1,6 @@
 import '../../css/Search.css';
 import * as comn from '../../comn/comnFunction';
 import {useEffect, useState} from "react";
-import axios from "axios";
 import instance from "../../comn/AxiosInterceptor";
 
 function Summary({data}){
@@ -23,7 +22,7 @@ function Summary({data}){
     }, [data]);
 
     const typeColor = (type) => {
-        let className = '';
+        let className;
         switch (type){
             case 'DINING' :
                 className = 'diningColor';
@@ -34,6 +33,7 @@ function Summary({data}){
             case 'ACCOMMODATION':
                 className = 'accommodationColor';
                 break;
+            default : className = '';
         }
         return className;
     }

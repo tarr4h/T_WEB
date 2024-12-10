@@ -29,8 +29,8 @@ function Hamburger(){
                  onClick={toggleMenu}>
                 <div className={`menuList`} onClick={e => e.stopPropagation()}>
                     <div onClick={toggleMenu}>닫기</div>
-                    <div>로그인하실래요?</div>
-                    <div>공지사항</div>
+                    {/*<div>로그인하실래요?</div>*/}
+                    {/*<div>공지사항</div>*/}
                     {
                         isMobile() ? (
                             <div>
