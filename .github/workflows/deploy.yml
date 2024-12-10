@@ -24,4 +24,4 @@ jobs:
           repository-name: tarr4h/adp
           clean: true
           token: ${{ secrets.TOKEN }}
-          commit-message: deploy-action
+          commit-message: 'deploy-action'
