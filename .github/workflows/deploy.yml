@@ -23,4 +23,4 @@ jobs:
           folder: .
           repository-name: tarr4h/adp
           clean: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN }}
