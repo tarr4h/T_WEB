@@ -32,7 +32,7 @@ import java.util.Arrays;
  */
 @Primary
 @Configuration("datasourceConfig")
-@MapperScan(value = "com.demo.t_web", sqlSessionFactoryRef = "SqlSessionFactory")
+@MapperScan(value = "com.demo.t_web.comn", sqlSessionFactoryRef = "SqlSessionFactory")
 @Slf4j
 public class DataSourceConfig {
 
