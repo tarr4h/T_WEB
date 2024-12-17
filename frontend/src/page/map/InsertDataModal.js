@@ -2,21 +2,22 @@ import {useEffect, useState} from "react";
 import '../../css/InsertData.css';
 import instance from "../../comn/AxiosInterceptor";
 import InsertDataDetail from "./InsertDataDetail";
+import {useModal} from "../modal/ModalContext";
 
-function InsertDataModal({isOpen, setIsOpen}){
+function InsertDataModal({dataList}){
 
     const [keyword, setKeyword] = useState('');
     const [searchList, setSearchList] = useState([]);
     const [isClear, setIsClear] = useState(true);
     let lastTouch = 0;
 
+    const {openModal, openSmallModalCenterCallback, openSmallModalCenter} = useModal();
+
     useEffect(() => {
-        if(!isOpen){
-            setSearchList([]);
-            setKeyword('');
-            setIsClear(true);
+        if(dataList && dataList.length > 0){
+            setSearchList(dataList);
         }
-    }, [isOpen]);
+    }, []);
 
     const keywordOnchange = (evt) => {
         setKeyword(evt.target.value);
@@ -60,6 +61,18 @@ function InsertDataModal({isOpen, setIsOpen}){
         setIsClear(false);
     }
 
+    const requestInsert = async (data) => {
+        const result = (await instance.post('/comn/requestNewData', data)).data;
+        if(result === 0){
+            const reopen = () => {
+                openModal(<InsertDataModal dataList={searchList}/>, '추가요청')
+            }
+            openSmallModalCenterCallback('이미 존재하는 업체입니다.', reopen);
+        } else {
+            openSmallModalCenter('요청되었습니다.\n검토 후 추가 예정입니다.');
+        }
+    }
+
     return (
         <div>
             <span style={{paddingLeft: '1vw', fontSize: '0.8rem'}}>찾으시는 가게를 입력해주세요</span>
@@ -80,7 +93,7 @@ function InsertDataModal({isOpen, setIsOpen}){
                     {
                         searchList.length > 0 ?
                             searchList.map((item, i) => (
-                                <InsertDataDetail data={item} key={i} setIsOpen={setIsOpen}/>
+                                <InsertDataDetail data={item} requestInsert={requestInsert} key={i}/>
                             ))
                             :
                             isClear ?

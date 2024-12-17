@@ -1,26 +1,18 @@
 import '../../css/Search.css';
 import Summary from "./Summary";
-import {useState} from "react";
-import Modal from "../modal/Modal";
 import InsertDataModal from "./InsertDataModal";
+import {useModal} from "../modal/ModalContext";
 
 function SearchList({dataList}) {
 
-    const [addDataModalOpened, setAddDataModalOpened] = useState(false);
+    const {openModal} = useModal();
 
     const openAddDataModal = () => {
-        setAddDataModalOpened(true);
+        openModal(<InsertDataModal/>, '추가요청');
     }
 
     return (
         <div className={'searchList'}>
-            <Modal title={'추가요청'}
-                   content={<InsertDataModal isOpen={addDataModalOpened}
-                                             setIsOpen={setAddDataModalOpened}
-                            />}
-                   isOpen={addDataModalOpened}
-                   setIsOpen={setAddDataModalOpened}
-            />
             {
                 dataList.length > 0 ?
                     dataList.map((item, index) => (

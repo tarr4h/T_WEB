@@ -8,10 +8,10 @@ import instance from "../../comn/AxiosInterceptor";
 function Hamburger(){
 
     const [showMenu, setShowMenu] = useState(false);
-    const {openModal} = useModal();
+    const {openModalCenter, openSmallModalCenter} = useModal();
 
     const openGuideModal = () => {
-        openModal('편리하게 사용하는 법', <AppViewGuide/>);
+        openModalCenter(<AppViewGuide/>, '편리하게 사용하는 법');
     }
 
     const toggleMenu = () => {
@@ -19,23 +19,16 @@ function Hamburger(){
     }
 
     const loginTest = async () => {
-        // const test = () => {
-        //     console.log('callback test');
-        // }
-        //
-        // openModal('제목', '내용', test);
         const userTest = {
             id : 'test1',
             password : 'pppppzzzz222',
             name : 'harry'
         }
 
-        // const ret = (await instance.post('/login/login', userTest).catch(
-        //     err => openModal('에러', '로그인 오류가 발생했습니다.')
-        // )).data;
-
-        const ret = (await instance.post('/login/login', userTest));
-        console.log('login whole : ', ret);
+        const ret = (await instance.post('/login/login', userTest)).data;
+        if(ret.errorType){
+            openSmallModalCenter(ret.msg, '에러');
+        }
     }
 
     return (
