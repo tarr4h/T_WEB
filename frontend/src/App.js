@@ -5,16 +5,19 @@ import {
 } from "react-router-dom";
 import Main from "./page/main/Main";
 import './css/Comn.css';
+import {ModalProvider} from "./page/modal/ModalContext";
 
 function App() {
 
   return(
-      <Router>
-        <Routes>
-          {/*<Route path="/" element={<Main/>}/>*/}
-          <Route path={process.env.PUBLIC_URL + "/"} element={<Main/>}/>
-        </Routes>
-      </Router>
+      <ModalProvider>
+          <Router>
+            <Routes>
+              {/*<Route path="/" element={<Main/>}/>*/}
+              <Route path={process.env.PUBLIC_URL + "/"} element={<Main/>}/>
+            </Routes>
+          </Router>
+      </ModalProvider>
   );
 }
 

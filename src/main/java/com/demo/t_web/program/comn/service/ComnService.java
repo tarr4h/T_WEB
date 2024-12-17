@@ -395,7 +395,9 @@ public class ComnService {
             map.put("params", paramStr);
 
             dao.insertExceptionHst(map);
-            log.error("exception occured => ", e);
+            log.error("exception occured ===================");
+            log.error("=>", e);
+            log.error("=====================================");
         } catch (Exception e1){
             log.error("addExceptionHst error => ", e1);
         }

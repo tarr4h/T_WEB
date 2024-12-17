@@ -32,12 +32,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/comn/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "https://localhost:8081")
-//                .allowedHeaders("Authorization", "Content-Type")
+        registry.addMapping("/login/**")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
 //                .allowedHeaders("*")
+                .allowedMethods("OPTIONS", "POST")
+        ;
+
+        registry.addMapping("/comn/**")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
+//                .allowedHeaders("Authorization", "Content-Type")
                 .exposedHeaders("Custom-Header")
                 .allowedMethods("*")
         ;
+
     }
 }

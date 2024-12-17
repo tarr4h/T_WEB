@@ -1,23 +1,18 @@
 package com.demo.t_web.comn.config;
 
-import com.demo.t_web.comn.model.DataBaseFrameworkProperties;
-import com.demo.t_web.comn.model.DataSourceProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
 
 /**
  * <pre>
@@ -32,35 +27,9 @@ import java.util.Arrays;
  */
 @Primary
 @Configuration("datasourceConfig")
-@MapperScan(value = "com.demo.t_web.comn", sqlSessionFactoryRef = "SqlSessionFactory")
+@MapperScan(value = "com.demo.t_web.program.comn", sqlSessionFactoryRef = "SqlSessionFactory")
 @Slf4j
-public class DataSourceConfig {
-
-    @Autowired
-    private Environment env;
-
-    @Bean
-    public DataSourceProperties props(){
-        return new DataSourceProperties();
-    }
-
-    @Bean
-    public DataBaseFrameworkProperties frameworkProps(){
-        return new DataBaseFrameworkProperties();
-    }
-
-    private DataSourceProperties.DbProps fetchProps(){
-        return props().getDbConfig().get(props().getActiveDb()).getEnv().get(props().getActiveEnv()).getProps();
-    }
-
-    private DataBaseFrameworkProperties.MybatisProperties fetchMybatisProps(){
-        return frameworkProps().getMybatisProperties();
-    }
-
-    private boolean isLocalProfile(){
-        String[] profile = env.getActiveProfiles();
-        return Arrays.asList(profile).contains("local");
-    }
+public class DataSourceConfig extends DataSourceUtil{
 
     @Bean(name = "dataSource")
     public DataSource DataSource() {

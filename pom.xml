@@ -49,6 +49,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--jpa-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!--//jpa-->
 
         <!--security-->
         <dependency>
@@ -56,6 +68,14 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <!--//security-->
+
+        <!--jwt-->
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
 
         <!--redis-->
         <dependency>
@@ -98,17 +118,12 @@
             <version>3.1.9</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter-test</artifactId>
-            <version>3.0.2</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.mybatis.spring.boot</groupId>-->
+<!--            <artifactId>mybatis-spring-boot-starter-test</artifactId>-->
+<!--            <version>3.0.2</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
         <!--ADD-->
         <dependency>
@@ -157,6 +172,25 @@
             <version>1.26.0</version>
         </dependency>
 
+        <!--junit-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -190,16 +224,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <!-- war plugin -->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-war-plugin</artifactId>-->
-<!--                &lt;!&ndash;				<version>3.2.1</version>&ndash;&gt;-->
-<!--                <configuration>-->
-<!--                    <warSourceDirectory>src/main/webapp</warSourceDirectory> &lt;!&ndash; war파일 디렉토리 &ndash;&gt;-->
-<!--                    <failOnMissingWebXml>false</failOnMissingWebXml> &lt;!&ndash; web.xml이 없을 때 에러를 낼건지 안낼건지 &ndash;&gt;-->
-<!--                </configuration>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 

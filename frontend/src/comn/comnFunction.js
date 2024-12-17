@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 export function isMobile(){
     let userAgent = navigator.userAgent;
     return userAgent.match(/iPhone/i) || userAgent.match(/Android/i);
@@ -93,4 +95,3 @@ export function removeRadius(){
 export function getRadius(){
     return getLocalStorage('radius');
 }
-
