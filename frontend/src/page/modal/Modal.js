@@ -3,6 +3,9 @@ import '../../css/Comn.css';
 function Modal({title, content, isOpen, setIsOpen}){
         const closeModal = () => {
         setIsOpen(false);
+
+
+
     }
 
     return (
