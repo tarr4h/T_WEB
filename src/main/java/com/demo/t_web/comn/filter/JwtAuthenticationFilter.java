@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -33,10 +34,11 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final LoginService loginService;
-    private final JwtUtil jwtUtil = new JwtUtil();
+    private final JwtUtil jwtUtil;
 
-    public JwtAuthenticationFilter(LoginService loginService) {
+    public JwtAuthenticationFilter(LoginService loginService, JwtUtil jwtUtil) {
         this.loginService = loginService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -55,6 +57,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtValidateException("NO SUITABLE TOKEN", e);
             } catch (ExpiredJwtException e) {
                 throw new JwtValidateException("JWT TOKEN EXPIRED", e);
+            } catch (Exception e){
+                log.error("jwt exception", e);
             }
         } else {
             throw new JwtValidateException("NO TOKEN IN HEADER");
@@ -66,6 +70,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(jwtUtil.validateToken(jwtToken, userDetails)){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                log.debug("authorities = {}", userDetails.getAuthorities().size());
+                for(GrantedAuthority grantedAuthority : userDetails.getAuthorities()){
+                    log.debug("authority = {}", grantedAuthority.getAuthority());
+                }
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

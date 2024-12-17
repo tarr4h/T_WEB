@@ -2,6 +2,7 @@ package com.demo.t_web.comn.config;
 
 import com.demo.t_web.comn.filter.JwtAuthenticationFilter;
 import com.demo.t_web.comn.filter.JwtExceptionHandlerFilter;
+import com.demo.t_web.comn.util.JwtUtil;
 import com.demo.t_web.program.comn.service.ComnService;
 import com.demo.t_web.program.login.service.LoginService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] uris = new String[]{"/comn/**", "/awsMas"};
+    private final String[] uris = new String[]{"/comn/**", "/awsMas", "/login/login"};
 
     @Autowired
     LoginService loginService;
@@ -41,8 +42,11 @@ public class SecurityConfig {
     @Autowired
     ComnService comnService;
 
+    @Autowired
+    JwtUtil jwtUtil;
+
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(loginService);
+        return new JwtAuthenticationFilter(loginService, jwtUtil);
     }
 
     public JwtExceptionHandlerFilter jwtExceptionHandlerFilter(){
@@ -69,7 +73,10 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults()) /// custom status 사용 시 preflight에서 cors 방지
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+            .authorizeHttpRequests(auth ->
+                    auth
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
             .addFilterBefore(jwtExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         ;

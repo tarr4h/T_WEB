@@ -1,10 +1,11 @@
 package com.demo.t_web.comn.util;
 
+import com.demo.t_web.comn.model.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -31,10 +33,11 @@ import java.util.stream.Collectors;
  * @date : 12/13/24
  */
 @Component
+@Slf4j
+@AllArgsConstructor
 public class JwtUtil {
 
-    @Value("${jwt.key}")
-    private String signKey;
+    private final JwtProperties jwtProperties;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -45,18 +48,23 @@ public class JwtUtil {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-       final Claims claims =  extractAllClaims(token);
+       final Claims claims = extractAllClaims(token);
        return claimsResolver.apply(claims);
     }
 
     public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(signKey.getBytes(StandardCharsets.UTF_8)).build()
+                .setSigningKey(jwtProperties.getSignKey().getBytes(StandardCharsets.UTF_8)).build()
                 .parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    public String generateToken(UserDetails userDetail){
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetail.getUsername());
     }
 
     private String generateToken(Map<String, Object> claims, UserDetails userDetail){
@@ -67,7 +75,7 @@ public class JwtUtil {
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 10)))
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256))
+                .signWith(Keys.hmacShaKeyFor(jwtProperties.getSignKey().getBytes(StandardCharsets.UTF_8)))
                 .compact();
 
     }

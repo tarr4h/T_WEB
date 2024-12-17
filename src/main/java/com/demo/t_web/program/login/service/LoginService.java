@@ -1,11 +1,14 @@
 package com.demo.t_web.program.login.service;
 
+import com.demo.t_web.comn.util.JwtUtil;
 import com.demo.t_web.program.login.model.User;
+import com.demo.t_web.program.login.model.UserRoles;
 import com.demo.t_web.program.login.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,13 +29,23 @@ public class LoginService {
 
     private UserRepository userRepository;
 
+    private JwtUtil jwtUtil;
+
     public Object login(User user) {
+        log.debug("login run ---------------");
 //        user.setRole(ROLE.USER);
         userRepository.save(user);
         long count = userRepository.count();
-        Optional<User> findUser = userRepository.findById("1234");
+        Optional<User> findUser = userRepository.findById(user.getId());
         log.debug("--- count = ? {}", count);
-        return "111";
+
+        List<UserRoles> roles = findUser.get().getRoles();
+        for(UserRoles role : roles) {
+            log.debug("role : {}", role.getRoleName());
+        }
+
+        String token = jwtUtil.generateToken(findUser.get());
+        return token;
     }
 
     public User selectUser(String userId){

@@ -1,6 +1,5 @@
 package com.demo.t_web.program.comn.controller;
 
-import com.demo.t_web.comn.exception.JwtValidateException;
 import com.demo.t_web.program.comn.service.ComnService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,15 +29,7 @@ public class ExceptionController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> exception(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        log.error("any exceptions");
         service.addExceptionHst(e, request);
         return ResponseEntity.ok("error occured");
-    }
-
-    @ExceptionHandler(JwtValidateException.class)
-    public ResponseEntity<String> jwtException(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        log.error("jwt exception", e);
-        service.addExceptionHst(e, request);
-        return ResponseEntity.ok("jwt error occured");
     }
 }

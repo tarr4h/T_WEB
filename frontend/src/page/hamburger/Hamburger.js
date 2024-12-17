@@ -28,7 +28,31 @@ function Hamburger(){
         const ret = (await instance.post('/login/login', userTest)).data;
         if(ret.errorType){
             openSmallModalCenter(ret.msg, '에러');
+        } else {
+            console.log('login ? ', ret);
+            setToken(ret);
         }
+    }
+
+    const [token, setToken] = useState();
+    const jwtTest = async () => {
+        const user = {
+            id : 'test1',
+            token : token
+        }
+
+        const tokens = token ? 'Bearer ' + token : '';
+        console.log('token : ', tokens);
+        const header = {
+            'Authorization': tokens
+        }
+
+        console.log('header : ', header);
+        const ret = (await instance.get('/login/jwtTest', {
+            headers : {...header}
+        })).data;
+
+        console.log(ret);
     }
 
     return (
@@ -43,6 +67,7 @@ function Hamburger(){
                 <div className={`menuList`} onClick={e => e.stopPropagation()}>
                     <div onClick={toggleMenu}>닫기</div>
                     <div onClick={loginTest}>로그인하실래요?</div>
+                    <div onClick={jwtTest}>login test</div>
                     {/*<div>공지사항</div>*/}
                     {
                         isMobile() ? (

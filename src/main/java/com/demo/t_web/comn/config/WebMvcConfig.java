@@ -35,7 +35,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/login/**")
                 .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
 //                .allowedHeaders("*")
-                .allowedMethods("OPTIONS", "POST")
+                .allowedMethods("OPTIONS", "POST", "GET")
         ;
 
         registry.addMapping("/comn/**")
