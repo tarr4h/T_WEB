@@ -52,9 +52,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 userId = jwtUtil.extractUsername(jwtToken);
             } catch (IllegalArgumentException e) {
-                throw new JwtValidateException("NO SUITABLE TOKEN");
+                throw new JwtValidateException("NO SUITABLE TOKEN", e);
             } catch (ExpiredJwtException e) {
-                throw new JwtValidateException("JWT TOKEN EXPIRED");
+                throw new JwtValidateException("JWT TOKEN EXPIRED", e);
             }
         } else {
             throw new JwtValidateException("NO TOKEN IN HEADER");

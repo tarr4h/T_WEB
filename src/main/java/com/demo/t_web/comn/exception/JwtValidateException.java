@@ -19,4 +19,8 @@ public class JwtValidateException extends JwtException {
     public JwtValidateException(String msg){
         super(msg);
     }
+
+    public JwtValidateException(String msg, Throwable ex){
+        super(msg, ex);
+    }
 }
