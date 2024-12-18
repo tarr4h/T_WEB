@@ -30,27 +30,18 @@ function Hamburger(){
             openSmallModalCenter(ret.msg, '에러');
         } else {
             console.log('login ? ', ret);
-            setToken(ret);
         }
     }
 
-    const [token, setToken] = useState();
     const jwtTest = async () => {
         const user = {
-            id : 'test1',
-            token : token
+            id : 'test1'
         }
 
-        const tokens = token ? 'Bearer ' + token : '';
-        console.log('token : ', tokens);
-        const header = {
-            'Authorization': tokens
-        }
+        // const ret = (await instance.get('/login/jwtTest', {
+        // }));
 
-        console.log('header : ', header);
-        const ret = (await instance.get('/login/jwtTest', {
-            headers : {...header}
-        })).data;
+        const ret = (await instance.post('/admin/test', {})).data;
 
         console.log(ret);
     }

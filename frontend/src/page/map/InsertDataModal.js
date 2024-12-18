@@ -47,23 +47,27 @@ function InsertDataModal({dataList}){
 
     const searchNv = async() => {
         if(keyword === ''){
-            alert('검색어를 입력해주세요');
+            const reopen = () => {
+                openModal(<InsertDataModal dataList={searchList}/>, '추가요청')
+            }
+            openSmallModalCenterCallback('검색어를 입력해주세요', reopen);
+
             return;
         }
         const result = (await instance.get('/comn/nvSearch', {params : {searchTxt : keyword}})).data;
-        const replaceList = Array.from(result.items).map(v => {
+        const replaceList = result && result.items ? Array.from(result.items).map(v => {
             return {
                 ...v,
                 title : v.title.replace(/<[^>]*>/g, '')
             }
-        });
+        }) : [];
         setSearchList(replaceList);
         setIsClear(false);
     }
 
     const requestInsert = async (data) => {
         const result = (await instance.post('/comn/requestNewData', data)).data;
-        if(result === 0){
+        if(Number(result) === 0){
             const reopen = () => {
                 openModal(<InsertDataModal dataList={searchList}/>, '추가요청')
             }

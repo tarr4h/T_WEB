@@ -6,11 +6,15 @@ import {
 import Main from "./page/main/Main";
 import './css/Comn.css';
 import {ModalProvider} from "./page/modal/ModalContext";
+import {AxiosInterceptorSetup} from "./comn/AxiosInterceptor";
+import Modal from "./page/modal/Modal";
 
 function App() {
 
   return(
       <ModalProvider>
+          <AxiosInterceptorSetup/>
+          <Modal/>
           <Router>
             <Routes>
               {/*<Route path="/" element={<Main/>}/>*/}

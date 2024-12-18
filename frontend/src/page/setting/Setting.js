@@ -18,7 +18,7 @@ function Setting(){
         const headers = {
             'Content-Type': 'multipart/form-data'
         }
-        const res = (await instance.post('/comn/importFiles', formData, headers));
+        const res = (await instance.post('/comn/importFiles', formData, headers)).data;
         // return new Promise((resolve) => {
         //     const res = fetch('/comn/importFiles', {
         //         method : 'POST',
