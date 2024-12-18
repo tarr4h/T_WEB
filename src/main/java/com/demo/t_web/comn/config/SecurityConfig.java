@@ -2,10 +2,11 @@ package com.demo.t_web.comn.config;
 
 import com.demo.t_web.comn.filter.JwtAuthenticationFilter;
 import com.demo.t_web.comn.filter.JwtExceptionHandlerFilter;
+import com.demo.t_web.comn.handler.SecurityAccessDeniedHandler;
 import com.demo.t_web.comn.util.JwtUtil;
-import com.demo.t_web.program.comn.service.ComnService;
+import com.demo.t_web.program.login.enums.ADP_ROLE;
 import com.demo.t_web.program.login.service.LoginService;
-import lombok.RequiredArgsConstructor;
+import com.demo.t_web.program.sys.service.ExceptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +32,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final String[] uris = new String[]{"/comn/**", "/awsMas", "/login/login"};
@@ -40,17 +41,20 @@ public class SecurityConfig {
     LoginService loginService;
 
     @Autowired
-    ComnService comnService;
+    ExceptionService exceptionService;
 
     @Autowired
     JwtUtil jwtUtil;
+
+    @Autowired
+    private SecurityAccessDeniedHandler securityAccessDeniedHandler;
 
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(loginService, jwtUtil);
     }
 
     public JwtExceptionHandlerFilter jwtExceptionHandlerFilter(){
-        return new JwtExceptionHandlerFilter(comnService);
+        return new JwtExceptionHandlerFilter(exceptionService);
     }
 
     @Bean
@@ -75,8 +79,10 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth ->
                     auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .requestMatchers("/admin/**").hasAuthority(ADP_ROLE.ADMIN.getId())
+                        .anyRequest().authenticated()
+            )
+            .exceptionHandling(e -> e.accessDeniedHandler(securityAccessDeniedHandler))
             .addFilterBefore(jwtExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         ;

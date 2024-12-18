@@ -34,16 +34,24 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/login/**")
                 .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
-//                .allowedHeaders("*")
                 .allowedMethods("OPTIONS", "POST", "GET")
+                .allowCredentials(true)
+                .maxAge(30 * 60)
         ;
 
         registry.addMapping("/comn/**")
                 .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
-//                .allowedHeaders("Authorization", "Content-Type")
                 .exposedHeaders("Custom-Header")
                 .allowedMethods("*")
+                .allowCredentials(true)
+                .maxAge(30 * 60)
         ;
 
+        registry.addMapping("/admin/**")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
+                .allowedMethods("*")
+                .allowCredentials(true)
+                .maxAge(30 * 60)
+        ;
     }
 }

@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -365,41 +363,5 @@ public class ComnService {
         }
     }
 
-    public void addExceptionHst(Exception e, HttpServletRequest request) {
-        try {
-            String uri = request.getRequestURI();
-            String exception = e.getClass().getSimpleName();
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            String msg = sw.toString();
-            if(msg.length() > 4000){
-                msg = msg.substring(0, 4000);
-            }
 
-            Tmap map = new Tmap();
-            map.put("uri", uri);
-            map.put("exception", exception);
-            map.put("msg", msg);
-
-            Enumeration<String> params = request.getParameterNames();
-            List<String> values = new ArrayList<>();
-            while(params.hasMoreElements()){
-                String name = params.nextElement();
-                values.add(name + ":" + request.getParameter(name));
-            }
-
-            String paramStr = Utilities.listToSeparatedString(values, ",");
-            if(paramStr.length() > 4000){
-                paramStr = paramStr.substring(0, 4000);
-            }
-            map.put("params", paramStr);
-
-            dao.insertExceptionHst(map);
-            log.error("exception occured ===================");
-            log.error("=>", e);
-            log.error("=====================================");
-        } catch (Exception e1){
-            log.error("addExceptionHst error => ", e1);
-        }
-    }
 }

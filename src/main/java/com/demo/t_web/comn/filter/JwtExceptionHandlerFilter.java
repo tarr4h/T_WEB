@@ -1,20 +1,18 @@
 package com.demo.t_web.comn.filter;
 
+import com.demo.t_web.comn.enums.ErrorType;
 import com.demo.t_web.comn.exception.JwtValidateException;
-import com.demo.t_web.program.comn.service.ComnService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.demo.t_web.comn.util.Utilities;
+import com.demo.t_web.program.sys.service.ExceptionService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <pre>
@@ -28,13 +26,12 @@ import java.util.Map;
  * @date : 12/14/24
  */
 @Component
-@Slf4j
 public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
 
-    private final ComnService comnService;
+    private final ExceptionService exceptionService;
 
-    public JwtExceptionHandlerFilter(ComnService comnService) {
-        this.comnService = comnService;
+    public JwtExceptionHandlerFilter(ExceptionService exceptionService) {
+        this.exceptionService = exceptionService;
     }
 
     @Override
@@ -47,18 +44,7 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
     }
 
     public void handleError(HttpServletRequest request, HttpServletResponse response, Exception ex){
-        response.setStatus(491);
-        response.setContentType("application/json;charset=utf-8");
-        comnService.addExceptionHst(ex, request);
-        try {
-            Map<String, String> obj = new HashMap<>();
-            obj.put("errorType", "JWT_ERROR");
-            obj.put("msg", ex.getMessage());
-            String json = new ObjectMapper().writeValueAsString(obj);
-            response.getWriter().write(json);
-            response.getWriter().flush();
-        } catch (Exception e){
-            log.error("jwt exception handler ex : ", e);
-        }
+        exceptionService.addExceptionHst(ex, request);
+        Utilities.sendHandleError(response, ErrorType.JWT_ERR, ex);
     }
 }

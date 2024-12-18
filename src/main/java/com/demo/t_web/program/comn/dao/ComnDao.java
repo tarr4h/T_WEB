@@ -67,6 +67,4 @@ public interface ComnDao {
     int insertDuplicateLocationData(Tmap d);
 
     int checkIsDuplicateInserted(String string);
-
-    int insertExceptionHst(Tmap map);
 }

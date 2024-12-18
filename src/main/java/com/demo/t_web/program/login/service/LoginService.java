@@ -1,14 +1,15 @@
 package com.demo.t_web.program.login.service;
 
 import com.demo.t_web.comn.util.JwtUtil;
+import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.login.model.User;
-import com.demo.t_web.program.login.model.UserRoles;
 import com.demo.t_web.program.login.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -33,19 +34,20 @@ public class LoginService {
 
     public Object login(User user) {
         log.debug("login run ---------------");
-//        user.setRole(ROLE.USER);
-        userRepository.save(user);
-        long count = userRepository.count();
+//        user.addRoles(ADP_ROLE.getRoles(ADP_ROLE.ADMIN, ADP_ROLE.USER));
+//        user.addRoles(ADP_ROLE.getRoles(ADP_ROLE.USER));
+//        userRepository.save(user);
+
         Optional<User> findUser = userRepository.findById(user.getId());
-        log.debug("--- count = ? {}", count);
-
-        List<UserRoles> roles = findUser.get().getRoles();
-        for(UserRoles role : roles) {
-            log.debug("role : {}", role.getRoleName());
+        boolean loginBool = false;
+        if (findUser.isPresent()) {
+            loginBool = true;
+            String token = jwtUtil.generateToken(findUser.get());
+            Utilities.addCookie("jwt", token);
         }
-
-        String token = jwtUtil.generateToken(findUser.get());
-        return token;
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", loginBool);
+        return result;
     }
 
     public User selectUser(String userId){

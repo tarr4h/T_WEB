@@ -1,6 +1,6 @@
-package com.demo.t_web.program.comn.controller;
+package com.demo.t_web.program.sys.controller;
 
-import com.demo.t_web.program.comn.service.ComnService;
+import com.demo.t_web.program.sys.service.ExceptionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * <pre>
- * com.demo.t_web.program.comn.controller.ExceptionController
+ * com.demo.t_web.program.sys.controller.ExceptionController
  *   - ExceptionController.java
  * </pre>
  *
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionController {
 
     @Autowired
-    ComnService service;
+    ExceptionService service;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> exception(Exception e, HttpServletRequest request, HttpServletResponse response) {

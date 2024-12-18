@@ -255,16 +255,4 @@
             ,   now()
         )
     </insert>
-
-    <insert id="insertExceptionHst">
-        insert into exception_hst
-        (uri, exception, msg, params, reg_dt)
-        values(
-               #{uri}
-            ,   #{exception}
-            ,   #{msg}
-            ,   #{params}
-            ,   now()
-        )
-    </insert>
 </mapper>

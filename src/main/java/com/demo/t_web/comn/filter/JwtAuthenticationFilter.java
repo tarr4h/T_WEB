@@ -3,15 +3,16 @@ package com.demo.t_web.comn.filter;
 import com.demo.t_web.comn.enums.JwtEnum;
 import com.demo.t_web.comn.exception.JwtValidateException;
 import com.demo.t_web.comn.util.JwtUtil;
+import com.demo.t_web.comn.util.Utilities;
 import com.demo.t_web.program.login.service.LoginService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -43,26 +44,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String requestHeader = request.getHeader(JwtEnum.HEADER_STRING.getValue());
 
         String userId = null;
         String jwtToken = null;
 
-        if(requestHeader != null && requestHeader.startsWith(JwtEnum.HEADER_PRE.getValue())){
-            jwtToken = requestHeader.substring(7);
+        // use Cookie
+        Cookie cookie = Utilities.getCookie(request, "jwt");
+        if(cookie != null){
+            jwtToken = cookie.getValue();
 
             try {
                 userId = jwtUtil.extractUsername(jwtToken);
             } catch (IllegalArgumentException e) {
-                throw new JwtValidateException("NO SUITABLE TOKEN", e);
+                throw new JwtValidateException(JwtEnum.NOT_SUITABLE_TOKEN.getValue(), e);
             } catch (ExpiredJwtException e) {
-                throw new JwtValidateException("JWT TOKEN EXPIRED", e);
+                throw new JwtValidateException(JwtEnum.JWT_TOKEN_EXPIRED.getValue(), e);
             } catch (Exception e){
-                log.error("jwt exception", e);
+                log.error(JwtEnum.JWT_EXCEPTION.getValue(), e);
             }
         } else {
-            throw new JwtValidateException("NO TOKEN IN HEADER");
+            throw new JwtValidateException(JwtEnum.JWT_TOKEN_NOT_FOUND.getValue());
         }
+
+//        header 통해 token 전송 시
+//        final String requestHeader = request.getHeader(JwtEnum.HEADER_STRING.getValue());
+//        if(requestHeader != null && requestHeader.startsWith(JwtEnum.HEADER_PRE.getValue())){
+//            jwtToken = requestHeader.substring(7);
+//
+//            try {
+//                userId = jwtUtil.extractUsername(jwtToken);
+//            } catch (IllegalArgumentException e) {
+//                throw new JwtValidateException(JwtEnum.NOT_SUITABLE_TOKEN.getValue(), e);
+//            } catch (ExpiredJwtException e) {
+//                throw new JwtValidateException(JwtEnum.JWT_TOKEN_EXPIRED.getValue(), e);
+//            } catch (Exception e){
+//                log.error(JwtEnum.JWT_EXCEPTION.getValue(), e);
+//            }
+//        } else {
+//            throw new JwtValidateException(JwtEnum.JWT_TOKEN_NOT_FOUND.getValue());
+//        }
 
         if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = loginService.selectUser(userId);
@@ -70,10 +90,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(jwtUtil.validateToken(jwtToken, userDetails)){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                log.debug("authorities = {}", userDetails.getAuthorities().size());
-                for(GrantedAuthority grantedAuthority : userDetails.getAuthorities()){
-                    log.debug("authority = {}", grantedAuthority.getAuthority());
-                }
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

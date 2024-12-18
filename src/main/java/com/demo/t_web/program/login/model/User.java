@@ -1,7 +1,9 @@
 package com.demo.t_web.program.login.model;
 
+import com.demo.t_web.program.login.enums.ADP_ROLE;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +31,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
+@Slf4j
 public class User implements UserDetails {
 
     @Id
@@ -56,8 +59,8 @@ public class User implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginDt;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    private List<UserRoles> roles = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserRole> roles = new ArrayList<>();
 
     @Transient
     private boolean loginYn;
@@ -100,5 +103,19 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+//    public void setRoles(List<UserRole> roles) {
+//        roles.forEach(role -> role.setUser(this));
+//        this.roles = roles;
+//    }
+
+    public void addRole(String roleId, String roleName){
+        if(this.roles.stream().noneMatch(userRole -> userRole.getId().getRoleId().equals(roleId)))
+            this.roles.add(new UserRole(this, roleId, roleName));
+    }
+
+    public void addRoles(List<ADP_ROLE> ADPRoles){
+        ADPRoles.forEach(ADPRole -> addRole(ADPRole.getId(), ADPRole.getName()));
     }
 }

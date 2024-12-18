@@ -1,5 +1,6 @@
 package com.demo.t_web.comn.util;
 
+import com.demo.t_web.comn.enums.ErrorType;
 import com.demo.t_web.comn.model.BaseVo;
 import com.demo.t_web.comn.model.MapSearch;
 import com.demo.t_web.comn.model.Tmap;
@@ -8,7 +9,9 @@ import com.demo.t_web.program.comn.model.NvSearch;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -405,4 +408,60 @@ public class Utilities {
         return sb.toString();
     }
 
+    public static void sendHandleError(HttpServletResponse response, ErrorType errorType, String msg){
+        response.setStatus(errorType.getCode());
+        response.setContentType(MediaType.APPLICATION_JSON.toString());
+        try {
+            Map<String, String> obj = new HashMap<>();
+            obj.put("errorType", errorType.getType());
+            obj.put("msg", msg);
+            obj.put("title", errorType.getTitle());
+
+            String json = new ObjectMapper().writeValueAsString(obj);
+            response.getWriter().write(json);
+            response.getWriter().flush();
+        } catch (Exception e){
+            log.error("handle exception error : ", e);
+        }
+    }
+
+    public static void sendHandleError(HttpServletResponse response, ErrorType errorType, Exception ex){
+        sendHandleError(response, errorType, ex.getMessage());
+    }
+
+    public static void sendHandleError(HttpServletResponse response, ErrorType errorType){
+        sendHandleError(response, errorType, errorType.getMsg());
+    }
+
+    public static HttpServletResponse getResponse(){
+        ServletRequestAttributes container = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if(container == null){
+            throw new NullPointerException("연결이 종료되었습니다.");
+        }
+        return container.getResponse();
+    }
+
+    public static Cookie getCookie(HttpServletRequest request, String name){
+        Cookie[] cookies = request.getCookies();
+        if(cookies == null){
+            return null;
+        }
+        Optional<Cookie> findCookie = Arrays.stream(cookies)
+                                        .filter(cookie -> cookie.getName().equals(name))
+                                        .findAny();
+        return findCookie.orElse(null);
+    }
+
+    public static void addCookie(String name, String value){
+        ResponseCookie jwtCookie = ResponseCookie.from(name, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(30 * 60)
+                .build();
+
+        HttpServletResponse response = Utilities.getResponse();
+        response.addHeader("Set-Cookie", jwtCookie.toString());
+    }
 }

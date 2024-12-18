@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 @Configuration("datasourceConfig")
 @MapperScan(value = "com.demo.t_web.program.comn", sqlSessionFactoryRef = "SqlSessionFactory")
 @Slf4j
-public class DataSourceConfig extends DataSourceUtil{
+public class DataSourceConfig extends DataSourceUtil {
 
     @Bean(name = "dataSource")
     public DataSource DataSource() {

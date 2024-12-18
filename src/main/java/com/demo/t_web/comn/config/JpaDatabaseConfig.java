@@ -1,5 +1,6 @@
 package com.demo.t_web.comn.config;
 
+
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,7 @@ import java.util.Properties;
 @EnableJpaRepositories(
         basePackages = "com.demo.t_web"
 )
-public class JpaDatabaseConfig extends DataSourceUtil{
+public class JpaDatabaseConfig extends DataSourceUtil {
 
     @Bean(name = "jpaDataSource")
     public DataSource dataSource(){
@@ -53,6 +54,7 @@ public class JpaDatabaseConfig extends DataSourceUtil{
         prop.setProperty("hibernate.hbm2ddl.auto", "update");
         prop.setProperty("hibernate.show_sql", "true");
         prop.setProperty("hibernate.format_sql", "true");
+        prop.setProperty("hibernate.highlight_sql", "true");
         prop.setProperty("hibernate.use_sql_comments", "true");
         prop.setProperty("hibernate.jdbc.batch_size", "10");
         em.setJpaProperties(prop);

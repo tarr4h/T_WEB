@@ -2,6 +2,7 @@ package com.demo.t_web.program.login.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -23,7 +24,8 @@ import java.util.Date;
 @Table(name = "adp_user_roles")
 @Getter
 @Setter
-public class UserRoles implements GrantedAuthority {
+@NoArgsConstructor
+public class UserRole implements GrantedAuthority {
 
     @EmbeddedId
     private RoleId id;
@@ -35,8 +37,8 @@ public class UserRoles implements GrantedAuthority {
     @Temporal(TemporalType.TIMESTAMP)
     private Date regDt;
 
-    @MapsId("userId")
     @ManyToOne
+    @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -55,10 +57,27 @@ public class UserRoles implements GrantedAuthority {
     @Embeddable
     @Getter
     @Setter
+    @NoArgsConstructor
     public static class RoleId implements Serializable {
+
+        public RoleId(String roleId, String userId) {
+            this.roleId = roleId;
+            this.userId = userId;
+        }
+
         @Column(name = "role_id")
         private String roleId;
         @Column(name = "user_id")
         private String userId;
+    }
+
+    public void setId(String roleId, String userId){
+        this.id = new RoleId(roleId, userId);
+    }
+
+    public UserRole(User user, String roleId, String roleName){
+        setId(roleId, user.getId());
+        this.roleName = roleName;
+        this.user = user;
     }
 }
