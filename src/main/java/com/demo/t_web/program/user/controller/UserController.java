@@ -1,8 +1,9 @@
-package com.demo.t_web.program.login.controller;
+package com.demo.t_web.program.user.controller;
 
+import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.comn.util.Utilities;
-import com.demo.t_web.program.login.model.User;
-import com.demo.t_web.program.login.service.LoginService;
+import com.demo.t_web.program.user.model.User;
+import com.demo.t_web.program.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,22 +24,27 @@ import java.util.Map;
  * @date : 12/12/24
  */
 @Controller
-@RequestMapping("/login")
+@RequestMapping("/user")
 @Slf4j
-public class LoginController {
+public class UserController {
 
     @Autowired
-    LoginService service;
+    UserService service;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    public ResponseEntity<Tmap> login(@RequestBody User user) {
         log.debug("login request");
-        return Utilities.retValue(service.login(user));
+        return ResponseEntity.ok(service.login(user));
+    }
+
+    @PostMapping("/selectUser")
+    public ResponseEntity<?> selectUser() {
+        return Utilities.retValue(service.selectUser());
     }
 
     @GetMapping("/jwtTest")
-    public ResponseEntity<?> jwtTest(@RequestParam Map<String, String> params) {
+    public ResponseEntity<String> jwtTest(@RequestParam Map<String, String> params) {
         log.debug("jwt test- --- - - -- - - - -- ");
-        return Utilities.retValue("123");
+        return ResponseEntity.accepted().body("asdfase");
     }
 }

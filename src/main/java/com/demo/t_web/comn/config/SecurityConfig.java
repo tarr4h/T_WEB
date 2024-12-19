@@ -4,8 +4,8 @@ import com.demo.t_web.comn.filter.JwtAuthenticationFilter;
 import com.demo.t_web.comn.filter.JwtExceptionHandlerFilter;
 import com.demo.t_web.comn.handler.SecurityAccessDeniedHandler;
 import com.demo.t_web.comn.util.JwtUtil;
-import com.demo.t_web.program.login.enums.ADP_ROLE;
-import com.demo.t_web.program.login.service.LoginService;
+import com.demo.t_web.program.user.enums.ADP_ROLE;
+import com.demo.t_web.program.user.service.UserService;
 import com.demo.t_web.program.sys.service.ExceptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -35,10 +35,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] uris = new String[]{"/comn/**", "/awsMas", "/login/login"};
+    private final String[] uris = new String[]{"/comn/**", "/awsMas/**", "/user/login"};
 
     @Autowired
-    LoginService loginService;
+    UserService userService;
 
     @Autowired
     ExceptionService exceptionService;
@@ -50,7 +50,7 @@ public class SecurityConfig {
     private SecurityAccessDeniedHandler securityAccessDeniedHandler;
 
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(loginService, jwtUtil);
+        return new JwtAuthenticationFilter(userService, jwtUtil);
     }
 
     public JwtExceptionHandlerFilter jwtExceptionHandlerFilter(){

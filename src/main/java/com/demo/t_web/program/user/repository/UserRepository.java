@@ -1,6 +1,6 @@
-package com.demo.t_web.program.login.repository;
+package com.demo.t_web.program.user.repository;
 
-import com.demo.t_web.program.login.model.User;
+import com.demo.t_web.program.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

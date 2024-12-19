@@ -1,15 +1,16 @@
-package com.demo.t_web.program.login.service;
+package com.demo.t_web.program.user.service;
 
+import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.comn.util.JwtUtil;
 import com.demo.t_web.comn.util.Utilities;
-import com.demo.t_web.program.login.model.User;
-import com.demo.t_web.program.login.repository.UserRepository;
+import com.demo.t_web.program.user.model.User;
+import com.demo.t_web.program.user.model.UserDto;
+import com.demo.t_web.program.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -26,13 +27,13 @@ import java.util.Optional;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class LoginService {
+public class UserService {
 
     private UserRepository userRepository;
 
     private JwtUtil jwtUtil;
 
-    public Object login(User user) {
+    public Tmap login(User user) {
         log.debug("login run ---------------");
 //        user.addRoles(ADP_ROLE.getRoles(ADP_ROLE.ADMIN, ADP_ROLE.USER));
 //        user.addRoles(ADP_ROLE.getRoles(ADP_ROLE.USER));
@@ -41,13 +42,22 @@ public class LoginService {
         Optional<User> findUser = userRepository.findById(user.getId());
         boolean loginBool = false;
         if (findUser.isPresent()) {
+            user = findUser.get();
             loginBool = true;
-            String token = jwtUtil.generateToken(findUser.get());
+            String token = jwtUtil.generateToken(user);
             Utilities.addCookie("jwt", token);
+
+            user.setLastLoginDt(new Date());
         }
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", loginBool);
-        return result;
+        return new Tmap().direct("success", loginBool);
+    }
+
+    public UserDto selectUser(){
+        String userId = jwtUtil.getUserIdFromToken();
+        log.debug("userId ? {}", userId);
+        UserDto user = selectUser(userId).asUser();
+        log.debug("user ? {}", user.getId());
+        return user;
     }
 
     public User selectUser(String userId){

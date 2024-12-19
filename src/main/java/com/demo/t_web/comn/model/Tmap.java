@@ -49,6 +49,11 @@ public class Tmap extends LinkedHashMap<String, Object> {
         }
     }
 
+    public Tmap direct(String key, Object value){
+        this.put(key, value);
+        return this;
+    }
+
     public String getString(String key) {
         Object value = super.get(key);
         if(value instanceof String){

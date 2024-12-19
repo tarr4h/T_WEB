@@ -1,9 +1,9 @@
 package com.demo.t_web.program.comn.model;
 
-import com.demo.t_web.comn.model.BaseVo;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -19,7 +19,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class ExcludeCategory extends BaseVo {
+public class ExcludeCategory implements Serializable {
 
     private String categoryName;
     private String relateMcid;

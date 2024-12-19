@@ -1,9 +1,13 @@
 package com.demo.t_web.comn.util;
 
+import com.demo.t_web.comn.enums.JwtEnum;
+import com.demo.t_web.comn.exception.JwtValidateException;
 import com.demo.t_web.comn.model.JwtProperties;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,6 +42,46 @@ import java.util.stream.Collectors;
 public class JwtUtil {
 
     private final JwtProperties jwtProperties;
+
+    public String getUserIdFromToken() {
+        String userId = null;
+
+        // use Cookie
+        Cookie cookie = Utilities.getCookie(Utilities.getRequest(), "jwt");
+        if(cookie != null){
+            try {
+                userId = extractUsername(cookie.getValue());
+            } catch (IllegalArgumentException e) {
+                throw new JwtValidateException(JwtEnum.NOT_SUITABLE_TOKEN.getValue(), e);
+            } catch (ExpiredJwtException e) {
+                throw new JwtValidateException(JwtEnum.JWT_TOKEN_EXPIRED.getValue(), e);
+            } catch (Exception e){
+                log.error(JwtEnum.JWT_EXCEPTION.getValue(), e);
+            }
+        } else {
+            throw new JwtValidateException(JwtEnum.JWT_TOKEN_NOT_FOUND.getValue());
+        }
+
+//        header 통해 token 전송 시
+//        final String requestHeader = request.getHeader(JwtEnum.HEADER_STRING.getValue());
+//        if(requestHeader != null && requestHeader.startsWith(JwtEnum.HEADER_PRE.getValue())){
+//            jwtToken = requestHeader.substring(7);
+//
+//            try {
+//                userId = jwtUtil.extractUsername(jwtToken);
+//            } catch (IllegalArgumentException e) {
+//                throw new JwtValidateException(JwtEnum.NOT_SUITABLE_TOKEN.getValue(), e);
+//            } catch (ExpiredJwtException e) {
+//                throw new JwtValidateException(JwtEnum.JWT_TOKEN_EXPIRED.getValue(), e);
+//            } catch (Exception e){
+//                log.error(JwtEnum.JWT_EXCEPTION.getValue(), e);
+//            }
+//        } else {
+//            throw new JwtValidateException(JwtEnum.JWT_TOKEN_NOT_FOUND.getValue());
+//        }
+
+        return userId;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -74,7 +118,7 @@ public class JwtUtil {
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 10)))
+                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 30))) //30분
                 .signWith(Keys.hmacShaKeyFor(jwtProperties.getSignKey().getBytes(StandardCharsets.UTF_8)))
                 .compact();
 

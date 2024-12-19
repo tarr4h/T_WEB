@@ -1,11 +1,11 @@
 package com.demo.t_web.comn.util;
 
 import com.demo.t_web.comn.enums.ErrorType;
-import com.demo.t_web.comn.model.BaseVo;
 import com.demo.t_web.comn.model.MapSearch;
 import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.program.comn.model.DrivingVo;
 import com.demo.t_web.program.comn.model.NvSearch;
+import com.demo.t_web.program.sys.model.BaseVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -433,12 +433,21 @@ public class Utilities {
         sendHandleError(response, errorType, errorType.getMsg());
     }
 
-    public static HttpServletResponse getResponse(){
+    public static ServletRequestAttributes getContainer(){
         ServletRequestAttributes container = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if(container == null){
             throw new NullPointerException("연결이 종료되었습니다.");
         }
-        return container.getResponse();
+
+        return container;
+    }
+
+    public static HttpServletResponse getResponse(){
+        return getContainer().getResponse();
+    }
+
+    public static HttpServletRequest getRequest(){
+        return getContainer().getRequest();
     }
 
     public static Cookie getCookie(HttpServletRequest request, String name){

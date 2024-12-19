@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +27,7 @@ import java.io.IOException;
  * @date : 12/14/24
  */
 @Component
+@Slf4j
 public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
 
     private final ExceptionService exceptionService;
@@ -40,6 +42,8 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (JwtValidateException e){
             handleError(request, response, e);
+        } catch (Exception e){
+            log.error("error occured = ", e);
         }
     }
 

@@ -25,7 +25,7 @@ function Hamburger(){
             name : 'harry'
         }
 
-        const ret = (await instance.post('/login/login', userTest)).data;
+        const ret = (await instance.post('/user/login', userTest)).data;
         if(ret.errorType){
             openSmallModalCenter(ret.msg, '에러');
         } else {

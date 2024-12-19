@@ -32,7 +32,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/login/**")
+        registry.addMapping("/user/**")
                 .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
                 .allowedMethods("OPTIONS", "POST", "GET")
                 .allowCredentials(true)
@@ -47,11 +47,27 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .maxAge(30 * 60)
         ;
 
+        registry.addMapping("/awsMas/**")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
+                .allowedMethods("*")
+                .allowCredentials(true)
+                .maxAge(30 * 60)
+        ;
+
         registry.addMapping("/admin/**")
                 .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
                 .allowedMethods("*")
                 .allowCredentials(true)
                 .maxAge(30 * 60)
         ;
+
+        registry.addMapping("/menu/**")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
+                .allowedMethods("*")
+                .allowCredentials(true)
+                .maxAge(30 * 60)
+        ;
+
+
     }
 }

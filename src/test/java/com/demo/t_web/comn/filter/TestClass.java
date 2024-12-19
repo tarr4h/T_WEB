@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
 @Slf4j
-public class JwtTest {
+public class TestClass {
 
     @Autowired
     private MockMvc mvc;
@@ -56,7 +56,7 @@ public class JwtTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(map);
 
-        MvcResult loginResult = this.mvc.perform(post("/login/login")
+        MvcResult loginResult = this.mvc.perform(post("/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -84,7 +84,7 @@ public class JwtTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(map);
 
-        MvcResult loginResult = this.mvc.perform(post("/login/login")
+        MvcResult loginResult = this.mvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())

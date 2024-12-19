@@ -1,4 +1,4 @@
-package com.demo.t_web.program.login.enums;
+package com.demo.t_web.program.user.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

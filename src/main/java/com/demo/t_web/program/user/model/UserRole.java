@@ -1,5 +1,6 @@
-package com.demo.t_web.program.login.model;
+package com.demo.t_web.program.user.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,7 @@ public class UserRole implements GrantedAuthority {
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @PrePersist

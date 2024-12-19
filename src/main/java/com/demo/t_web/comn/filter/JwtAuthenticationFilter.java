@@ -1,16 +1,12 @@
 package com.demo.t_web.comn.filter;
 
-import com.demo.t_web.comn.enums.JwtEnum;
-import com.demo.t_web.comn.exception.JwtValidateException;
 import com.demo.t_web.comn.util.JwtUtil;
-import com.demo.t_web.comn.util.Utilities;
-import com.demo.t_web.program.login.service.LoginService;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.demo.t_web.program.user.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,67 +30,31 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final LoginService loginService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    public JwtAuthenticationFilter(LoginService loginService, JwtUtil jwtUtil) {
-        this.loginService = loginService;
+    public JwtAuthenticationFilter(UserService userService, JwtUtil jwtUtil) {
+        this.userService = userService;
         this.jwtUtil = jwtUtil;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        String userId = null;
-        String jwtToken = null;
-
-        // use Cookie
-        Cookie cookie = Utilities.getCookie(request, "jwt");
-        if(cookie != null){
-            jwtToken = cookie.getValue();
-
-            try {
-                userId = jwtUtil.extractUsername(jwtToken);
-            } catch (IllegalArgumentException e) {
-                throw new JwtValidateException(JwtEnum.NOT_SUITABLE_TOKEN.getValue(), e);
-            } catch (ExpiredJwtException e) {
-                throw new JwtValidateException(JwtEnum.JWT_TOKEN_EXPIRED.getValue(), e);
-            } catch (Exception e){
-                log.error(JwtEnum.JWT_EXCEPTION.getValue(), e);
-            }
-        } else {
-            throw new JwtValidateException(JwtEnum.JWT_TOKEN_NOT_FOUND.getValue());
-        }
-
-//        header 통해 token 전송 시
-//        final String requestHeader = request.getHeader(JwtEnum.HEADER_STRING.getValue());
-//        if(requestHeader != null && requestHeader.startsWith(JwtEnum.HEADER_PRE.getValue())){
-//            jwtToken = requestHeader.substring(7);
-//
-//            try {
-//                userId = jwtUtil.extractUsername(jwtToken);
-//            } catch (IllegalArgumentException e) {
-//                throw new JwtValidateException(JwtEnum.NOT_SUITABLE_TOKEN.getValue(), e);
-//            } catch (ExpiredJwtException e) {
-//                throw new JwtValidateException(JwtEnum.JWT_TOKEN_EXPIRED.getValue(), e);
-//            } catch (Exception e){
-//                log.error(JwtEnum.JWT_EXCEPTION.getValue(), e);
-//            }
-//        } else {
-//            throw new JwtValidateException(JwtEnum.JWT_TOKEN_NOT_FOUND.getValue());
-//        }
+    protected void doFilterInternal(@NonNull HttpServletRequest request
+            , @NonNull HttpServletResponse response
+            , @NonNull FilterChain filterChain) throws ServletException, IOException {
+        String userId = jwtUtil.getUserIdFromToken();
 
         if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = loginService.selectUser(userId);
+            UserDetails userDetails = userService.selectUser(userId);
 
-            if(jwtUtil.validateToken(jwtToken, userDetails)){
+//            if(jwtUtil.validateToken(jwtToken, userDetails)){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
+//            }
         }
 
         filterChain.doFilter(request, response);
