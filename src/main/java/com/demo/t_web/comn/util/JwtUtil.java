@@ -43,11 +43,19 @@ public class JwtUtil {
 
     private final JwtProperties jwtProperties;
 
+    public Cookie getJwtCookie() {
+        return Utilities.getCookie("jwt");
+    }
+
+    public boolean checkTokenExist(){
+        return getJwtCookie() != null;
+    }
+
     public String getUserIdFromToken() {
         String userId = null;
 
         // use Cookie
-        Cookie cookie = Utilities.getCookie(Utilities.getRequest(), "jwt");
+        Cookie cookie = getJwtCookie();
         if(cookie != null){
             try {
                 userId = extractUsername(cookie.getValue());
@@ -56,7 +64,7 @@ public class JwtUtil {
             } catch (ExpiredJwtException e) {
                 throw new JwtValidateException(JwtEnum.JWT_TOKEN_EXPIRED.getValue(), e);
             } catch (Exception e){
-                log.error(JwtEnum.JWT_EXCEPTION.getValue(), e);
+                throw new JwtValidateException(JwtEnum.JWT_EXCEPTION.getValue(), e);
             }
         } else {
             throw new JwtValidateException(JwtEnum.JWT_TOKEN_NOT_FOUND.getValue());
@@ -102,6 +110,10 @@ public class JwtUtil {
                 .parseClaimsJws(token).getBody();
     }
 
+    public Boolean isTokenExpired(){
+        return isTokenExpired(getJwtCookie().getValue());
+    }
+
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -119,6 +131,7 @@ public class JwtUtil {
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 30))) //30분
+//                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 10))) //10초
                 .signWith(Keys.hmacShaKeyFor(jwtProperties.getSignKey().getBytes(StandardCharsets.UTF_8)))
                 .compact();
 

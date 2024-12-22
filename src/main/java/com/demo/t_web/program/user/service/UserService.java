@@ -3,6 +3,7 @@ package com.demo.t_web.program.user.service;
 import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.comn.util.JwtUtil;
 import com.demo.t_web.comn.util.Utilities;
+import com.demo.t_web.program.user.enums.ADP_ROLE;
 import com.demo.t_web.program.user.model.User;
 import com.demo.t_web.program.user.model.UserDto;
 import com.demo.t_web.program.user.repository.UserRepository;
@@ -31,14 +32,17 @@ public class UserService {
 
     private UserRepository userRepository;
 
+    private MenuService menuService;
+
     private JwtUtil jwtUtil;
 
-    public Tmap login(User user) {
-        log.debug("login run ---------------");
-//        user.addRoles(ADP_ROLE.getRoles(ADP_ROLE.ADMIN, ADP_ROLE.USER));
-//        user.addRoles(ADP_ROLE.getRoles(ADP_ROLE.USER));
-//        userRepository.save(user);
+    public Tmap join(User user){
+        user.addRoles(ADP_ROLE.getRoles(ADP_ROLE.ADMIN, ADP_ROLE.USER));
+        userRepository.save(user);
+        return new Tmap().direct("success", true);
+    }
 
+    public Tmap login(User user) {
         Optional<User> findUser = userRepository.findById(user.getId());
         boolean loginBool = false;
         if (findUser.isPresent()) {
@@ -52,15 +56,31 @@ public class UserService {
         return new Tmap().direct("success", loginBool);
     }
 
+    public Tmap logout(){
+        Utilities.deleteCookie("jwt");
+        return new Tmap().direct("success", true);
+    }
+
+    public boolean checkLogin(){
+        boolean bool = false;
+        if(jwtUtil.checkTokenExist()){
+            if(!jwtUtil.isTokenExpired()){
+                bool = true;
+            }
+        }
+        return bool;
+    }
+
     public UserDto selectUser(){
         String userId = jwtUtil.getUserIdFromToken();
-        log.debug("userId ? {}", userId);
-        UserDto user = selectUser(userId).asUser();
-        log.debug("user ? {}", user.getId());
-        return user;
+        User user = selectUser(userId);
+        user.setUserMenu(menuService.selectUserMenuList(user));
+        return user.asUser();
     }
 
     public User selectUser(String userId){
         return userRepository.findById(userId).orElse(null);
     }
+
+
 }

@@ -49,6 +49,7 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
 
     public void handleError(HttpServletRequest request, HttpServletResponse response, Exception ex){
         exceptionService.addExceptionHst(ex, request);
+        Utilities.deleteCookie("jwt");
         Utilities.sendHandleError(response, ErrorType.JWT_ERR, ex);
     }
 }

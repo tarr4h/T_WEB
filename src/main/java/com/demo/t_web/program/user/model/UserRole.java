@@ -1,5 +1,6 @@
 package com.demo.t_web.program.user.model;
 
+import com.demo.t_web.program.sys.model.BaseVo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,7 +9,6 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * <pre>
@@ -26,7 +26,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserRole implements GrantedAuthority {
+public class UserRole extends BaseVo implements GrantedAuthority {
 
     @EmbeddedId
     private RoleId id;
@@ -34,22 +34,11 @@ public class UserRole implements GrantedAuthority {
     @Column(name = "role_name")
     private String roleName;
 
-    @Column(name = "reg_dt")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date regDt;
-
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-
-    @PrePersist
-    public void prePersist(){
-        if(regDt == null){
-            regDt = new Date();
-        }
-    }
 
     @Override
     public String getAuthority() {

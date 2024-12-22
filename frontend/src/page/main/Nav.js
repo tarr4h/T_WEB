@@ -1,17 +1,23 @@
 import logoImg from '../../images/adp_logo.png';
 import Hamburger from "../hamburger/Hamburger";
 import instance from "../../comn/AxiosInterceptor";
+import {useEffect, useState} from "react";
 
 function Nav({setPage}){
 
-    const movePage = async (page) => {
-        await selectUser();
-        setPage(page);
-    }
+    const [menuList, setMenuList] = useState([]);
 
-    const selectUser = async () => {
-        const user = (await instance.post('/user/selectUser')).data;
-        console.log('user : ', user);
+    useEffect(() => {
+        const makeMenu = async () => {
+            const list = (await instance.get('/menu/selectMenuList')).data;
+            setMenuList(list);
+        }
+
+        makeMenu();
+    }, []);
+
+    const movePage = async (page) => {
+        setPage(page);
     }
 
     return (
@@ -21,15 +27,15 @@ function Nav({setPage}){
             </div>
             <div>ADP</div>
             <div>
-                <div onClick={(page) => {movePage('map')}}
-                >
-                    MAP
-                </div>
-                <div onClick={(page) => {movePage('setting')}}
-                     // className={'dpn'}
-                >
-                    SETTING
-                </div>
+                {
+                    menuList.map(menu => (
+                        <div onClick={(page) => {movePage(menu.menuNm.toLowerCase())}}
+                             key={menu.id}
+                        >
+                            {menu.menuNm}
+                        </div>
+                    ))
+                }
             </div>
             <Hamburger/>
         </div>

@@ -450,6 +450,10 @@ public class Utilities {
         return getContainer().getRequest();
     }
 
+    public static Cookie getCookie(String name){
+        return getCookie(Utilities.getRequest(), name);
+    }
+
     public static Cookie getCookie(HttpServletRequest request, String name){
         Cookie[] cookies = request.getCookies();
         if(cookies == null){
@@ -461,13 +465,33 @@ public class Utilities {
         return findCookie.orElse(null);
     }
 
+    public static void deleteCookie(String name){
+        deleteCookie(Utilities.getRequest(), name);
+    }
+
+    public static void deleteCookie(HttpServletRequest request, String name){
+        Cookie cookie = getCookie(request, name);
+        if(cookie != null){
+            ResponseCookie responseCookie = ResponseCookie.from(cookie.getName(), "")
+                    .path("/")
+                    .sameSite("None")
+                    .httpOnly(true)
+                    .secure(true)
+                    .maxAge(0)
+                    .build();
+
+            Utilities.getResponse().addHeader("Set-Cookie", responseCookie.toString());
+        }
+    }
+
     public static void addCookie(String name, String value){
         ResponseCookie jwtCookie = ResponseCookie.from(name, value)
                 .path("/")
                 .sameSite("None")
                 .httpOnly(true)
                 .secure(true)
-                .maxAge(30 * 60)
+                .maxAge(30 * 60) // 30분
+//                .maxAge(10) // 10초
                 .build();
 
         HttpServletResponse response = Utilities.getResponse();

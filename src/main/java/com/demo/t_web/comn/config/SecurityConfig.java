@@ -35,7 +35,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] uris = new String[]{"/comn/**", "/awsMas/**", "/user/login"};
+    private final String[] uris = new String[]{"/comn/**", "/awsMas/**"
+            , "/user/login", "/user/join", "/user/checkLogin"
+            , "/menu/selectMenuList"};
 
     @Autowired
     UserService userService;

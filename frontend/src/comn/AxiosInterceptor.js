@@ -25,18 +25,23 @@ export const setupAxiosInterceptors = (openModal) => {
         },
         (error) =>{
             const data = error.response.data;
-            openModal(data.msg, data.title);
+            if(data.errorType === 'JWT_ERROR'){
+                const onClose = () => window.location.reload();
+                openModal(data.msg, onClose, data.title);
+            } else {
+                openModal(data.msg, null, data.title);
+            }
             return error.response;
         }
     )
 }
 
 export const AxiosInterceptorSetup = () => {
-    const {openSmallModalCenter} = useModal();
+    const {openSmallModalCenterCallback} = useModal();
 
     React.useEffect(() => {
-        setupAxiosInterceptors(openSmallModalCenter);
-    }, [openSmallModalCenter]);
+        setupAxiosInterceptors(openSmallModalCenterCallback);
+    }, [openSmallModalCenterCallback]);
 
     return null;
 }

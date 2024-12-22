@@ -1,6 +1,7 @@
 package com.demo.t_web.comn.filter;
 
 import com.demo.t_web.comn.enums.JwtEnum;
+import com.demo.t_web.program.user.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -43,6 +44,30 @@ public class TestClass {
 
     @Autowired
     private MockMvc mvc;
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void addUser() throws Exception {
+        User user = User.builder()
+                .id("test1")
+                .name("harry")
+                .password("abcd1234")
+                .email("asfelis@naver.com")
+                .phone("01011111111")
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
+
+        MvcResult joinResult = this.mvc.perform(post("/user/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        log.debug("response = {}", joinResult.getResponse().getContentAsString());
+    }
 
     @Test
     @Transactional

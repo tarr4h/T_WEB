@@ -2,6 +2,7 @@ package com.demo.t_web.program.sys.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Date;
  * @date : 12/19/24
  */
 @MappedSuperclass
-public class BaseVo {
+public class BaseVo implements Serializable {
 
     @Column(name = "reg_dt")
     @Temporal(TemporalType.TIMESTAMP)

@@ -31,10 +31,24 @@ public class UserController {
     @Autowired
     UserService service;
 
+    @PostMapping("/join")
+    public ResponseEntity<Tmap> join(@RequestBody User user) {
+        return ResponseEntity.ok(service.join(user));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Tmap> login(@RequestBody User user) {
-        log.debug("login request");
         return ResponseEntity.ok(service.login(user));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Tmap> logout() {
+        return ResponseEntity.ok(service.logout());
+    }
+
+    @GetMapping("/checkLogin")
+    public ResponseEntity<Boolean> checkLogin(){
+        return ResponseEntity.ok(service.checkLogin());
     }
 
     @PostMapping("/selectUser")

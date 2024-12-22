@@ -1,5 +1,7 @@
 package com.demo.t_web.program.user.model;
 
+import com.demo.t_web.program.sys.model.BaseVo;
+import com.demo.t_web.program.sys.model.Menu;
 import com.demo.t_web.program.user.enums.ADP_ROLE;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -33,7 +35,7 @@ import java.util.List;
 @Getter
 @Setter
 @Slf4j
-public class User implements UserDetails{
+public class User extends BaseVo implements UserDetails{
 
     @Id
     @Column(name = "id", length = 20, nullable = false)
@@ -66,16 +68,20 @@ public class User implements UserDetails{
     @Transient
     private String token;
 
-    @PrePersist
-    public void prePersist(){
-        if(joinDt == null){
-            joinDt = new Date();
-        }
-    }
+    @Transient
+    private List<Menu> userMenu = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<UserRole> roles = new ArrayList<>();
+
+    @Override
+    public void prePersist(){
+        super.prePersist();
+        if(joinDt == null){
+            joinDt = new Date();
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -108,12 +114,15 @@ public class User implements UserDetails{
     }
 
     public void addRole(String roleId, String roleName){
+        if(this.roles == null){
+            this.roles = new ArrayList<>();
+        }
         if(this.roles.stream().noneMatch(userRole -> userRole.getId().getRoleId().equals(roleId)))
             this.roles.add(new UserRole(this, roleId, roleName));
     }
 
-    public void addRoles(List<ADP_ROLE> ADPRoles){
-        ADPRoles.forEach(ADPRole -> addRole(ADPRole.getId(), ADPRole.getName()));
+    public void addRoles(List<ADP_ROLE> adpRoles){
+        adpRoles.forEach(role -> addRole(role.getId(), role.getName()));
     }
 
     public UserDto asUser(){
@@ -125,6 +134,7 @@ public class User implements UserDetails{
                 .joinDt(this.joinDt)
                 .lastLoginDt(this.lastLoginDt)
                 .roles(this.roles)
+                .userMenu(userMenu)
                 .build();
     }
 

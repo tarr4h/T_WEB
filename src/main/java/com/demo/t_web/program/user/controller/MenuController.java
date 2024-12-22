@@ -4,10 +4,7 @@ import com.demo.t_web.program.sys.model.Menu;
 import com.demo.t_web.program.user.service.MenuService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <pre>
@@ -32,4 +29,8 @@ public class MenuController {
         return ResponseEntity.ok(service.addMenu(menu));
     }
 
+    @GetMapping("/selectMenuList")
+    public ResponseEntity<?> selectMenuList() {
+        return ResponseEntity.ok(service.selectMenuList());
+    }
 }
