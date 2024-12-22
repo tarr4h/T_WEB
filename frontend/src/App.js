@@ -8,6 +8,7 @@ import './css/Comn.css';
 import {ModalProvider} from "./page/modal/ModalContext";
 import {AxiosInterceptorSetup} from "./comn/AxiosInterceptor";
 import Modal from "./page/modal/Modal";
+import ErrorPage from "./page/main/ErrorPage";
 
 function App() {
 
@@ -17,8 +18,8 @@ function App() {
           <Modal/>
           <Router>
             <Routes>
-              {/*<Route path="/" element={<Main/>}/>*/}
               <Route path={process.env.PUBLIC_URL + "/"} element={<Main/>}/>
+              <Route path="*" element={<ErrorPage/>}/>
             </Routes>
           </Router>
       </ModalProvider>
