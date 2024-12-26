@@ -68,6 +68,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .maxAge(30 * 60)
         ;
 
-
+        registry.addMapping("/ai/**")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
+                .allowedMethods("*")
+                .allowCredentials(true)
+                .maxAge(30 * 60)
+        ;
     }
 }
