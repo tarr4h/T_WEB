@@ -46,3 +46,6 @@ dist/*
 .fastRequest/
 
 application.yml
+
+cert.pem
+key.pem
