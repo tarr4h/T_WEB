@@ -74,5 +74,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(30 * 60)
         ;
+
+        registry.addMapping("/memo/**")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001")
+                .allowedMethods("*")
+                .allowCredentials(true)
+                .maxAge(30 * 60)
+        ;
     }
 }

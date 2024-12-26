@@ -39,6 +39,7 @@ public class SecurityConfig {
             , "/user/login", "/user/join", "/user/checkLogin"
             , "/menu/selectMenuList"
             , "/ai/**"
+            , "/memo/**"
     };
 
     @Autowired
