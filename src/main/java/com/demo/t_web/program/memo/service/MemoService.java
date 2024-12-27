@@ -3,8 +3,11 @@ package com.demo.t_web.program.memo.service;
 import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.program.memo.model.AskMaker;
 import com.demo.t_web.program.memo.model.Memo;
+import com.demo.t_web.program.memo.model.MemoChat;
+import com.demo.t_web.program.memo.repository.MemoChatRepository;
 import com.demo.t_web.program.memo.repository.MemoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -14,6 +17,10 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +47,9 @@ public class MemoService {
     @Autowired
     MemoRepository memoRepository;
 
+    @Autowired
+    MemoChatRepository memoChatRepository;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -49,7 +59,6 @@ public class MemoService {
         this.chatClient = builder.build();
     }
 
-    @SuppressWarnings("unchecked")
     public Object search(Map<String, Object> param) {
         String userInput = (String) param.get("userInput");
 
@@ -58,26 +67,25 @@ public class MemoService {
                 .build();
         preset.addMemo(userInput);
 
-        log.debug("ask = {}", preset.getAsk());
-        String ready = aiAsk(preset.getAsk());
-        log.debug("ready = {}", ready);
-
-        Map<String, Object> wordsMap = new HashMap<>();
+        String ready = aiAsk(preset.getAsk(), preset);
+        if(ready.contains("json")){
+            ready = ready.replaceAll("```", "").replaceAll("json", "");
+        }
+        log.debug("ask1 = {}", ready);
+        Map<String, List<String>> wordsMap = new HashMap<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
-            wordsMap = mapper.readValue(ready, HashMap.class);
+            wordsMap = mapper.readValue(ready, new TypeReference<Map<String, List<String>>>() {
+            });
         } catch (JsonProcessingException e) {
-            log.error("json error -----");
+            log.error("json error -----", e);
         }
 
-        List<String> words = wordsMap.get("words") == null ? new ArrayList<>() : (List<String>) wordsMap.get("words");
-        List<String> importantWords = wordsMap.get("importantWords") == null ? new ArrayList<>() : (List<String>) wordsMap.get("importantWords");
-
-        log.debug("words = {}", words);
-        log.debug("importantWords = {}", importantWords);
+        List<String> words = wordsMap.get("words") == null ? new ArrayList<>() : wordsMap.get("words");
+        List<String> importantWords = wordsMap.get("importantWords") == null ? new ArrayList<>() : wordsMap.get("importantWords");
 
         List<Memo> searchMemoList = getMemos(words, importantWords);
-        log.debug("searchMemoList = {}", searchMemoList.size());
+        log.debug("memoList = {}", searchMemoList.size());
 
         AskMaker resultset = AskMaker.builder()
                 .askType(2)
@@ -88,11 +96,24 @@ public class MemoService {
                 .toList()
         );
 
-        log.debug("ask = {}", resultset.getAsk());
-        String result = aiAsk(resultset.getAsk());
-        log.debug("result = {}", result);
+        String result = aiAsk(resultset.getAsk(), resultset);
 
-        return new Tmap().direct("memoList", searchMemoList).direct("response", result);
+        MemoChat askChat = MemoChat.builder()
+                .type(1)
+                .content(userInput)
+                .build();
+        MemoChat resChat = MemoChat.builder()
+                .type(2)
+                .content(result)
+                .build();
+        memoChatRepository.save(askChat);
+        memoChatRepository.save(resChat);
+
+        return new Tmap()
+                .direct("success", true)
+                .direct("memoList", searchMemoList)
+                .direct("q", askChat)
+                .direct("r", resChat);
     }
 
     public List<Memo> getMemos(List<String> words, List<String> importantWords) {
@@ -105,8 +126,10 @@ public class MemoService {
 
         words.forEach(w -> {
             titlePredicates.add(cb.like(memoRoot.get("title"), "%" + w + "%"));
+            contentPredicates.add(cb.like(memoRoot.get("content"), "%" + w + "%"));
         });
         importantWords.forEach(w -> {
+            titlePredicates.add(cb.like(memoRoot.get("title"), "%" + w + "%"));
             contentPredicates.add(cb.like(memoRoot.get("content"), "%" + w + "%"));
         });
 
@@ -118,8 +141,13 @@ public class MemoService {
         return em.createQuery(cq).getResultList();
     }
 
-    public String aiAsk(String input){
-        return chatClient.prompt()
+    public String aiAsk(String input, AskMaker am){
+        Message message = new UserMessage(input);
+        SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(am.getPrompt());
+        Message sysMsg = systemPromptTemplate.createMessage();
+
+        Prompt prompt = new Prompt(List.of(message, sysMsg));
+        return chatClient.prompt(prompt)
                 .user(input)
                 .call()
                 .content();
@@ -129,5 +157,9 @@ public class MemoService {
         log.debug("memos = {}, {}", memo.getTitle(), memo.getContent());
         memoRepository.save(memo);
         return new Tmap().direct("success", true);
+    }
+
+    public List<Memo> selectMemoList() {
+        return memoRepository.findAll();
     }
 }

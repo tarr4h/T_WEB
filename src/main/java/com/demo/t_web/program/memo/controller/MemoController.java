@@ -35,4 +35,9 @@ public class MemoController {
     public ResponseEntity<?> add(@RequestBody Memo memo){
         return ResponseEntity.ok().body(service.add(memo));
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> list(){
+        return ResponseEntity.ok().body(service.selectMemoList());
+    }
 }
