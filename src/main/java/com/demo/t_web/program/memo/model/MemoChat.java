@@ -1,7 +1,11 @@
 package com.demo.t_web.program.memo.model;
 
+import com.demo.t_web.program.sys.model.BaseVo;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <pre>
@@ -22,7 +26,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class MemoChat {
+public class MemoChat extends BaseVo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chat_generator")
@@ -34,4 +38,7 @@ public class MemoChat {
 
     @Column(name = "content", length = 1000)
     private String content;
+
+    @Transient
+    public List<Memo> memos = new ArrayList<>();
 }

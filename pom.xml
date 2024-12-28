@@ -33,6 +33,11 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <!--자연어처리 repo-->
+        <repository>
+            <id>jitpack.id</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -227,6 +232,13 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.8.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <!--자연어처리-->
+        <dependency>
+            <groupId>com.github.shin285</groupId>
+            <artifactId>KOMORAN</artifactId>
+            <version>3.3.9</version>
         </dependency>
 
     </dependencies>

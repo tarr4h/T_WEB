@@ -31,9 +31,7 @@ public class AskMaker {
 
     public String getAsk(){
         StringBuilder str = new StringBuilder();
-        str
-//                .append(getPrompt())
-                .append("\n[\n");
+        str.append("\n[\n");
 
         memos.forEach(memo -> {
             str.append("------------------\n")
@@ -62,35 +60,7 @@ public class AskMaker {
     }
 
     public String getPrompt(){
-        if(this.askType == 1){
-            return prompt1;
-        } else if(this.askType == 2){
-            return prompt2;
-        } else {
-            return "";
-        }
-    }
-
-    private final String prompt1 = """
-                Extract only the nouns from the given sentence and return them as a JSON formatted string.
-                Do not include words that are a single character in length.
-                Ensure that only nouns with more than one character are included.
-                      It should consist of two arrays.
-                      One containing all the nouns,
-                      Another containing the nouns that are contextually important.
-                      each key is "words", "importantWords".
-                      and each value must be array object.
-                      Must escape " char as \\"
-                Never translate into English, especially Korean into English.
-                Only return the JSON string in the exact format requested above.
-                No explaination, greeting.
-                Do not explain about json string and process.
-                Do not contain any other word or sentence without object.
-                Do not response what u did.
-                Do not prefix the response with "```json" or any other formatting marker.
-            """;
-
-    private final String prompt2 = """
+        return """
             Analyze the content inside the brackets [ ] and answer the question based on the given information only.
             Do not modify or paraphrase any words inside the brackets.
             Provide only the answer to the question without any additional explanations or context.
@@ -98,4 +68,5 @@ public class AskMaker {
             Answer should be correct with conteint inside the brackets mentions.
             Only use the information from the brackets to form the answer, and do not include any unrelated or additional responses.
             """;
+    }
 }

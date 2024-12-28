@@ -1,31 +1,30 @@
 package com.demo.t_web.program.memo.service;
 
 import com.demo.t_web.comn.model.Tmap;
+import com.demo.t_web.program.ai.component.ChatClientComponent;
 import com.demo.t_web.program.memo.model.AskMaker;
 import com.demo.t_web.program.memo.model.Memo;
 import com.demo.t_web.program.memo.model.MemoChat;
 import com.demo.t_web.program.memo.repository.MemoChatRepository;
 import com.demo.t_web.program.memo.repository.MemoRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL;
+import kr.co.shineware.nlp.komoran.core.Komoran;
+import kr.co.shineware.nlp.komoran.model.KomoranResult;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,49 +41,21 @@ import java.util.Map;
  */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class MemoService {
 
-    @Autowired
-    MemoRepository memoRepository;
-
-    @Autowired
-    MemoChatRepository memoChatRepository;
+    private MemoRepository memoRepository;
+    private MemoChatRepository memoChatRepository;
+    private ChatClientComponent chatClient;
 
     @PersistenceContext
     private EntityManager em;
 
-    private final ChatClient chatClient;
-
-    public MemoService(ChatClient.Builder builder){
-        this.chatClient = builder.build();
-    }
-
     public Object search(Map<String, Object> param) {
         String userInput = (String) param.get("userInput");
 
-        AskMaker preset = AskMaker.builder()
-                .askType(1)
-                .build();
-        preset.addMemo(userInput);
-
-        String ready = aiAsk(preset.getAsk(), preset);
-        if(ready.contains("json")){
-            ready = ready.replaceAll("```", "").replaceAll("json", "");
-        }
-        log.debug("ask1 = {}", ready);
-        Map<String, List<String>> wordsMap = new HashMap<>();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            wordsMap = mapper.readValue(ready, new TypeReference<Map<String, List<String>>>() {
-            });
-        } catch (JsonProcessingException e) {
-            log.error("json error -----", e);
-        }
-
-        List<String> words = wordsMap.get("words") == null ? new ArrayList<>() : wordsMap.get("words");
-        List<String> importantWords = wordsMap.get("importantWords") == null ? new ArrayList<>() : wordsMap.get("importantWords");
-
-        List<Memo> searchMemoList = getMemos(words, importantWords);
+        List<String> words = getNouns(userInput);
+        List<Memo> searchMemoList = getMemos(words);
         log.debug("memoList = {}", searchMemoList.size());
 
         AskMaker resultset = AskMaker.builder()
@@ -109,14 +80,15 @@ public class MemoService {
         memoChatRepository.save(askChat);
         memoChatRepository.save(resChat);
 
+        resChat.setMemos(searchMemoList);
+
         return new Tmap()
                 .direct("success", true)
-                .direct("memoList", searchMemoList)
                 .direct("q", askChat)
                 .direct("r", resChat);
     }
 
-    public List<Memo> getMemos(List<String> words, List<String> importantWords) {
+    public List<Memo> getMemos(List<String> words) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Memo> cq = cb.createQuery(Memo.class);
 
@@ -125,10 +97,6 @@ public class MemoService {
         List<Predicate> contentPredicates = new ArrayList<>();
 
         words.forEach(w -> {
-            titlePredicates.add(cb.like(memoRoot.get("title"), "%" + w + "%"));
-            contentPredicates.add(cb.like(memoRoot.get("content"), "%" + w + "%"));
-        });
-        importantWords.forEach(w -> {
             titlePredicates.add(cb.like(memoRoot.get("title"), "%" + w + "%"));
             contentPredicates.add(cb.like(memoRoot.get("content"), "%" + w + "%"));
         });
@@ -147,19 +115,29 @@ public class MemoService {
         Message sysMsg = systemPromptTemplate.createMessage();
 
         Prompt prompt = new Prompt(List.of(message, sysMsg));
-        return chatClient.prompt(prompt)
+        return chatClient.getChatClient().prompt(prompt)
                 .user(input)
                 .call()
                 .content();
     }
 
     public Object add(Memo memo) {
-        log.debug("memos = {}, {}", memo.getTitle(), memo.getContent());
         memoRepository.save(memo);
         return new Tmap().direct("success", true);
     }
 
     public List<Memo> selectMemoList() {
         return memoRepository.findAll();
+    }
+
+    public List<String> getNouns(String sentence){
+        Komoran komoran = new Komoran(DEFAULT_MODEL.LIGHT);
+        KomoranResult result = komoran.analyze(sentence);
+
+        if(result != null){
+            return result.getNouns();
+        } else {
+            return new ArrayList<>();
+        }
     }
 }
