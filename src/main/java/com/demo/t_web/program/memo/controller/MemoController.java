@@ -36,6 +36,11 @@ public class MemoController {
         return ResponseEntity.ok().body(service.add(memo));
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<?> delete(@RequestBody Memo memo){
+        return ResponseEntity.ok().body(service.delete(memo));
+    }
+
     @GetMapping("/list")
     public ResponseEntity<?> list(){
         return ResponseEntity.ok().body(service.selectMemoList());

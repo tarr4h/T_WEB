@@ -126,6 +126,11 @@ public class MemoService {
         return new Tmap().direct("success", true);
     }
 
+    public Object delete(Memo memo) {
+        memoRepository.delete(memo);
+        return new Tmap().direct("success", true);
+    }
+
     public List<Memo> selectMemoList() {
         return memoRepository.findAll();
     }
@@ -140,4 +145,5 @@ public class MemoService {
             return new ArrayList<>();
         }
     }
+
 }
