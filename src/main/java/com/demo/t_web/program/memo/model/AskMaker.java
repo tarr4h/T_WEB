@@ -61,12 +61,14 @@ public class AskMaker {
 
     public String getPrompt(){
         return """
+            Make response quickly with short and clear sentence.
             Analyze the content inside the brackets [ ] and answer the question based on the given information only.
             Do not modify or paraphrase any words inside the brackets.
             Provide only the answer to the question without any additional explanations or context.
             The answer must be provided in Korean.
             Answer should be correct with conteint inside the brackets mentions.
             Only use the information from the brackets to form the answer, and do not include any unrelated or additional responses.
+            Response must be short and clear.
             """;
     }
 }

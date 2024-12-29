@@ -56,6 +56,14 @@ public class MemoService {
 
         List<String> words = getNouns(userInput);
         List<Memo> searchMemoList = getMemos(words);
+        if(searchMemoList.isEmpty()){
+            MemoChat resChat = MemoChat.builder()
+                    .type(2)
+                    .content("적합한 응답 결과가 없습니다.\n다시 시도해주세요.")
+                    .build();
+            return new Tmap().direct("success", false)
+                    .direct("r", resChat);
+        }
         log.debug("memoList = {}", searchMemoList.size());
 
         AskMaker resultset = AskMaker.builder()
@@ -67,7 +75,9 @@ public class MemoService {
                 .toList()
         );
 
+        log.debug("----- ask for ai start -----");
         String result = aiAsk(resultset.getAsk(), resultset);
+        log.debug("----- ask for ai end -----");
 
         MemoChat askChat = MemoChat.builder()
                 .type(1)
@@ -84,7 +94,6 @@ public class MemoService {
 
         return new Tmap()
                 .direct("success", true)
-                .direct("q", askChat)
                 .direct("r", resChat);
     }
 
