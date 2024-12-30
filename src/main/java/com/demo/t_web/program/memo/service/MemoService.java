@@ -53,6 +53,7 @@ public class MemoService {
     public Flux<String> search(Tmap param) {
         String userInput = param.getString("i");
         String conversationId = param.getString("c");
+        log.debug("conversationId : {}", conversationId);
 
         List<String> words = getNouns(userInput);
         List<Memo> searchMemoList = getMemos(words);
@@ -63,10 +64,7 @@ public class MemoService {
                 .conversationId(conversationId)
                 .referenceYn(!searchMemoList.isEmpty())
                 .build();
-        resultset.addMemoList(searchMemoList.stream()
-                .map(m -> m.getTitle() + "\n" + m.getContent())
-                .toList()
-        );
+        resultset.addMemoList(searchMemoList);
         return aiStream(resultset.getAsk(), resultset);
     }
 
@@ -129,6 +127,8 @@ public class MemoService {
     }
 
     public Flux<String> aiStream(String input, AskMaker am) {
+        log.debug("prompt ? {}", am.getPrompt());
+        log.debug("input ? {}", input);
         return chatClient.getChatClient()
                 .prompt()
                 .system(am.getPrompt())
