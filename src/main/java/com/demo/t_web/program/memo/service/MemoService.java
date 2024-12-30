@@ -18,21 +18,11 @@ import kr.co.shineware.nlp.komoran.core.Komoran;
 import kr.co.shineware.nlp.komoran.model.KomoranResult;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.SystemPromptTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
 import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
@@ -60,18 +50,12 @@ public class MemoService {
     @PersistenceContext
     private EntityManager em;
 
-    public Object search(Map<String, Object> param) {
-        String userInput = (String) param.get("userInput");
-        String conversationId = "";
-        if(param.get("conversationId") == null) {
-            conversationId = UUID.randomUUID().toString();
-        } else {
-            conversationId = (String) param.get("conversationId");
-        }
+    public Flux<String> search(Tmap param) {
+        String userInput = param.getString("i");
+        String conversationId = param.getString("c");
 
         List<String> words = getNouns(userInput);
         List<Memo> searchMemoList = getMemos(words);
-        log.debug("memoList = {}", searchMemoList.size());
 
         AskMaker resultset = AskMaker.builder()
                 .askType(2)
@@ -83,28 +67,31 @@ public class MemoService {
                 .map(m -> m.getTitle() + "\n" + m.getContent())
                 .toList()
         );
+        return aiStream(resultset.getAsk(), resultset);
+    }
 
-        log.debug("----- ask for ai start -----");
-        String result = aiAsk(resultset.getAsk(), resultset);
-        log.debug("----- ask for ai end -----");
+    public Tmap saveChatHistory(Tmap param){
+        String q = param.getString("q");
+        String r = param.getString("r");
 
         MemoChat askChat = MemoChat.builder()
                 .type(1)
-                .content(userInput)
+                .content(q)
                 .build();
         MemoChat resChat = MemoChat.builder()
                 .type(2)
-                .content(result)
+                .content(r)
                 .build();
         memoChatRepository.save(askChat);
         memoChatRepository.save(resChat);
 
+        List<String> words = getNouns(q);
+        List<Memo> searchMemoList = getMemos(words);
         resChat.setMemos(searchMemoList);
 
         return new Tmap()
                 .direct("success", true)
-                .direct("r", resChat)
-                .direct("cid", conversationId);
+                .direct("r", resChat);
     }
 
     public List<Memo> getMemos(List<String> words) {
@@ -141,6 +128,19 @@ public class MemoService {
                 .content();
     }
 
+    public Flux<String> aiStream(String input, AskMaker am) {
+        return chatClient.getChatClient()
+                .prompt()
+                .system(am.getPrompt())
+                .user(input)
+                .advisors(a -> a
+                        .param(CHAT_MEMORY_CONVERSATION_ID_KEY, am.getConversationId())
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+                )
+                .stream()
+                .content();
+    }
+
     public Object add(Memo memo) {
         memoRepository.save(memo);
         return new Tmap().direct("success", true);
@@ -165,5 +165,4 @@ public class MemoService {
             return new ArrayList<>();
         }
     }
-
 }

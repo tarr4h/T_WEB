@@ -1,12 +1,12 @@
 package com.demo.t_web.program.memo.controller;
 
+import com.demo.t_web.comn.model.Tmap;
 import com.demo.t_web.program.memo.model.Memo;
 import com.demo.t_web.program.memo.service.MemoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import reactor.core.publisher.Flux;
 
 /**
  * <pre>
@@ -26,9 +26,14 @@ public class MemoController {
 
     private MemoService service;
 
-    @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam Map<String, Object> param){
+    @PostMapping("/search")
+    public ResponseEntity<Flux<String>> search(@RequestBody Tmap param){
         return ResponseEntity.ok().body(service.search(param));
+    }
+
+    @PostMapping("/saveChatHistory")
+    public ResponseEntity<Tmap> saveChatHistory(@RequestBody Tmap param){
+        return ResponseEntity.ok().body(service.saveChatHistory(param));
     }
 
     @PostMapping("/add")
