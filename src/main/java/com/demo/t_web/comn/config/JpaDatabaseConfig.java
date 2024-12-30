@@ -50,7 +50,8 @@ public class JpaDatabaseConfig extends DataSourceUtil {
         em.setJpaVendorAdapter(vendorAdapter);
         em.setPackagesToScan("com.demo.t_web");
         Properties prop = new Properties();
-        prop.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+//        prop.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        prop.setProperty("hibernate.dialect", "org.hibernate.dialect.MariaDBDialect");
         prop.setProperty("hibernate.hbm2ddl.auto", "update");
         prop.setProperty("hibernate.show_sql", "true");
         prop.setProperty("hibernate.format_sql", "true");

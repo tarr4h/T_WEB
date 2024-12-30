@@ -18,15 +18,24 @@ import kr.co.shineware.nlp.komoran.core.Komoran;
 import kr.co.shineware.nlp.komoran.model.KomoranResult;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
 
 /**
  * <pre>
@@ -44,8 +53,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class MemoService {
 
-    private MemoRepository memoRepository;
-    private MemoChatRepository memoChatRepository;
+    MemoRepository memoRepository;
+    MemoChatRepository memoChatRepository;
     private ChatClientComponent chatClient;
 
     @PersistenceContext
@@ -53,22 +62,22 @@ public class MemoService {
 
     public Object search(Map<String, Object> param) {
         String userInput = (String) param.get("userInput");
+        String conversationId = "";
+        if(param.get("conversationId") == null) {
+            conversationId = UUID.randomUUID().toString();
+        } else {
+            conversationId = (String) param.get("conversationId");
+        }
 
         List<String> words = getNouns(userInput);
         List<Memo> searchMemoList = getMemos(words);
-        if(searchMemoList.isEmpty()){
-            MemoChat resChat = MemoChat.builder()
-                    .type(2)
-                    .content("적합한 응답 결과가 없습니다.\n다시 시도해주세요.")
-                    .build();
-            return new Tmap().direct("success", false)
-                    .direct("r", resChat);
-        }
         log.debug("memoList = {}", searchMemoList.size());
 
         AskMaker resultset = AskMaker.builder()
                 .askType(2)
                 .question(userInput)
+                .conversationId(conversationId)
+                .referenceYn(!searchMemoList.isEmpty())
                 .build();
         resultset.addMemoList(searchMemoList.stream()
                 .map(m -> m.getTitle() + "\n" + m.getContent())
@@ -94,7 +103,8 @@ public class MemoService {
 
         return new Tmap()
                 .direct("success", true)
-                .direct("r", resChat);
+                .direct("r", resChat)
+                .direct("cid", conversationId);
     }
 
     public List<Memo> getMemos(List<String> words) {
@@ -119,13 +129,14 @@ public class MemoService {
     }
 
     public String aiAsk(String input, AskMaker am){
-        Message message = new UserMessage(input);
-        SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(am.getPrompt());
-        Message sysMsg = systemPromptTemplate.createMessage();
-
-        Prompt prompt = new Prompt(List.of(message, sysMsg));
-        return chatClient.getChatClient().prompt(prompt)
+        return chatClient.getChatClient()
+                .prompt()
+                .system(am.getPrompt())
                 .user(input)
+                .advisors(a -> a
+                        .param(CHAT_MEMORY_CONVERSATION_ID_KEY, am.getConversationId())
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+                )
                 .call()
                 .content();
     }

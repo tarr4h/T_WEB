@@ -29,6 +29,18 @@ public class AskMaker {
 
     private int askType;
 
+    private boolean referenceYn;
+
+    private String conversationId;
+
+    public String getConversationId() {
+        return this.conversationId;
+    }
+
+    public boolean isReferenceYn() {
+        return this.referenceYn;
+    }
+
     public String getAsk(){
         StringBuilder str = new StringBuilder();
         str.append("\n[\n");
@@ -60,15 +72,20 @@ public class AskMaker {
     }
 
     public String getPrompt(){
-        return """
+        return isReferenceYn() ? prompt2 : prompt1;
+    }
+
+    private final String prompt1 = """
+            이전 답변을 참고해서 짧고 간결하게 대답.
+            """;
+    private final String prompt2 = """
             Make response quickly with short and clear sentence.
             Analyze the content inside the brackets [ ] and answer the question based on the given information only.
             Do not modify or paraphrase any words inside the brackets.
             Provide only the answer to the question without any additional explanations or context.
             The answer must be provided in Korean.
-            Answer should be correct with conteint inside the brackets mentions.
+            Answer should be correct with content inside the brackets mentions.
             Only use the information from the brackets to form the answer, and do not include any unrelated or additional responses.
             Response must be short and clear.
             """;
-    }
 }

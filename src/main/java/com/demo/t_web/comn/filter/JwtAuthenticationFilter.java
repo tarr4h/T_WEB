@@ -42,6 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request
             , @NonNull HttpServletResponse response
             , @NonNull FilterChain filterChain) throws ServletException, IOException {
+        log.debug("url ? {}", request.getRequestURL());
+        log.debug("uri ? {} ", request.getRequestURI());
+        log.debug("method ? {} ", request.getMethod());
+        log.debug("query string ? {}", request.getQueryString());
         String userId = jwtUtil.getUserIdFromToken();
 
         if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
