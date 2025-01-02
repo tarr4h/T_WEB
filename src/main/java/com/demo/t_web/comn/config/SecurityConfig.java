@@ -4,9 +4,9 @@ import com.demo.t_web.comn.filter.JwtAuthenticationFilter;
 import com.demo.t_web.comn.filter.JwtExceptionHandlerFilter;
 import com.demo.t_web.comn.handler.SecurityAccessDeniedHandler;
 import com.demo.t_web.comn.util.JwtUtil;
-import com.demo.t_web.program.user.enums.ADP_ROLE;
-import com.demo.t_web.program.user.service.UserServiceOld;
 import com.demo.t_web.program.sys.service.ExceptionService;
+import com.demo.t_web.program.user.enums.ADP_ROLE;
+import com.demo.t_web.program.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +43,7 @@ public class SecurityConfig {
     };
 
     @Autowired
-    UserServiceOld userService;
+    UserService userService;
 
     @Autowired
     ExceptionService exceptionService;
