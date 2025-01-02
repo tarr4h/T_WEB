@@ -1,7 +1,7 @@
 package com.demo.t_web.comn.filter;
 
 import com.demo.t_web.comn.util.JwtUtil;
-import com.demo.t_web.program.user.service.UserService;
+import com.demo.t_web.program.user.service.UserServiceOld;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +30,10 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserService userService;
+    private final UserServiceOld userService;
     private final JwtUtil jwtUtil;
 
-    public JwtAuthenticationFilter(UserService userService, JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(UserServiceOld userService, JwtUtil jwtUtil) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
     }

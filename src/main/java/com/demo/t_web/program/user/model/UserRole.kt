@@ -1,74 +1,47 @@
-package com.demo.t_web.program.user.model;
+package com.demo.t_web.program.user.model
 
-import com.demo.t_web.program.sys.model.BaseVo;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
+import com.demo.t_web.program.sys.model.BaseVo
+import com.fasterxml.jackson.annotation.JsonBackReference
+import jakarta.persistence.*
+import org.springframework.security.core.GrantedAuthority
+import java.io.Serializable
 
-import java.io.Serializable;
-
-/**
- * <pre>
- * com.demo.t_web.program.login.model.UserRoles
- *   - UserRoles.java
- * </pre>
- *
- * @author : tarr4h
- * @className : UserRoles
- * @description :
- * @date : 12/13/24
- */
 @Entity
 @Table(name = "adp_user_roles")
-@Getter
-@Setter
-@NoArgsConstructor
-public class UserRole extends BaseVo implements GrantedAuthority {
+data class UserRole(
 
     @EmbeddedId
-    private RoleId id;
+    var id : RoleId? = null,
 
     @Column(name = "role_name")
-    private String roleName;
+    var roleName: String = "",
 
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     @JsonBackReference
-    private User user;
+    var user: User? = null,
+) : BaseVo(), GrantedAuthority {
 
-    @Override
-    public String getAuthority() {
-        return getId().getRoleId();
+    constructor(user: User, roleId: String, roleName: String) : this() {
+        setId(roleId, user.id)
+        this.roleName = roleName
+        this.user = user
     }
 
-    @Embeddable
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class RoleId implements Serializable {
+    override fun getAuthority() = id?.roleId
 
-        public RoleId(String roleId, String userId) {
-            this.roleId = roleId;
-            this.userId = userId;
-        }
-
-        @Column(name = "role_id")
-        private String roleId;
-        @Column(name = "user_id")
-        private String userId;
+    companion object {
+        @Embeddable
+        data class RoleId(
+            @Column(name = "role_id")
+            var roleId : String = "",
+            @Column(name = "user_id")
+            var userId : String = "",
+        ) : Serializable
     }
 
-    public void setId(String roleId, String userId){
-        this.id = new RoleId(roleId, userId);
-    }
-
-    public UserRole(User user, String roleId, String roleName){
-        setId(roleId, user.getId());
-        this.roleName = roleName;
-        this.user = user;
+    fun setId(roleId: String, userId: String){
+        this.id = RoleId(roleId, userId)
     }
 }

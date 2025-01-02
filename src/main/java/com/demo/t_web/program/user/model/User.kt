@@ -1,141 +1,113 @@
-package com.demo.t_web.program.user.model;
+package com.demo.t_web.program.user.model
 
-import com.demo.t_web.program.sys.model.BaseVo;
-import com.demo.t_web.program.sys.model.Menu;
-import com.demo.t_web.program.user.enums.ADP_ROLE;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.demo.t_web.program.sys.model.BaseVo
+import com.demo.t_web.program.sys.model.Menu
+import com.demo.t_web.program.user.enums.ADP_ROLE
+import com.fasterxml.jackson.annotation.JsonManagedReference
+import jakarta.persistence.*
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
+import java.util.*
+import kotlin.jvm.Transient
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-/**
- * <pre>
- * com.demo.t_web.program.login.model.User
- *   - User.java
- * </pre>
- *
- * @author : tarr4h
- * @className : User
- * @description :
- * @date : 12/12/24
- */
 @Entity(name = "adp_user")
 @Table(name = "adp_user")
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Getter
-@Setter
-@Slf4j
-public class User extends BaseVo implements UserDetails{
+data class User(
 
     @Id
     @Column(name = "id", length = 20, nullable = false)
-    @Order(1)
-    private String id;
+    var id : String,
 
     @Column(name = "password", length = 100, nullable = false)
-    private String password;
+    var pwd : String,
 
     @Column(name = "name", length = 20, nullable = false)
-    private String name;
+    var name : String,
 
     @Column(name = "phone")
-    private String phone;
+    var phone : String,
 
     @Column(name = "email")
-    private String email;
+    var email : String,
 
     @Column(name = "join_dt")
     @Temporal(TemporalType.DATE)
-    private Date joinDt;
+    var joinDt : Date?,
 
     @Column(name = "last_login_dt")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastLoginDt;
+    var lastLoginDt : Date,
 
     @Transient
-    private boolean loginYn;
+    var loginYn : Boolean,
 
     @Transient
-    private String token;
+    var token : String,
 
     @Transient
-    private List<Menu> userMenu = new ArrayList<>();
+    var userMenu : List<Menu>,
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = [CascadeType.ALL])
     @JsonManagedReference
-    private List<UserRole> roles = new ArrayList<>();
+    val roles : MutableList<UserRole>?
 
-    @Override
-    public void prePersist(){
-        super.prePersist();
-        if(joinDt == null){
-            joinDt = new Date();
+    ) : BaseVo(), UserDetails {
+
+    override fun prePersist(){
+        super.prePersist()
+        joinDt ?: Date()
+    }
+
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        return roles ?: mutableListOf()
+    }
+
+    override fun getUsername(): String {
+        return id
+    }
+
+    override fun getPassword(): String {
+        return pwd
+    }
+
+    override fun isAccountNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isAccountNonLocked(): Boolean {
+        return true
+    }
+
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isEnabled(): Boolean {
+        return true
+    }
+
+    fun addRole(roleId : String, roleName : String){
+        roles ?: mutableListOf()
+        if(roles!!.stream().noneMatch { userRole -> userRole.id?.roleId.equals(roleId) }){
+            roles.add(UserRole(this, roleId, roleName))
         }
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+    fun addRoles(adpRoles : List<ADP_ROLE>){
+        adpRoles.forEach{role -> addRole(role.id, role.roleName)}
     }
 
-    @Override
-    public String getUsername() {
-        return getId();
-    }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    fun asUser() : UserDto {
+        return UserDto(
+            id = id,
+            name = name,
+            phone = phone,
+            email = email,
+            joinDt = joinDt,
+            lastLoginDt = lastLoginDt,
+            roles = roles,
+            userMenu = userMenu
+        )
     }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    public void addRole(String roleId, String roleName){
-        if(this.roles == null){
-            this.roles = new ArrayList<>();
-        }
-        if(this.roles.stream().noneMatch(userRole -> userRole.getId().getRoleId().equals(roleId)))
-            this.roles.add(new UserRole(this, roleId, roleName));
-    }
-
-    public void addRoles(List<ADP_ROLE> adpRoles){
-        adpRoles.forEach(role -> addRole(role.getId(), role.getName()));
-    }
-
-    public UserDto asUser(){
-        return UserDto.builder()
-                .id(this.id)
-                .name(this.name)
-                .phone(this.phone)
-                .email(this.email)
-                .joinDt(this.joinDt)
-                .lastLoginDt(this.lastLoginDt)
-                .roles(this.roles)
-                .userMenu(userMenu)
-                .build();
-    }
-
 }

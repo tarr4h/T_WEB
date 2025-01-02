@@ -1,35 +1,21 @@
-package com.demo.t_web.program.sys.controller;
+package com.demo.t_web.program.sys.controller
 
-import com.demo.t_web.program.sys.service.ExceptionService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.demo.t_web.program.sys.service.ExceptionService
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import lombok.extern.slf4j.Slf4j
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestController
 
-/**
- * <pre>
- * com.demo.t_web.program.sys.controller.ExceptionController
- *   - ExceptionController.java
- * </pre>
- *
- * @author : 한태우
- * @className : ExceptionController
- * @description :
- * @date : 8/4/24
- */
-@RestControllerAdvice
+@RestController
 @Slf4j
-public class ExceptionController {
-
-    @Autowired
-    ExceptionService service;
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> exception(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        service.addExceptionHst(e, request);
-        return ResponseEntity.ok("error occured");
+class ExceptionController(
+    private var service : ExceptionService
+) {
+    @ExceptionHandler(Exception::class)
+    fun exception(e : Exception, request : HttpServletRequest, response : HttpServletResponse) : ResponseEntity<String> {
+        service.addExceptionHst(e, request)
+        return ResponseEntity.ok().body("error occured")
     }
 }

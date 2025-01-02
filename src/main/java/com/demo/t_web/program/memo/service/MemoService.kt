@@ -1,168 +1,148 @@
-package com.demo.t_web.program.memo.service;
+package com.demo.t_web.program.memo.service
 
-import com.demo.t_web.comn.model.Tmap;
-import com.demo.t_web.program.ai.component.ChatClientComponent;
-import com.demo.t_web.program.memo.model.AskMaker;
-import com.demo.t_web.program.memo.model.Memo;
-import com.demo.t_web.program.memo.model.MemoChat;
-import com.demo.t_web.program.memo.repository.MemoChatRepository;
-import com.demo.t_web.program.memo.repository.MemoRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL;
-import kr.co.shineware.nlp.komoran.core.Komoran;
-import kr.co.shineware.nlp.komoran.model.KomoranResult;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
+import com.demo.t_web.comn.model.Tmap
+import com.demo.t_web.program.ai.component.ChatClientComponent
+import com.demo.t_web.program.memo.model.AskMaker
+import com.demo.t_web.program.memo.model.Memo
+import com.demo.t_web.program.memo.model.MemoChat
+import com.demo.t_web.program.memo.repository.MemoChatRepository
+import com.demo.t_web.program.memo.repository.MemoRepository
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
+import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL
+import kr.co.shineware.nlp.komoran.core.Komoran
+import kr.co.shineware.nlp.komoran.model.KomoranResult
+import lombok.extern.slf4j.Slf4j
+import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
-import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
-
-/**
- * <pre>
- * com.demo.t_web.program.memo.service.MemoService
- *   - MemoService.java
- * </pre>
- *
- * @author : tarr4h
- * @className : MemoService
- * @description :
- * @date : 12/27/24
- */
 @Service
 @Slf4j
-@AllArgsConstructor
-public class MemoService {
-
-    MemoRepository memoRepository;
-    MemoChatRepository memoChatRepository;
-    private ChatClientComponent chatClient;
+class MemoService @Autowired constructor(
+    private val memoRepository: MemoRepository,
+    private val memoChatRepository: MemoChatRepository,
+    private val chatClientComponent : ChatClientComponent
+){
 
     @PersistenceContext
-    private EntityManager em;
+    lateinit var em : EntityManager
 
-    public Flux<String> search(Tmap param) {
-        String userInput = param.getString("i");
-        String conversationId = param.getString("c");
+    fun search(param : Tmap) : Flux<String> {
+        val userInput = param.getString("i")
+        val conversationId = param.getString("c")
 
-        List<String> words = getNouns(userInput);
-        List<Memo> searchMemoList = getMemos(words);
+        val searchMemoList = getMemos(getNouns(userInput))
 
-        AskMaker resultset = AskMaker.builder()
-                .askType(2)
-                .question(userInput)
-                .conversationId(conversationId)
-                .referenceYn(!searchMemoList.isEmpty())
-                .build();
-        resultset.addMemoList(searchMemoList.stream()
-                .map(m -> m.getTitle() + "\n" + m.getContent())
-                .toList()
-        );
-        return aiStream(resultset.getAsk(), resultset);
+        val resultset = AskMaker(
+            askType = 2,
+            question = userInput,
+            conversationId = conversationId,
+            referenceYn = searchMemoList.isNotEmpty(),
+        )
+        resultset.addMemoList(searchMemoList.stream().map{
+            m -> m.title + "\n" + m.content
+        }.toList())
+
+        return aiStream(resultset.getAsk(), resultset)
     }
 
-    public Tmap saveChatHistory(Tmap param){
-        String q = param.getString("q");
-        String r = param.getString("r");
+    fun saveChatHistory(param : Tmap) : Tmap {
+        val q = param.getString("q");
+        val r = param.getString("r")
+        val askChat = MemoChat(
+            type = 1,
+            content = q
+        )
+        val resChat = MemoChat(
+            type = 2,
+            content = r
+        )
 
-        MemoChat askChat = MemoChat.builder()
-                .type(1)
-                .content(q)
-                .build();
-        MemoChat resChat = MemoChat.builder()
-                .type(2)
-                .content(r)
-                .build();
-        memoChatRepository.save(askChat);
-        memoChatRepository.save(resChat);
+        memoChatRepository.save(askChat)
+        memoChatRepository.save(resChat)
 
-        List<String> words = getNouns(q);
-        List<Memo> searchMemoList = getMemos(words);
-        resChat.setMemos(searchMemoList);
+        val words = getNouns(q)
+        val searchMemoList = getMemos(words)
+        resChat.memos.addAll(searchMemoList)
 
-        return new Tmap()
-                .direct("success", true)
-                .direct("r", resChat);
+        return Tmap()
+            .direct("success", true)
+            .direct("r", resChat)
     }
 
-    public List<Memo> getMemos(List<String> words) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Memo> cq = cb.createQuery(Memo.class);
 
-        Root<Memo> memoRoot = cq.from(Memo.class);
-        List<Predicate> titlePredicates = new ArrayList<>();
-        List<Predicate> contentPredicates = new ArrayList<>();
+    fun getMemos(words : List<String>) : List<Memo> {
+        val cb : CriteriaBuilder? = em!!.criteriaBuilder
+        val cq : CriteriaQuery<Memo>? = cb!!.createQuery(
+            Memo::class.java)
 
-        words.forEach(w -> {
-            titlePredicates.add(cb.like(memoRoot.get("title"), "%" + w + "%"));
-            contentPredicates.add(cb.like(memoRoot.get("content"), "%" + w + "%"));
-        });
+        val memoRoot : Root<Memo> = cq!!.from(Memo::class.java)
+        val titlePredicates = ArrayList<Predicate>()
+        val contentPredicates = ArrayList<Predicate>()
 
-        Predicate titlePredicate = cb.or(titlePredicates.toArray(new Predicate[0]));
-        Predicate contentPredicate = cb.or(contentPredicates.toArray(new Predicate[0]));
-
-        cq.where(cb.or(titlePredicate, contentPredicate));
-
-        return em.createQuery(cq).getResultList();
-    }
-
-    public String aiAsk(String input, AskMaker am){
-        return chatClient.getChatClient()
-                .prompt()
-                .system(am.getPrompt())
-                .user(input)
-                .advisors(a -> a
-                        .param(CHAT_MEMORY_CONVERSATION_ID_KEY, am.getConversationId())
-                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
-                )
-                .call()
-                .content();
-    }
-
-    public Flux<String> aiStream(String input, AskMaker am) {
-        return chatClient.getChatClient()
-                .prompt()
-                .system(am.getPrompt())
-                .user(input)
-                .advisors(a -> a
-                        .param(CHAT_MEMORY_CONVERSATION_ID_KEY, am.getConversationId())
-                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
-                )
-                .stream()
-                .content();
-    }
-
-    public Object add(Memo memo) {
-        memoRepository.save(memo);
-        return new Tmap().direct("success", true);
-    }
-
-    public Object delete(Memo memo) {
-        memoRepository.delete(memo);
-        return new Tmap().direct("success", true);
-    }
-
-    public List<Memo> selectMemoList() {
-        return memoRepository.findAll();
-    }
-
-    public List<String> getNouns(String sentence){
-        Komoran komoran = new Komoran(DEFAULT_MODEL.LIGHT);
-        KomoranResult result = komoran.analyze(sentence);
-
-        if(result != null){
-            return result.getNouns();
-        } else {
-            return new ArrayList<>();
+        words.forEach{ w ->
+            titlePredicates.add(cb.like(memoRoot.get("title"), "%$w%"))
+            contentPredicates.add(cb.like(memoRoot.get("content"), "%$w%"))
         }
+
+        cq.where(cb.or(cb.or(*titlePredicates.toTypedArray<Predicate>())
+            , cb.or(*contentPredicates.toTypedArray<Predicate>())))
+
+        return em.createQuery(cq).resultList ?: emptyList()
     }
+
+
+    fun aiAsk(input : String, am : AskMaker) : String? {
+        return chatClientComponent.chatClient
+            .prompt()
+            .system(am.getPrompt())
+            .user(input)
+            .advisors { a -> a
+                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, am.conversationId)
+                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+
+            }
+            .call()
+            .content()
+    }
+
+    fun aiStream(input : String, am : AskMaker) : Flux<String> {
+        return chatClientComponent.chatClient
+            .prompt()
+            .system(am.getPrompt())
+            .user(input)
+            .advisors { a -> a
+                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, am.conversationId)
+                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+
+            }
+            .stream()
+            .content()
+    }
+
+    fun add(memo : Memo) : Tmap {
+        memoRepository.save(memo)
+        return Tmap().direct("success", true);
+    }
+
+    fun delete(memo : Memo) : Tmap {
+        memoRepository.delete(memo)
+        return Tmap().direct("success", true);
+    }
+
+    fun selectMemoList() : List<Memo> = memoRepository.findAll()
+
+    fun getNouns(sentence : String) : List<String> {
+        val komoran = Komoran(DEFAULT_MODEL.LIGHT)
+        val result : KomoranResult? = komoran.analyze(sentence);
+
+        return result?.nouns ?: emptyList()
+    }
+
 }

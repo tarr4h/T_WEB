@@ -1,36 +1,24 @@
-package com.demo.t_web.program.user.controller;
+package com.demo.t_web.program.user.controller
 
-import com.demo.t_web.program.sys.model.Menu;
-import com.demo.t_web.program.user.service.MenuService;
-import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.demo.t_web.program.sys.model.Menu
+import com.demo.t_web.program.user.service.MenuService
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
-/**
- * <pre>
- * com.demo.t_web.program.user.controller.MenuController
- *   - MenuController.java
- * </pre>
- *
- * @author : tarr4h
- * @className : MenuController
- * @description :
- * @date : 12/19/24
- */
 @RestController
 @RequestMapping("/menu")
-@AllArgsConstructor
-public class MenuController {
-
-    private MenuService service;
+class MenuController (
+    private val service : MenuService
+){
 
     @PostMapping("/add")
-    public ResponseEntity<?> addMenu(@RequestBody Menu menu) {
-        return ResponseEntity.ok(service.addMenu(menu));
+    fun addMenu(@RequestBody menu: Menu) : ResponseEntity<*>{
+        return ResponseEntity.ok().body(service.addMenu(menu))
     }
 
     @GetMapping("/selectMenuList")
-    public ResponseEntity<?> selectMenuList() {
-        return ResponseEntity.ok(service.selectMenuList());
+    fun selectMenuList(): ResponseEntity<*> {
+        return ResponseEntity.ok().body(service.selectMenuList())
     }
+
 }

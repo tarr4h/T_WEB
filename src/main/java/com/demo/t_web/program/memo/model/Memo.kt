@@ -1,39 +1,22 @@
-package com.demo.t_web.program.memo.model;
+package com.demo.t_web.program.memo.model
 
-import com.demo.t_web.program.sys.model.BaseVo;
-import jakarta.persistence.*;
-import lombok.*;
+import com.demo.t_web.program.sys.model.BaseVo
+import jakarta.persistence.*
 
-/**
- * <pre>
- * com.demo.t_web.program.memo.model.Memo
- *   - Memo.java
- * </pre>
- *
- * @author : tarr4h
- * @className : Memo
- * @description :
- * @date : 12/27/24
- */
+
 @Entity
 @Table(name = "s_memo")
-@SequenceGenerator(name = "memo_generator", sequenceName = "memo_seq", initialValue = 1, allocationSize = 1)
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Getter
-@Setter
-public class Memo extends BaseVo {
-
+@SequenceGenerator(name = "memo_seq", sequenceName = "memo_seq", allocationSize = 1)
+data class Memo(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "memo_generator")
     @Column(name = "id", nullable = false)
-    private Long id;
+    val id : Long,
 
     @Column(name = "title", length = 100, nullable = false)
-    private String title;
+    val title : String,
 
     @Column(name = "content", length = 1000)
-    private String content;
+    val content : String
 
-}
+) : BaseVo()

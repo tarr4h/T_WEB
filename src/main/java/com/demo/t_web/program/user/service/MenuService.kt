@@ -1,70 +1,56 @@
-package com.demo.t_web.program.user.service;
+package com.demo.t_web.program.user.service
 
-import com.demo.t_web.comn.util.JwtUtil;
-import com.demo.t_web.program.sys.model.Menu;
-import com.demo.t_web.program.sys.model.MenuRoleRel;
-import com.demo.t_web.program.user.enums.ADP_ROLE;
-import com.demo.t_web.program.user.model.User;
-import com.demo.t_web.program.user.repository.MenuRepository;
-import com.demo.t_web.program.user.repository.MenuRoleRelRepository;
-import com.demo.t_web.program.user.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.demo.t_web.comn.util.JwtUtil
+import com.demo.t_web.program.sys.model.Menu
+import com.demo.t_web.program.sys.model.MenuRoleRel
+import com.demo.t_web.program.user.enums.ADP_ROLE
+import com.demo.t_web.program.user.model.User
+import com.demo.t_web.program.user.model.UserRole
+import com.demo.t_web.program.user.repository.MenuRepository
+import com.demo.t_web.program.user.repository.MenuRoleRelRepository
+import com.demo.t_web.program.user.repository.UserRepository
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.stereotype.Service
 
-import java.util.List;
-import java.util.Optional;
-
-/**
- * <pre>
- * com.demo.t_web.program.user.service.MenuService
- *   - MenuService.java
- * </pre>
- *
- * @author : tarr4h
- * @className : MenuService
- * @description :
- * @date : 12/19/24
- */
 @Service
-@Slf4j
-@AllArgsConstructor
-public class MenuService {
+class MenuService (
+    private val menuRepository: MenuRepository,
+    private val menuRoleRelRepository: MenuRoleRelRepository,
+    private val userRepository: UserRepository,
+    private val jwtUtil : JwtUtil
+) {
+    private val log = KotlinLogging.logger {}
 
-    private final JwtUtil jwtUtil;
-    private MenuRepository menuRepository;
-    private MenuRoleRelRepository menuRoleRelRepository;
-    private UserRepository userRepository;
+    fun addMenu(menu : Menu) : String {
+        menuRepository.save(menu)
+        menu.menuCd = "M_" + String.format("%05d", menu.id)
+        menu.addRels(ADP_ROLE.getRolesByLevel(2))
 
-    public String addMenu(Menu menu){
-        menuRepository.save(menu);
-        menu.setMenuCd("M_" + String.format("%05d", menu.getId()));
-        menu.addRels(ADP_ROLE.getRolesByLevel(2));
-
-        return "123123";
+        return "123123"
     }
 
-    public List<Menu> selectUserMenuList(User user) {
-        return user.getRoles().stream()
-                .map(role -> menuRoleRelRepository.findByIdRoleId(role.getId().getRoleId()))
-                .flatMap(List::stream)
-                .map(MenuRoleRel::getMenu)
-                .toList();
+    fun selectUserMenuList(user: User): List<Menu> {
+        return user.roles!!.stream()
+            .map{ role: UserRole -> menuRoleRelRepository.findByIdRoleId(role.id!!.roleId) }
+            .flatMap { obj: List<MenuRoleRel> -> obj.stream() }
+            .map<Menu>(MenuRoleRel::menu)
+            .toList()
     }
 
-    public List<Menu> selectMenuList(){
-        boolean login = jwtUtil.checkTokenExist();
+    fun selectMenuList() : List<Menu> {
+        val login = jwtUtil.checkTokenExist()
         if(login){
-            Optional<User> user = userRepository.findById(jwtUtil.getUserIdFromToken());
-            if(user.isPresent()){
-                return selectUserMenuList(user.get());
+            val user = userRepository.findById(jwtUtil.userIdFromToken)
+            if(user.isPresent){
+                return selectUserMenuList(user.get())
             }
         }
 
-        return ADP_ROLE.getRolesByLevel(1).stream()
-                .map(role -> menuRoleRelRepository.findByIdRoleId(role.getId()))
-                .flatMap(List::stream)
-                .map(MenuRoleRel::getMenu)
-                .toList();
+        return ADP_ROLE.getRolesByLevel(1)
+            .stream()
+            .map{ role -> menuRoleRelRepository.findByIdRoleId(role.id)}
+            .flatMap {obj : List<MenuRoleRel> -> obj.stream()}
+            .map<Menu>(MenuRoleRel::menu)
+            .toList()
     }
 }

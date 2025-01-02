@@ -1,64 +1,46 @@
-package com.demo.t_web.program.user.controller;
+package com.demo.t_web.program.user.controller
 
-import com.demo.t_web.comn.model.Tmap;
-import com.demo.t_web.comn.util.Utilities;
-import com.demo.t_web.program.user.model.User;
-import com.demo.t_web.program.user.service.UserService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import com.demo.t_web.comn.model.Tmap
+import com.demo.t_web.comn.util.Utilities
+import com.demo.t_web.program.user.model.User
+import com.demo.t_web.program.user.service.UserService
+import com.demo.t_web.program.user.service.UserServiceOld
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
-import java.util.Map;
-
-/**
- * <pre>
- * com.demo.t_web.program.login.controller.LoginController
- *   - LoginController.java
- * </pre>
- *
- * @author : tarr4h
- * @className : LoginController
- * @description :
- * @date : 12/12/24
- */
-@Controller
+@RestController
 @RequestMapping("/user")
-@Slf4j
-public class UserController {
-
-    @Autowired
-    UserService service;
+class UserController (
+    private val service : UserService
+) {
 
     @PostMapping("/join")
-    public ResponseEntity<Tmap> join(@RequestBody User user) {
-        return ResponseEntity.ok(service.join(user));
+    fun join(@RequestBody user: User): ResponseEntity<Tmap> {
+        return ResponseEntity.ok(service.join(user))
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Tmap> login(@RequestBody User user) {
-        return ResponseEntity.ok(service.login(user));
+    fun login(@RequestBody user: User): ResponseEntity<Tmap> {
+        return ResponseEntity.ok(service.login(user))
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Tmap> logout() {
-        return ResponseEntity.ok(service.logout());
+    fun logout(): ResponseEntity<Tmap> {
+        return ResponseEntity.ok(service.logout())
     }
 
     @GetMapping("/checkLogin")
-    public ResponseEntity<Boolean> checkLogin(){
-        return ResponseEntity.ok(service.checkLogin());
+    fun checkLogin(): ResponseEntity<Boolean> {
+        return ResponseEntity.ok(service.checkLogin())
     }
 
     @PostMapping("/selectUser")
-    public ResponseEntity<?> selectUser() {
-        return Utilities.retValue(service.selectUser());
+    fun selectUser(): ResponseEntity<*> {
+        return Utilities.retValue(service.selectUser())
     }
 
     @GetMapping("/jwtTest")
-    public ResponseEntity<String> jwtTest(@RequestParam Map<String, String> params) {
-        log.debug("jwt test- --- - - -- - - - -- ");
-        return ResponseEntity.accepted().body("asdfase");
+    fun jwtTest(@RequestParam params: Map<String?, String?>?): ResponseEntity<String> {
+        return ResponseEntity.accepted().body("asdfase")
     }
 }

@@ -1,74 +1,47 @@
-package com.demo.t_web.program.sys.model;
+package com.demo.t_web.program.sys.model
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference
+import jakarta.persistence.*
+import java.io.Serializable
 
-import java.io.Serializable;
-
-/**
- * <pre>
- * com.demo.t_web.program.sys.model.MenuRoleRel
- *   - MenuRoleRel.java
- * </pre>
- *
- * @author : tarr4h
- * @className : MenuRoleRel
- * @description :
- * @date : 12/20/24
- */
 @Entity
 @Table(name = "adp_menu_role_rel")
-@Getter
-@Setter
-@NoArgsConstructor
-public class MenuRoleRel extends BaseVo {
-
+data class MenuRoleRel(
     @EmbeddedId
-    private MenuRoleId id;
+    var id : MenuRoleId? = null,
 
     @Column(name = "menu_cd")
-    private String menuCd;
+    var menuCd : String? = null,
 
     @ManyToOne
     @MapsId("menuId")
     @JoinColumn(name = "menu_id")
     @JsonBackReference
-    private Menu menu;
+    var menu : Menu? = null
+) : BaseVo() {
 
-    @Embeddable
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class MenuRoleId implements Serializable{
-
-        public MenuRoleId(Long menuId, String roleId){
-            this.menuId = menuId;
-            this.roleId = roleId;
-        }
-
-        @Column(name = "menu_id")
-        private Long menuId;
-
-        @Column(name = "role_id")
-        private String roleId;
+    companion object {
+        @Embeddable
+        data class MenuRoleId(
+            @Column(name = "menu_id")
+            var menuId : Long? = null,
+            @Column(name = "role_id")
+            var roleId : String? = null
+        ) : Serializable
     }
 
-    public void setId(Long menuId, String roleId){
-        this.id = new MenuRoleId(menuId, roleId);
+    fun setId(menuId : Long, roleId : String){
+        id = MenuRoleId(menuId, roleId)
     }
 
-    public MenuRoleRel(Menu menu, String roleId){
-        setId(menu.getId(), roleId);
-        this.menu = menu;
-//        this.userRole = userRole;
+    constructor(menu : Menu, roleId : String) :
+            this(menu = menu) {
+                setId(menu.id, roleId)
+            }
+
+    override fun prePersist() {
+        super.prePersist()
+        this.menuCd = menu?.menuCd
     }
 
-    @Override
-    public void prePersist(){
-        super.prePersist();
-        this.menuCd = menu.getMenuCd();
-    }
 }
