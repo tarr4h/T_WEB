@@ -21,19 +21,19 @@ import java.util.List;
 @Setter
 public class MapSearch implements Serializable {
 
-    private double lat;
-    private double lng;
-    private int radius;
-    private double maxLat;
-    private double maxLng;
-    private double minLat;
-    private double minLng;
+    public double lat;
+    public double lng;
+    public int radius;
+    public double maxLat;
+    public double maxLng;
+    public double minLat;
+    public double minLng;
 
-    private String name;
-    private String mcid;
-    private String addr1;
-    private String addr2;
-    private List<String> placeName;
+    public String name;
+    public String mcid;
+    public String addr1;
+    public String addr2;
+    public List<String> placeName;
 
     public String cacheKey;
 

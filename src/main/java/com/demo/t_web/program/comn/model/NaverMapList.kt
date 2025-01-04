@@ -1,36 +1,15 @@
-package com.demo.t_web.program.comn.model;
+package com.demo.t_web.program.comn.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 
-import java.util.List;
-import java.util.Map;
-
-/**
- * <pre>
- * com.demo.t_web.program.comn.model.NaverMapList
- *   - NaverMapList.java
- * </pre>
- *
- * @author : 한태우
- * @className : NaverMapList
- * @description :
- * @date : 4/28/24
- */
-@Getter
-@Setter
-@ToString
-public class NaverMapList {
-
+data class NaverMapList(
     @JsonIgnore
-    private Map<String, Object> folder;
+    var folder : Map<String, Any>,
     @JsonProperty("bookmarkList")
-    private List<NaverMap> bookmarkList;
+    var bookmarkList : List<NaverMap>,
     @JsonIgnore
-    private int unavailableCount;
+    var unavailableCount : Int,
     @JsonIgnore
-    private boolean removed;
-}
+    var removed : Boolean
+)

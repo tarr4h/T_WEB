@@ -1,60 +1,54 @@
-package com.demo.t_web.program.comn.model;
+package com.demo.t_web.program.comn.model
 
-import com.demo.t_web.comn.util.Utilities;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import com.demo.t_web.comn.util.Utilities
+import com.fasterxml.jackson.annotation.JsonIgnore
+import java.io.Serializable
+import java.sql.Timestamp
+import java.time.LocalDateTime
+import java.util.*
 
-import java.io.Serializable;
-
-/**
- * <pre>
- * com.demo.t_web.program.comn.model.MapData
- *   - MapData.java
- * </pre>
- *
- * @author : 한태우
- * @className : MapData
- * @description :
- * @date : 4/29/24
- */
-@Getter
-@Setter
-public class MapData implements Serializable, Comparable<MapData> {
-
-    private String id;
-    private String name;
-    private String px;
-    private String py;
-    private String address;
-    private String addr1;
-    private String addr2;
-    private String addr3;
-    private String mcid;
-    private String mcidName;
-    private String available;
-    private String updatedDt;
-
-    private double centerDistance;
+data class MapData(
+    var id : String,
+    var name : String,
+    var px : String,
+    var py : String,
+    var address : String,
+    var addr1 : String,
+    var addr2 : String,
+    var addr3 : String,
+    var mcid : String,
+    var mcidName : String,
+    var available : String,
+    var updatedAt : LocalDateTime? = null,
+    var centerDistance : Double = 0.0,
     @JsonIgnore
-    private DrivingVo driving;
+    var driving : DrivingVo? = null
+) : Serializable, Comparable<MapData> {
 
-    public double getLat(){
-        return Utilities.parseDouble(getPy());
+    // 명시적 생성자
+    constructor(
+        id: String, name: String, px: String, py: String, address: String,
+        addr1: String, addr2: String, addr3: String, mcid: String,
+        mcidName: String, available: String, updatedAt: LocalDateTime?
+    ) : this(
+        id, name, px, py, address, addr1, addr2, addr3, mcid, mcidName, available, updatedAt, 0.0, null
+    )
+
+    fun getDLat() : Double{
+        return Utilities.parseDouble(py)
     }
 
-    public double getLng(){
-        return Utilities.parseDouble(getPx());
+    fun getDLng() : Double{
+        return Utilities.parseDouble(px)
     }
 
-    @Override
-    public int compareTo(MapData o) {
-        if(this.centerDistance < o.centerDistance){
-            return -1;
-        } else if(this.centerDistance == o.centerDistance){
-            return 0;
+    override fun compareTo(o: MapData): Int {
+        return if(centerDistance < o.centerDistance){
+            -1
+        } else if(centerDistance == o.centerDistance){
+            0
         } else {
-            return 1;
+            1
         }
     }
 }

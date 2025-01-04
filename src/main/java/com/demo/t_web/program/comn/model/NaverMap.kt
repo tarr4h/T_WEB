@@ -1,69 +1,52 @@
-package com.demo.t_web.program.comn.model;
+package com.demo.t_web.program.comn.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * <pre>
- * com.demo.t_web.program.comn.model.NaverMap
- *   - NaverMap.java
- * </pre>
- *
- * @author : 한태우
- * @className : NaverMap
- * @description :
- * @date : 4/28/24
- */
-@Getter
-@Setter
-public class NaverMap {
-
+data class NaverMap(
     @JsonProperty
-    private String bookmarkId;
+    var bookmarkId : String,
     @JsonProperty
-    private String name;
+    var name : String,
     @JsonProperty
-    private double px;
+    var px : Double,
     @JsonProperty
-    private double py;
+    var py : Double,
     @JsonProperty
-    private String type;
+    var type : String,
     @JsonProperty
-    private String address;
+    var address : String,
     @JsonProperty
-    private String mcid;
+    var mcid : String,
     @JsonProperty
-    private String mcidName;
+    var mcidName : String,
     @JsonProperty
-    private boolean available;
+    var available : Boolean,
 
     @JsonIgnore
-    private String displayName;
+    var displayName : String,
     @JsonIgnore
-    private String useTime;
+    var useTime : String,
     @JsonIgnore
-    private String lastUpdateTime;
+    var lastUpdateTime : String,
     @JsonIgnore
-    private String creationTime;
+    var creationTime : String,
     @JsonIgnore
-    private int order;
+    var order : Int,
     @JsonIgnore
-    private String sid;
+    var sid : String,
     @JsonIgnore
-    private String memo;
+    var memo : String,
     @JsonIgnore
-    private String url;
+    var url : String,
     @JsonIgnore
-    private String rcode;
+    var rcode : String,
     @JsonIgnore
-    private String[] cidPath;
+    var cidPath : List<String>,
     @JsonIgnore
-    private String folderMappings;
+    var folderMappings : String,
     @JsonIgnore
-    private Object placeInfo;
+    var placeInfo : Any,
     @JsonIgnore
-    private Object isIndoor;
-
-}
+    var isIndoor : Any
+)

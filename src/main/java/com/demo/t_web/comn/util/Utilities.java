@@ -8,6 +8,7 @@ import com.demo.t_web.program.comn.model.NvSearch;
 import com.demo.t_web.program.sys.model.BaseVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -287,7 +288,7 @@ public class Utilities {
                 .toUri();
 
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new KotlinModule());
         try{
             return objectMapper.readValue(response.getBody(), DrivingVo.class);
         } catch(JsonProcessingException e){
@@ -313,7 +314,9 @@ public class Utilities {
         requestHeaders.put("X-Naver-Client-Secret", naverClientSecret);
         String responseBody = nvGet(uri.toString(),requestHeaders);
 
-        ObjectMapper objMapper = new ObjectMapper();
+        log.debug("responseBody = {}", responseBody);
+
+        ObjectMapper objMapper = new ObjectMapper().registerModule(new KotlinModule());
         try{
             return objMapper.readValue(responseBody, NvSearch.class);
         } catch (JsonProcessingException e){

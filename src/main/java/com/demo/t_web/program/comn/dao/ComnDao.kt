@@ -1,70 +1,56 @@
-package com.demo.t_web.program.comn.dao;
+package com.demo.t_web.program.comn.dao
 
-import com.demo.t_web.comn.model.MapSearch;
-import com.demo.t_web.comn.model.Tmap;
-import com.demo.t_web.program.comn.model.ExcludeCategory;
-import com.demo.t_web.program.comn.model.MapData;
-import com.demo.t_web.program.comn.model.NaverMap;
-import org.apache.ibatis.annotations.Mapper;
+import com.demo.t_web.comn.model.MapSearch
+import com.demo.t_web.comn.model.Tmap
+import com.demo.t_web.program.comn.model.ExcludeCategory
+import com.demo.t_web.program.comn.model.MapData
+import com.demo.t_web.program.comn.model.NaverMap
+import org.apache.ibatis.annotations.Mapper
 
-import java.util.List;
-import java.util.Map;
-
-/**
- * <pre>
- * com.demo.t_web.program.comn.dao.ComnDao
- *   - ComnDao.java
- * </pre>
- *
- * @author : 한태우
- * @ClassName : ComnDao
- * @description :
- * @date : 2023/10/19
- */
 @Mapper
-public interface ComnDao {
+interface ComnDao {
+    fun insertMapData(map: NaverMap): Int
 
-    int insertMapData(NaverMap map);
+    fun selectMapDataCount(map: NaverMap): Int
 
-    int selectMapDataCount(NaverMap map);
+    fun selectMapDataList(c: MapSearch): List<MapData>
 
-    List<MapData> selectMapDataList(MapSearch c);
+    fun selectMapDataList(c: Map<String, Any>): List<MapData>
 
-    List<MapData> selectMapDataList(Map<String, Object> c);
+    fun selectMcidList(c: MapSearch): List<Tmap?>?
 
-    List<Tmap> selectMcidList(MapSearch c);
+    fun getRegion1(param: Map<String, Any>): List<Tmap?>
 
-    List<Tmap> getRegion1(Map<String, Object> param);
+    fun getRegion2(param: Map<String, Any>): List<Tmap?>
 
-    List<Tmap> getRegion2(Map<String, Object> param);
+    fun getRegionMapData(param: Map<String, Any>): List<MapData>
 
-    List<MapData> getRegionMapData(Map<String, Object> param);
+    fun checkVisit(param: Map<String, Any>): Int
 
-    int checkVisit(Map<String, Object> param);
+    fun insertVisitLog(param: Map<String, Any>): Int
 
-    int insertVisitLog(Map<String, Object> param);
+    fun updateVisitLog(param: Map<String, Any>): Int
 
-    int updateVisitLog(Map<String, Object> param);
+    fun checkVanish(param: Map<String, Any>): Int
 
-    int checkVanish(Map<String, Object> param);
+    fun insertVanish(param: Map<String, Any>): Int
 
-    int insertVanish(Map<String, Object> param);
+    fun updateVanish(param: Map<String, Any>): Int
 
-    int updateVanish(Map<String, Object> param);
+    fun selectMapData(stringObjectMap: Map<String, Any>): MapData?
 
-    MapData selectMapData(Map<String, Object> stringObjectMap);
+    fun insertLocationChange(cmap: Map<String, Any>): Int
 
-    int insertLocationChange(Map<String, Object> cmap);
+    fun updateMapDataLocation(mdt: MapData?): Int
 
-    int updateMapDataLocation(MapData mdt);
+    fun selectRelatedCategories(param: Map<String, Any>): List<ExcludeCategory>
 
-    List<ExcludeCategory> selectRelatedCategories(Map<String, Object> param);
+    fun selectMapDataExist(param: Map<String, Any>): List<MapData>
 
-    List<MapData> selectMapDataExist(Map<String, Object> param);
+    fun insertRequestData(param: Map<String, Any>): Int
 
-    int insertRequestData(Map<String, Object> param);
+    fun insertDuplicateLocationData(d: Tmap?): Int
 
-    int insertDuplicateLocationData(Tmap d);
-
-    int checkIsDuplicateInserted(String string);
+    fun checkIsDuplicateInserted(string: String): Int
+    
 }

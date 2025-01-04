@@ -89,6 +89,7 @@ function Map(){
             dt.ifw = setInfoWindow(map, mkr, dt);
             dt.map = map;
             dt.marker = mkr;
+            dt.radius = param.radius
             aDataList.push(dt);
         });
 

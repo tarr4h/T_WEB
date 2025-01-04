@@ -1,13 +1,12 @@
-package com.demo.t_web;
+package com.demo.t_web
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
-public class ServletInitializer extends SpringBootServletInitializer {
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(TWebApplication.class);
+class ServletInitializer : SpringBootServletInitializer() {
+
+    override fun configure(application: SpringApplicationBuilder): SpringApplicationBuilder {
+        return application.sources(TWebApplication::class.java)
     }
-
 }

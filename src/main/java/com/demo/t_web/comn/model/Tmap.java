@@ -42,8 +42,8 @@ public class Tmap extends LinkedHashMap<String, Object> {
             } else {
                 return super.put(JdbcUtils.convertUnderscoreNameToPropertyName(key), value);
             }
-        } else if (value instanceof String){
-            return super.put(key.toLowerCase(), String.valueOf(value));
+//        } else if (value instanceof String){
+//            return super.put(key.toLowerCase(), String.valueOf(value));
         } else {
             return super.put(key, value);
         }

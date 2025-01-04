@@ -4,7 +4,6 @@ import com.demo.t_web.comn.model.Tmap
 import com.demo.t_web.comn.util.Utilities
 import com.demo.t_web.program.user.model.User
 import com.demo.t_web.program.user.service.UserService
-import com.demo.t_web.program.user.service.UserServiceOld
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

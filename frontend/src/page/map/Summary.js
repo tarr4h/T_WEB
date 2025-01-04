@@ -70,14 +70,14 @@ function Summary({data}){
         }
 
         let cont = data.addr1 + ' ' + data.addr2 + ' ' + data.addr3 + ' ' + data.name;
-        let placeInfo = await searchPlace(cont, center.y, center.x, data.id, data.mcid, false);
+        let placeInfo = await searchPlace(cont, center.y, center.x, data.radius, data.id, data.mcid, false);
 
         let avpi = false;
         if(placeInfo){
             avpi = true;
         } else {
             cont = data.addr1 + ' ' + data.addr2 + ' ' + data.name;
-            placeInfo = await searchPlace(cont, center.y, center.x, data.id, data.mcid, true);
+            placeInfo = await searchPlace(cont, center.y, center.x, data.radius, data.id, data.mcid, true);
             if(placeInfo){
                 avpi = true;
             }
@@ -92,8 +92,8 @@ function Summary({data}){
         }
     }
 
-    const searchPlace = async (searchTxt, lat, lng, id, mcid, vanishYn) => {
-        return (await instance.get('/comn/getNvSearch', {params : {searchTxt, lat, lng, id, mcid, vanishYn}})).data;
+    const searchPlace = async (searchTxt, lat, lng, radius, id, mcid, vanishYn) => {
+        return (await instance.get('/comn/getNvSearch', {params : {searchTxt, lat, lng, radius, id, mcid, vanishYn}})).data;
     }
 
     const openDetail = () => {

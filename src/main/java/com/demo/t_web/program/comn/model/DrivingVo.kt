@@ -1,95 +1,70 @@
-package com.demo.t_web.program.comn.model;
+package com.demo.t_web.program.comn.model
 
-import lombok.Getter;
-import lombok.Setter;
+data class DrivingVo(
+    var code : Int,
+    var message : String,
+    var currentDateTime : String,
+    var route : RouteData?,
+    var duration : Double,
+    var durationMin : Int
+) {
 
-import java.util.List;
+    companion object {
+        data class RouteData (
+            var traoptimal : List<TraoptimalData>
+        ){
+            companion object {
+                data class TraoptimalData (
+                    var guide : List<GuideData>,
+                    var path : List<Array<Double>>,
+                    var section : List<SectionData>,
+                    var summary : SummaryData,
+                ) {
+                    companion object {
 
-/**
- * <pre>
- * com.web.trv.comn.model.DrivingVo
- *   - DrivingVo.java
- * </pre>
- *
- * @author : 한태우
- * @ClassName : DrivingVo
- * @description :
- * @date : 2023/07/31
- */
-@Getter
-@Setter
-public class DrivingVo {
-    private int code;
-    private String message;
-    private String currentDateTime;
-    private RouteData route;
+                        data class GuideData (
+                            var pointIndex : Int,
+                            var type : Int,
+                            var instructions : String,
+                            var distance : Int,
+                            var duration : Int
+                        )
 
-    private double duration;
-    private int durationMin;
+                        data class SectionData (
+                            var pointIndex : Int,
+                            var pointCount : Int,
+                            var distance : Int,
+                            var name : String,
+                            var congestion : Int,
+                            var speed : Int
+                        )
 
-    @Getter
-    @Setter
-    public static class RouteData{
-        private List<TraoptimalData> traoptimal;
+                        data class SummaryData (
+                            var start : StartLocation,
+                            var goal : GoalLocation,
+                            var distance : Int,
+                            var duration : Int,
+                            var bbox: Array<DoubleArray>,
+                            var tollFare : Int,
+                            var taxiFare : Int,
+                            var fuelPrice : Int,
+                            var departureTime : String,
+                            var etaServiceType : Int
+                        ) {
+                            companion object {
+                                data class GoalLocation(
+                                    var location : List<Double>,
+                                    var dir : Int
+                                )
 
-        @Getter
-        @Setter
-        public static class TraoptimalData {
-            private List<GuideData> guide;
-            private List<double[]> path;
-            private List<SectionData> section;
-            private SummaryData summary;
-
-            @Getter
-            @Setter
-            public static class GuideData {
-                private int pointIndex;
-                private int type;
-                private String instructions;
-                private int distance;
-                private int duration;
-            }
-
-            @Getter
-            @Setter
-            public static class SectionData {
-                private int pointIndex;
-                private int pointCount;
-                private int distance;
-                private String name;
-                private int congestion;
-                private int speed;
-            }
-
-            @Getter
-            @Setter
-            public static class SummaryData {
-                private StartLocation start;
-                private GoalLocation goal;
-                private int distance;
-                private int duration;
-                private double[][] bbox;
-                private int tollFare;
-                private int taxiFare;
-                private int fuelPrice;
-                private String departureTime;
-                private int etaServiceType;
-
-                @Getter
-                @Setter
-                public static class GoalLocation {
-                    private double[] location;
-                    private int dir;
-                }
-
-                @Getter
-                @Setter
-                public static class StartLocation {
-                    private double[] location;
+                                data class StartLocation(
+                                    var location : List<Double>
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-
-
 }
