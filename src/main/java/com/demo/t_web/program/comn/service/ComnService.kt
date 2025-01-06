@@ -5,18 +5,27 @@ import com.demo.t_web.comn.model.Tmap
 import com.demo.t_web.comn.util.Utilities
 import com.demo.t_web.program.comn.dao.ComnDao
 import com.demo.t_web.program.comn.model.MapData
-import com.demo.t_web.program.comn.model.NvSearch
 import com.demo.t_web.program.comn.model.NvSearchDetail
 import com.demo.t_web.program.memo.model.Memo
+import com.demo.t_web.program.memo.repository.MemoRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.http.HttpServletRequest
+import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.xssf.usermodel.XSSFCell
+import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
+import java.io.FileInputStream
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.ceil
 
 @Service
 class ComnService(
-    val dao : ComnDao,
-    val cacheService : CacheableService
+    val dao: ComnDao,
+    val cacheService: CacheableService,
+    val memoRepository: MemoRepository
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -284,8 +293,6 @@ class ComnService(
             0
         }
     }
-
-
 
 
 

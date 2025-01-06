@@ -11,12 +11,12 @@ data class Memo(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "memo_generator")
     @Column(name = "id", nullable = false)
-    val id : Long,
+    val id : Long = 0L,
 
     @Column(name = "title", length = 100, nullable = false)
-    val title : String,
+    var title : String? = "",
 
     @Column(name = "content", length = 1000)
-    val content : String
+    var content : String? = ""
 
 ) : BaseVo()

@@ -9,19 +9,21 @@ import java.io.Serializable
 import java.util.*
 
 @MappedSuperclass
-open class BaseVo : Serializable {
-
+open class BaseVo(
     @Column(name = "reg_dt")
     @Temporal(TemporalType.TIMESTAMP)
-    var regDt : Date? = null
+    var regDt : Date? = null,
 
     @Column(name = "upt_dt")
     @Temporal(TemporalType.TIMESTAMP)
     var uptDt : Date? = null
 
+) : Serializable {
+
+
     @PrePersist
     open fun prePersist(){
-        regDt ?: Date()
-        uptDt ?: Date()
+        regDt = Date()
+        uptDt = Date()
     }
 }
