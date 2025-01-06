@@ -12,7 +12,7 @@ data class AskMaker (
         str.append("\n[\n")
 
         memos.forEach {
-            memo -> str.append("------------------\n")
+            memo -> str
                 .append(memo)
                 .append("\n")
         }
@@ -43,25 +43,46 @@ data class AskMaker (
             Do not modify or paraphrase any words inside the brackets.
             Provide only the answer to the question without any additional explanations or context.
             The answer must be provided in Korean.
-            Answer should be correct with content inside the brackets mentions.
             Only use the information from the brackets to form the answer, and do not include any unrelated or additional responses.
             Response must be short and clear.
+            
             Define relationships:
             - '<->' means "counterproductive relationship."
             - Analyze ONLY the part of the sentence containing '<->'.
             - Items on the left of '<->' are counterproductive to all items on the right.
-            - Items separated by commas on the same side (e.g., B, C) are *not* counterproductive to each other and should NOT be linked in any way.
-            
-            Relationships:
-            A(word) <-> B(word), C(word)
-            
-            Important:
-            - Counterproductive relationships only exist across '<->', NOT within the same side.
-            - A is counterproductive to B also A is counterproductive to C.
-            - B is counterproductive to A.
-            - C is counterproductive to A.
-            - B is NOT counterproductive to C.
-            - C is NOT counterproductive to B.
+            - Do not infer or expand relationships beyond what is specified by <->.
             """.trimIndent();
 }
-//            if [A <-> B \n A, A <-> C] then A is counterproduct of B and C, B is not counterproduct of C
+//Relationships(example):
+//A <-> B
+//A <-> C
+//D <-> B
+//E <-> B
+//F <-> B
+//...
+//
+//Important:
+//- Do NOT infer or expand relationships across <->.
+//Relationships must remain directly across <-> as explicitly stated.
+//- <-> 간의 관계를 절대 확장하면 안됨.
+//- A is counterproductive to B.
+//- A is counterproductive to C.
+//- B is counterproductive to A.
+//- C is counterproductive to A.
+//- D is counterproductive to B.
+//- B is counterproductive to D.
+//- D has no relationship with A.
+//- B is counterproductive to E.
+//- E is counterproductive to B.
+//- F is counterproductive to B.
+//- B is counterproductive to F.
+//- for example, A is counterproduct of (B, C), B is counterproduct of (A, D, E), C is counterproduct of (A), D is counterproduct of (B), E is counterproduct of (B).
+
+
+//- B is NOT counterproductive to C.
+//- C is NOT counterproductive to B.
+//A(word) <-> B(word)
+//A(word) <-> C(word)
+//D(word) <-> B(word)
+//E(word) <-> B(word)
+//            - Items separated by commas on the same side (e.g., B, C) are *not* counterproductive to each other and should NOT be linked in any way.

@@ -33,14 +33,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/user/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.245:3001")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.148:3001")
                 .allowedMethods("OPTIONS", "POST", "GET")
                 .allowCredentials(true)
                 .maxAge(30 * 60)
         ;
 
         registry.addMapping("/comn/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.245:3001")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.148:3001")
                 .exposedHeaders("Custom-Header")
                 .allowedMethods("*")
                 .allowCredentials(true)
@@ -48,35 +48,35 @@ public class WebMvcConfig implements WebMvcConfigurer {
         ;
 
         registry.addMapping("/awsMas/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.245:3001")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.148:3001")
                 .allowedMethods("*")
                 .allowCredentials(true)
                 .maxAge(30 * 60)
         ;
 
         registry.addMapping("/admin/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.245:3001")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.148:3001")
                 .allowedMethods("*")
                 .allowCredentials(true)
                 .maxAge(30 * 60)
         ;
 
         registry.addMapping("/menu/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.245:3001")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.148:3001")
                 .allowedMethods("*")
                 .allowCredentials(true)
                 .maxAge(30 * 60)
         ;
 
         registry.addMapping("/ai/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.245:3001")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.148:3001")
                 .allowedMethods("*")
                 .allowCredentials(true)
                 .maxAge(30 * 60)
         ;
 
         registry.addMapping("/memo/**")
-                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.245:3001")
+                .allowedOrigins("https://tarr4h.github.io", "https://localhost:3001", "http://localhost:3001", "http://121.138.193.148:3001")
                 .allowedMethods("*")
                 .allowCredentials(true)
                 .maxAge(30 * 60)

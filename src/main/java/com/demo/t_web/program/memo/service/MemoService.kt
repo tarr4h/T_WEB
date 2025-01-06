@@ -59,9 +59,9 @@ class MemoService @Autowired constructor(
             referenceYn = refineList.isNotEmpty(),
         )
         resultset.addMemoList(refineList.stream().map{
-            m -> m.title + "\n" + m.content
+            m -> m.content.toString()
         }.toList())
-
+        log.debug { "ask ? ${resultset.getAsk()}" }
         return aiStream(resultset.getAsk(), resultset)
     }
 
@@ -142,7 +142,7 @@ class MemoService @Autowired constructor(
             .user(input)
             .advisors { a -> a
                 .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, am.conversationId)
-                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 3)
 
             }
             .call()
@@ -156,7 +156,7 @@ class MemoService @Autowired constructor(
             .user(input)
             .advisors { a -> a
                 .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, am.conversationId)
-                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+                .param(AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 3)
 
             }
             .stream()
@@ -178,7 +178,7 @@ class MemoService @Autowired constructor(
     fun getNouns(sentence : String) : List<String> {
         val komoran = Komoran(DEFAULT_MODEL.LIGHT)
 
-        val path = "/Users/taewoohan/WorkFolder/komo_words.txt"
+        val path = "C:\\dev\\doosung\\komo_words.txt"
         komoran.setUserDic(path)
 
         val result : KomoranResult? = komoran.analyze(sentence);
@@ -187,7 +187,7 @@ class MemoService @Autowired constructor(
     }
 
     fun insertDicWords(words: List<String>) {
-        val path = "/Users/taewoohan/WorkFolder/komo_words.txt"
+        val path = "C:\\dev\\doosung\\komo_words.txt"
         val file = File(path)
         val exists = file.readLines()
         for(word in words) {
@@ -262,7 +262,7 @@ class MemoService @Autowired constructor(
     }
 
     fun readExcel() : MutableList<MutableList<String>> {
-        val filePath = "/Users/taewoohan/WorkFolder/doosung.xlsx"
+        val filePath = "C:\\dev\\doosung\\doosung.xlsx"
         val file = FileInputStream(filePath)
         val workbook = XSSFWorkbook(file)
 
